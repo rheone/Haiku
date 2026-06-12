@@ -1,0 +1,24 @@
+@page "/tag/{TagName}"
+
+<PageTitle>Haiku - #@TagName</PageTitle>
+
+<h3 class="mb-4"><i class="fas fa-hashtag me-2"></i>#@TagName</h3>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card haiku-card mb-3">
+            <div class="card-body">
+                <div class="haiku-content mb-2">
+                    <p class="mb-1">The <a href="/word/wind" class="haiku-word">wind</a> whispers</p>
+                    <p class="mb-1">Through <a href="/word/autumn" class="haiku-word">autumn</a> leaves falling down</p>
+                    <p class="mb-0">#@TagName calls</p>
+                </div>
+                <small class="text-muted">by <a href="/poet/1">poet_user</a> &middot; 1 hour ago</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string TagName { get; set; } = string.Empty;
+}

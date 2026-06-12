@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Haiku.Domain/Haiku.Domain.csproj" />
+    <Project Path="src/Haiku.Infrastructure/Haiku.Infrastructure.csproj" />
+    <Project Path="src/Haiku.Services/Haiku.Services.csproj" />
+    <Project Path="src/Haiku.Web/Haiku.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Haiku.Tests/Haiku.Tests.csproj" />
+  </Folder>
+</Solution>

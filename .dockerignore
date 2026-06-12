@@ -1,0 +1,18 @@
+**/.class
+**/.dockerignore
+**/.env
+**/.git
+**/.gitignore
+**/.vs/
+**/bin/
+**/obj/
+**/node_modules/
+**/vcs/
+.git/
+.gitattributes
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.deploy/

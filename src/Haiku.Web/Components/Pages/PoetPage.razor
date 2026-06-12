@@ -1,0 +1,44 @@
+@page "/poet/{AuthorId}"
+
+<PageTitle>Haiku - Poet Profile</PageTitle>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-body text-center">
+                <i class="fas fa-user-circle fa-5x text-secondary mb-3"></i>
+                <h3>poet_user</h3>
+                <p class="text-muted">@AuthorId</p>
+                <p>A lover of nature and silence. Writing haiku since 2024.</p>
+                <div class="d-flex justify-content-around">
+                    <div><strong>42</strong> <small class="text-muted">Poems</small></div>
+                    <div><strong>128</strong> <small class="text-muted">Loves</small></div>
+                    <div><strong>15</strong> <small class="text-muted">Followers</small></div>
+                    <div><strong>8</strong> <small class="text-muted">Following</small></div>
+                </div>
+                <button class="btn btn-outline-primary mt-3 w-100">
+                    <i class="fas fa-user-plus me-1"></i>Follow
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <h4 class="mb-3">Poems</h4>
+
+        <div class="card haiku-card mb-3">
+            <div class="card-body">
+                <div class="haiku-content mb-2">
+                    <p class="mb-1">An old silent pond</p>
+                    <p class="mb-1">A frog jumps into the pond</p>
+                    <p class="mb-0">Splash! Silence again</p>
+                </div>
+                <small class="text-muted">Posted 3 days ago</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string AuthorId { get; set; } = string.Empty;
+}
