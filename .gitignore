@@ -182,7 +182,6 @@ Arcus.SmokeTests/feed/
 src/results/
 
 # Planning and working documents
-PRD*.md
 RELEASE-*.md
 future.todo.md
 skills-lock.json

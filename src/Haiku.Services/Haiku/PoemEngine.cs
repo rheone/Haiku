@@ -6,7 +6,7 @@ namespace Haiku.Services.Haiku;
 
 /// <summary>
 /// Core poetry engine: loads the CMU pronunciation dictionary, counts syllables,
-/// validates poetic forms, detects poem types, generates poems, and analyses rhyme.
+/// validates poetic forms, detects poem types, generates poems, and analyzes rhyme.
 /// </summary>
 public class PoemEngine
 {
@@ -355,11 +355,11 @@ public class PoemEngine
     // =========================================================================
 
     /// <summary>
-    /// Analyses a poem, returning syllable counts per line, per-word breakdown, and detected type.
+    /// Analyzes a poem, returning syllable counts per line, per-word breakdown, and detected type.
     /// </summary>
-    /// <param name="lines">The poem lines to analyse.</param>
+    /// <param name="lines">The poem lines to analyze.</param>
     /// <returns>A <see cref="PoemAnalysis"/> with line-level and word-level breakdowns.</returns>
-    public PoemAnalysis Analyse(params string[] lines)
+    public PoemAnalysis Analyze(params string[] lines)
     {
         return new PoemAnalysis
         {
@@ -371,7 +371,7 @@ public class PoemEngine
                             LineNumber = i + 1,
                             Text = line,
                             TotalSyllables = CountLineSyllables(line),
-                            WordBreakdown = AnalyseLine(line),
+                            WordBreakdown = AnalyzeLine(line),
                         }
                 )
                 .ToList(),
@@ -644,7 +644,7 @@ public class PoemEngine
     // Private: Analysis
     // =========================================================================
 
-    private List<WordAnalysis> AnalyseLine(string line) =>
+    private List<WordAnalysis> AnalyzeLine(string line) =>
         line.Split(' ', StringSplitOptions.RemoveEmptyEntries)
             .Select(w =>
             {

@@ -2,73 +2,55 @@
 
 ### Repo: Haiku
 
-Blazor Server (.NET 10) social platform for haiku poetry — EF Core, SQL Server, Docker.
+Blazor Web App (.NET 10, Interactive Server render mode) social platform for haiku poetry — EF Core 10, SQL Server 2022, Docker. See `prd/prd.md` and `prd/prd.UiStylingAddendum.md` for the full spec (consult before adding features that affect UX or domain rules).
 
 ### Quick start
 
 ```bash
 cp .env.example .env
-docker compose up -d      # starts SQL Server + web app on http://localhost:5000
-dotnet build              # or: dotnet build Haiku.slnx
-dotnet test               # xUnit v3 + NSubstitute, MTP runner
-dotnet run --project src/Haiku.Web    # local dev (needs SQL Server on localhost:1433, DB: Haiku_Dev)
+docker compose up -d          # SQL Server + web app on :5000
+dotnet build Haiku.slnx
+dotnet test                    # xUnit v3 + NSubstitute, MTP runner (106 tests)
+dotnet run --project src/Haiku.Web    # local dev, needs SQL on :1433, DB: Haiku_Dev
 ```
 
-### Solution structure (`Haiku.slnx` — modern `.slnx` format)
+### Key architecture
 
-| Project | Description |
-|---|---|
-| `Haiku.Domain` | Entities (DataAnnotations for EF Core), enums, repository interfaces, value objects |
-| `Haiku.Infrastructure` | EF Core `HaikuDbContext`, repository implementations, email senders |
-| `Haiku.Services` | Business logic + 11 CQRS Slices, `PoemEngine`, `SyllableEngine`, `DictionaryService` |
-| `Haiku.Web` | Blazor Server UI — `Program.cs` wires DI, cookie auth, EF Core |
-| `MicroMediator` | Custom lightweight CQRS mediator (the only packable project) |
-| `Haiku.Tests` | xUnit + NSubstitute (32 tests — auth, syllable, email, slices) |
-| `Haiku.Services.Tests` | Slice handler tests (47 tests) |
-| `MicroMediator.Tests` | Mediator unit tests (5 tests) |
-| 3 other test projects | Empty scaffolding (Domain, Infrastructure, Web) |
+- **Blazor Web App**, not legacy Blazor Server — `Program.cs` uses `AddRazorComponents().AddInteractiveServerComponents()` / `MapRazorComponents<App>().AddInteractiveServerRenderMode()`. Cookie auth (`haiku-auth`, 7-day sliding).
+- **Slice/CQRS**: 11 feature slices under `src/Haiku.Services/Slices/` dispatched via `MicroMediator` (custom lightweight mediator in `src/MicroMediator/`, the only packable project). Handlers + FluentValidation validators registered via `builder.Services.AddApplication()`.
+- **`TargetFramework`** is set in `src/Directory.Build.props` and `tests/Directory.Build.props` (both `<TargetFramework>net10.0</TargetFramework>`), **not** in individual `.csproj` files — `grep` for TFM there will miss it.
+- **`Directory.Build.targets`** auto-installs [Husky](https://github.com/alexaigor/husk) pre-commit hooks on restore/build. Disable in CI with env var `HUSKY: 0`.
+- **Singleton** engines: `SyllableEngine` and `PoemEngine` hold the CMU pronunciation dictionary (`dictionary.dic`, loaded relative to working directory). All other services are **scoped**.
+- **Poem type detection**: `PoemType` enum (15 types), `DetectPoemType()` in `HaikuService`, matcher chain `PoemMatcherChain` with priority-order matchers.
 
-84 total passing tests. All packages locked via `packages.lock.json`.
+### Testing
 
-### Testing quirks
+- **xUnit v3 + Microsoft.Testing.Platform (MTP)** runner. Filter syntax: `--filter-class AuthServiceTests`, `--filter-trait "Category=Unit"`.
+- 3 test projects with actual tests (106 total): `Haiku.Tests` (54), `Haiku.Services.Tests` (47), `MicroMediator.Tests` (5). 3 remaining test projects are empty scaffolding.
+- Run tests from solution root (`dictionary.dic` is resolved relative to CWD).
+- `AuthService` tests call `BCrypt.Net.BCrypt.HashPassword` with work factor 12 (~300ms/hash).
+- Cancellation tokens from `TestContext.Current.CancellationToken`.
 
-- **xUnit v3** — tests use `TestContext.Current.CancellationToken` for cancellation tokens.
-- **MTP runner** — filters use MTP syntax: `--filter-class AuthServiceTests`, `--filter-trait "Category=Unit"`.
-- `dotnet test tests/Haiku.Tests` to run a single project.
-- `AuthService` tests use `BCrypt.Net.BCrypt.HashPassword` with work factor 12 (~300ms per hash).
-- No integration tests — all unit tests with NSubstitute mocks.
-- CMU pronunciation dictionary (`dictionary.dic`) loaded relative to working directory — run tests from solution root.
+### Debug impersonation
 
-### Architecture notes
+```bash
+dotnet run --project src/Haiku.Web --launch-profile Debug   # :5001, auto-login as debug_user
+```
 
-- **EF Core**: Scoped `HaikuDbContext` per request via `AddDbContext`. Fluent API in `OnModelCreating` for relationships and indexes; DataAnnotations on entities for table/column/key mapping. No `virtual` on entity properties.
-- **Slice/CQRS**: 11 feature slices under `src/Haiku.Services/Slices/` (Auth, Poems, Votes, Loves, Bookmarks, Tags, PoetProfile, Dictionary, Moderation, Email, WordSearch). Each slice has Command/Query + Handler pairs dispatched via `MicroMediator`.
-- **DI wiring** in `Program.cs`: repositories → services → Blazor components. `SyllableEngine` and `PoemEngine` are **singletons** (hold CMU dictionary in memory); all other services are **scoped**.
-- **Auth cookie**: named `haiku-auth`, 7-day sliding expiry. Dev mode relaxes Secure/SameSite for HTTP.
-- **Email**: `IEmailSender` → `SmtpEmailSender` (prod) / `ConsoleEmailSender` (dev). Configured via `Email:Sender:Provider` setting.
-- **Dev config** (`appsettings.Development.json`): `Haiku_Dev` DB, `RequireVerification = false`, `Console` email.
-- **Two syllable engines**: `PoemEngine` (full CMU dict, rhyme, generation) and `SyllableEngine` (simpler, constructor-injected dictionaries, used in tests).
-- **Poem type detection**: `PoemType` enum with 15 types. `DetectPoemType()` in `HaikuService`. Matcher chain in `PoemMatcherChain` with priority-order matchers.
-- **InternalsVisibleTo**: `Haiku.Services` exposes internals to `Haiku.Services.Tests` and `Haiku.Web`.
+Active when `ASPNETCORE_ENVIRONMENT=Debug` — `DebugImpersonationMiddleware` auto-signs unauthenticated requests. Configured in `appsettings.Debug.json`.
 
-### Docker
+### CI
 
-- **Root `docker-compose.yml`** — dev stack, uses `.env` for config.
-- **`deploy/docker-compose.yml`** — production stack, hardcoded values, build context is `..` (one level up).
-- SQL Server auto-initialized via `deploy/db/init-db.sql` + `seed-data.sql` mounted to `/docker-entrypoint-initdb.d/`.
-- Web container health-check: waits for `haiku-db` to be healthy.
-- `BlazorDisableThrowNavigationException=true` in `Haiku.Web.csproj` — do not remove.
+Two GitHub Actions workflows under `.github/workflows/`:
+- **`build.yml`** — on push/PR to `main`: restore → build → `dotnet format --verify-no-changes` → test. Sets `HUSKY: 0`.
+- **`publish.yml`** — on `v*` tag: build + test + push container image to `ghcr.io`.
+
+Docker build (`Dockerfile`) gates publish on `dotnet test` passing.
 
 ### Code conventions
 
-- **Formatting**: CSharpier (`.csharpierrc.json`: 128 col, 4-space tabs) + StyleCop + Roslynator. Enforced via pre-commit (`dotnet husky run`). Run manually: `dotnet format style && dotnet format analyzers && dotnet csharpier format .`
-- **Line endings**: CRLF for `.cs` files per `.editorconfig`.
-- **Build flags**: `Nullable=enable`, `ImplicitUsings=enable`, `Deterministic=true`, SourceLink with GitHub.
-- **Env vars**: `NUGET_XMLDOC_MODE=skip` set in devcontainer (silences XML doc warnings).
-
-### Deployment
-
-- Dockerfile runs `dotnet test` before `dotnet publish` (tests gate the build).
-- No GitHub Actions CI found.
-- `.slnx` format requires .NET 8+ SDK.
-- DB port defaults to 1433, web port to 5000 — override via `.env` (`DB_PORT`, `WEB_PORT`).
+- CSharpier (`.csharpierrc.json`: 128 col, 4-space tabs) + StyleCop + Roslynator. Enforced via pre-commit. Run: `dotnet format style && dotnet format analyzers && dotnet csharpier format .`
+- `.editorconfig`: CRLF line endings for `.cs` files, braces on new lines, `var` preferred, `_camelCase` private fields.
+- `Nullable=enable`, `ImplicitUsings=enable`, `Deterministic=true`. `NUGET_XMLDOC_MODE=skip` in devcontainer.
+- `BlazorDisableThrowNavigationException=true` in `Haiku.Web.csproj` — do not remove.
+- `InternalsVisibleTo`: `Haiku.Services` → `Haiku.Services.Tests`, `Haiku.Web`.

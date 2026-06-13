@@ -1,8 +1,8 @@
 # Haiku
 
-A web-based social platform for composing, sharing, and discovering messages in haiku and related poetry forms. Built with [Blazor Server](https://learn.microsoft.com/aspnet/core/blazor/?view=aspnetcore-10.0) (.NET 10) and [SQL Server 2022](https://www.microsoft.com/sql-server).
+A web-based social platform for composing, sharing, and discovering messages in haiku and related poetry forms. Built with [Blazor Web App](https://learn.microsoft.com/aspnet/core/blazor/?view=aspnetcore-10.0) (.NET 10, Interactive Server render mode) and [SQL Server 2022](https://www.microsoft.com/sql-server).
 
-See the [Product Requirements Document](./prd.md) for full specification.
+See the [Product Requirements Document](./prd/prd.md) for full specification.
 
 ---
 
@@ -378,7 +378,7 @@ Configuration files:
 | `Haiku.Domain` | Entities (User, Poem, Vote, Love, Follow, Bookmark, Tag, etc.), enums, repository interfaces |
 | `Haiku.Infrastructure` | EF Core `HaikuDbContext`, repository implementations, email senders |
 | `Haiku.Services` | Business logic: AuthService, HaikuService, SyllableEngine, EmailService, ModerationService, DictionaryService |
-| `Haiku.Web` | Blazor Server UI with Bootstrap 5, FontAwesome, 9 pages (Feed, PoetPage, TagPage, WordPage, Login, Register, Bookmarks, Loves, Admin) |
+| `Haiku.Web` | Blazor Web App UI (Interactive Server) with Bootstrap 5, FontAwesome, 9 pages (Feed, PoetPage, TagPage, WordPage, Login, Register, Bookmarks, Loves, Admin) |
 | `MicroMediator` | Lightweight CQRS mediator library (`ICommand<>`, `IQuery<>`, `ICommandHandler<>`, `IQueryHandler<>`, `IMediator`). This is the only project packaged as a NuGet distribution package. |
 | `Haiku.Tests` | xUnit + NSubstitute |
 | `MicroMediator.Tests` | xUnit |
@@ -389,7 +389,7 @@ Configuration files:
 
 ## Technology Stack
 
-- **UI:** [Blazor Server](https://learn.microsoft.com/aspnet/core/blazor/?view=aspnetcore-10.0) (Interactive Server), [Bootstrap 5](https://getbootstrap.com/), [FontAwesome](https://fontawesome.com/)
+- **UI:** [Blazor Web App](https://learn.microsoft.com/aspnet/core/blazor/?view=aspnetcore-10.0) (Interactive Server render mode), [Bootstrap 5](https://getbootstrap.com/), [FontAwesome](https://fontawesome.com/)
 - **ORM:** [Entity Framework Core](https://learn.microsoft.com/ef/core/) 10.x
 - **Database:** [SQL Server 2022](https://www.microsoft.com/sql-server)
 - **Auth:** [ASP.NET Core Cookie Authentication](https://learn.microsoft.com/aspnet/core/security/authentication/cookie), [BCrypt.Net](https://github.com/BcryptNet/bcrypt.net)
@@ -411,7 +411,7 @@ src/
 │                         #   Tags, PoetProfile, Dictionary, Moderation, Email,
 │                         #   WordSearch
 ├── MicroMediator/        # Lightweight CQRS mediator library (distributable)
-└── Haiku.Web/            # Blazor Server app (Components, Pages, Layout)
+└── Haiku.Web/            # Blazor Web App (Components, Pages, Layout, Interactive Server render mode)
 tests/
 ├── Haiku.Tests/          # Unit tests (Slices/ subdirectories by feature)
 ├── MicroMediator.Tests/

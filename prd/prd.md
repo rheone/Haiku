@@ -25,6 +25,10 @@
 14. [Open Questions](#14-open-questions)
 15. [Appendix](#15-appendix)
 
+### Addendum
+
+1. [UI & Styling Addendum](prd.UiStylingAddendum.md)
+
 ---
 
 ## 1. Overview
@@ -162,14 +166,20 @@ Requirements are tagged **MH** (must-have, v1.0), **SH** (should-have, v1.1), or
 | AM-09 | *(reserved)* | |
 | AM-10 | Email verification on registration. A verification email with a one-time token (1-hour expiry) is sent. Unverified accounts may read the feed but cannot publish poems or vote. | MH |
 | AM-11 | Password reset via email link with a one-time token (1-hour expiry). | MH |
+| AM-12 | A "Sessions" page lists all active sessions for the user, showing device/browser info, IP address, and last active timestamp. Each session can be individually revoked. Backed by a `UserSessions` table with a series+token security stamp pattern. | MH |
+| AM-13 | Revoking a session invalidates its auth cookie immediately; the user must re-authenticate on that device. | MH |
+| AM-14 | A GDPR cookie consent banner is shown on a user's first visit. It explains the use of the authentication cookie and any non-essential cookies, and includes a dismiss action. The banner is dismissable and must meet key requirements for cookie consent messaging. | MH |
+| AM-15 | **(Future)** A "Log out of all devices" option invalidates all sessions for the user (triggered by password change). | NH |
+| AM-16 | **(Future)** OAuth 2.0 / social login is supported via configurable providers (Google, GitHub, and others TBD). OAuth accounts are linked to an existing email-and-password account on first login if the email matches, or create a new account. A user may link multiple OAuth providers to the same account. | NH |
+| AM-17 | **(Future)** Automatic profile image resolution via Gravatar (using the user's email hash) or equivalent provider. If no Gravatar match is found, a generated identicon or initials-based avatar is shown as fallback. The user may override with a custom URL. | NH |
 
 ### 5.2 Poem Composition
 
 | ID | Requirement | Priority |
 |---|---|---|
 | HC-01 | Authenticated users can compose a poem in a single text input field. Lines are delimited by newline control characters. The UI may render each line in its own visual row. | MH |
-| HC-02 | The composer displays a live syllable count per line that updates on every keystroke. The counts are computed client-side for responsiveness and validated server-side on publish. | MH |
-| HC-03 | Each line's syllable count badge is green when it hits its target, amber when in progress, and red when over the target. | MH |
+| HC-02 | The composer displays a live syllable count per line that updates on every keystroke. Each line has an inline syllable badge positioned to its right showing `{actual}/{target}` when the poem type is detected/known, or `{actual}` alone for freeform. The counts are computed client-side for responsiveness and validated server-side on publish. | MH |
+| HC-03 | Each line's syllable count badge is green when it hits its target, amber when in progress, and red when over the target. The target is only displayed when the poem type is inferred or explicitly known. | MH |
 | HC-04 | The "Publish" action is blocked with a validation error if any line's syllable count does not match the target for the detected poem type. Freeform poems skip validation. | MH |
 | HC-05 | Users can save a poem as a draft without syllable validation. | MH |
 | HC-06 | Drafts are private and visible only to the author. | MH |
@@ -180,6 +190,12 @@ Requirements are tagged **MH** (must-have, v1.0), **SH** (should-have, v1.1), or
 | HC-11 | The system attempts to guess the poem type based on line count and syllable structure at creation time. If the input does not match any known pattern it defaults to Freeform. The user may override the detected type. | MH |
 | HC-12 | Users may explicitly select "Freeform" mode to bypass syllable validation for non-standard structures. This must be an intentional opt-in via the UI. | MH |
 | HC-13 | On publish, the validated syllable counts, poem type, and total syllable count are persisted with the poem record. | MH |
+| HC-14 | A dedicated "My Drafts" page (`/drafts`) displays a paginated list of all the user's unpublished drafts, newest first. Each draft shows its preview text and has Publish and Delete actions. | MH |
+| HC-15 | A badge on the NavBar or composer area shows the count of unpublished drafts when the user has one or more drafts saved. | MH |
+| HC-16 | Users can delete a draft from the drafts page without publishing it. | MH |
+| HC-17 | The composer displays a count line below the input area showing character count, total syllable count, word count, and line count in that order. Format: `{chars} chars · {syl} syl · {words} words · {lines} lines` in monospace type. Updates are debounced at 800ms on keystroke and 50ms on paste. | MH |
+| HC-18 | The composer layout from top to bottom: (1) single textarea with per-line syllable badges, (2) poem type badge + Freeform toggle row, (3) count display line (chars · syl · words · lines), (4) theme picker chip row, (5) action bar. | MH |
+| HC-19 | The composer is hidden entirely for unauthenticated users. | MH |
 
 ### 5.3 Syllable Counting Engine
 
@@ -190,11 +206,13 @@ Requirements are tagged **MH** (must-have, v1.0), **SH** (should-have, v1.1), or
 | SC-03 | The CMU dictionary is loaded once at application startup and cached in memory. It is bundled as an embedded resource. | MH |
 | SC-04 | There exists a custom dictionary table where words, their syllable count, the user that added/suggested them, and modification timestamps are stored. Words are case-insensitive. Admin may add/remove directly; users may submit suggestions with a justification. A privileged user approves or rejects each suggestion. | MH |
 | SC-05 | Individual letters should be syllable-counted as the number of syllables as the spoken letter. | MH |
-| SC-06a | Numerals and numbers should be syllable-counted as their spoken word equivalent. | MH |
+| SC-06a | Numerals and numbers should be syllable-counted as their spoken word equivalent. The Humanizer library is used to convert numerals to their spoken English form (e.g., 100 → "one hundred", 15 → "fifteen", -3 → "negative three"). | MH |
 | SC-06b | Roman numerals, when capitalised as a single string of greater than one character that are obviously non-words, should be treated as numerals. | SH |
 | SC-07 | Words not found in any tier default to a minimum of 1 syllable. | MH |
 | SC-08 | The engine exposes a diagnostic mode that returns the syllable count and the resolution tier for each word, visible to all users but hidden by default. | SH |
 | SC-09 | Syllable validation is performed at creation/publish time. The validated counts are persisted on the poem record and are not re-computed on read. | MH |
+| SC-10 | Non-spoken characters (em dashes, en dashes, hyphens, punctuation marks, emoji, and other non-alphabetic glyphs) do not count toward syllable count and are not counted as words. They are preserved in the poem content for display but excluded from all counting logic. | MH |
+| SC-11 | Word count for the composer display is defined as whitespace-delimited tokens meeting any of: (a) one or more consecutive alphabetical characters, (b) one or more consecutive numeral digits, or (c) an uppercase Roman numeral sequence. The line count counts only non-empty lines (lines containing at least one qualifying word token). | MH |
 
 ### 5.4 Feed and Discovery
 
@@ -221,10 +239,16 @@ Requirements are tagged **MH** (must-have, v1.0), **SH** (should-have, v1.1), or
 | V-03 | Each user may cast at most one vote per poem (enforced at the database level). | MH |
 | V-04 | Voting the same direction a second time removes the vote (toggle). | MH |
 | V-05 | Voting the opposite direction from an existing vote replaces it (flip). | MH |
-| V-06 | The poem card displays the total thumbs-up count, thumbs-down count, and net score. | MH |
-| V-07 | The net score is coloured green for positive, red for negative, and neutral for zero. A `+` / `-` prefix is also shown to avoid relying solely on colour. | MH |
-| V-08 | The current user's active vote is visually indicated (highlighted button). | MH |
-| V-09 | Unauthenticated users see vote counts and loves but cannot vote or love; the buttons are disabled with a tooltip. | MH |
+| V-06 | The poem card displays the total thumbs-up count, thumbs-down count, and net score. The net score is prefixed with `+` for positive or `-` for negative values. | MH |
+| V-07 | The net score is colored green for positive, red for negative, and neutral for zero. A `+` / `-` prefix is also shown to avoid relying solely on color. | MH |
+| V-08 | The current user's active vote is visually indicated: the button becomes a filled/solid style with a background glow/highlight. The same treatment applies to the heart/love toggle when active. | MH |
+| V-09 | Unauthenticated users see vote counts and loves but cannot vote or love; the buttons are disabled with a contextual tooltip: "Log in to vote", "Log in to love this poem", "Log in to bookmark" per button. | MH |
+| V-10 | Casting a thumbs-up or thumbs-down vote triggers a micro-bounce/pop animation on the icon (scale to 1.2x and back, ≈200ms). Plays on activation (toggle on) only. | MH |
+| V-11 | Toggling the heart/love button triggers a single 360° spin animation on the icon (custom CSS keyframe, ≈400ms). Plays on activation (toggle on) only. | MH |
+| V-12 | Toggling the bookmark triggers a micro-bounce/pop animation (same as V-10). Plays on activation (toggle on) only. | MH |
+| V-13 | When a vote is cast, the score number briefly pulses/scales up with a green or red color flash matching the vote direction, then settles to its resting color. | MH |
+| V-14 | All interactive micro-animations (V-10 through V-13) respect `prefers-reduced-motion: reduce` — icons snap to their active/inactive state instantly with no animation. | MH |
+| V-15 | Vote, love, and bookmark buttons carry dynamic `aria-label` attributes that update based on toggle state: "Upvote poem" / "Remove upvote", "Love this poem" / "Remove love", "Bookmark poem" / "Remove bookmark". | MH |
 
 ### 5.6 Bookmarks
 
@@ -234,6 +258,7 @@ Requirements are tagged **MH** (must-have, v1.0), **SH** (should-have, v1.1), or
 | BM-02 | Bookmarking the same poem a second time removes the bookmark (toggle). | MH |
 | BM-03 | Bookmarks are private to the user — never exposed on profiles or feeds. | MH |
 | BM-04 | A dedicated "Bookmarks" page shows all of the user's saved poems. | SH |
+| BM-05 | Toggling a bookmark triggers a micro-bounce/pop animation on the bookmark icon on activation. | MH |
 
 ### 5.7 Social Graph
 
@@ -253,6 +278,9 @@ Requirements are tagged **MH** (must-have, v1.0), **SH** (should-have, v1.1), or
 | MOD-03 | Privileged users (with `moderate_users` privilege) can reinstate a disabled account. | MH |
 | MOD-04 | All moderation actions are recorded in the ModerationActions table with timestamp, actor, target, action type, and reason. | MH |
 | MOD-05 | Privilege grants and revocations are recorded in the UserPrivileges table. | MH |
+| MOD-06 | Any authenticated user can report any published poem via a "Report" button on the `HaikuCard`. Submitting a report creates a record in a `Reports` table viewable in the moderation queue. The report button is hidden entirely for unauthenticated users. | MH |
+| MOD-07 | The report reason picker offers: Spam, NSFW (Not Safe For Work), Copyright infringement, and Other (with a free-text details field). | MH |
+| MOD-08 | Privileged users with `moderate_poems` privilege see a moderation queue page (`/moderation/queue`) listing unreviewed reports grouped by poem. For each report, the moderator may Hide the poem or Dismiss the report. A record is written to `ModerationActions` on hide. | MH |
 
 ### 5.9 Custom Dictionary Workflow
 
@@ -280,6 +308,54 @@ Requirements are tagged **MH** (must-have, v1.0), **SH** (should-have, v1.1), or
 | DEV-03 | Development configuration (`appsettings.Development.json`) disables email verification and HTTPS-only cookie requirements to allow local HTTP testing. | MH |
 | DEV-04 | Password reset emails follow the same `IEmailSender` abstraction. In development, reset links are printed to the console so developers can copy-paste them. | MH |
 | DEV-05 | Unit and integration tests use `FakeEmailSender` which captures sent emails in memory for assertion. No SMTP dependency in test projects. | MH |
+| DEV-06 | A user impersonation feature is available in the development environment only. It is gated by both `IWebHostEnvironment.IsDevelopment()` and a `DevTools:EnableImpersonation` config key (default `false`). If either condition is false, the impersonation middleware is completely inert — no override is applied regardless of request input. | MH |
+| DEV-07 | The admin page provides a searchable user picker (by username or email) to initiate impersonation. Selecting a user sets a server-side override so all subsequent requests within that session behave as that user. The picker lists all active users; disabled/deleted users are excluded. | MH |
+| DEV-08 | A "View as Anonymous" toggle is available alongside the user picker. When active, the developer browses the feed with no authenticated user — exactly as an unauthenticated visitor would see it. This does not require selecting a real DB user. | MH |
+| DEV-09 | Impersonation defaults to read-only (browse feed, view profiles, see bookmarks/loves). Write operations (publish, vote, love, bookmark) are blocked with a clear "Write actions are disabled in impersonation mode" message. A `DevTools:ImpersonationAllowWrites` config flag can override this to full read-write when needed for targeted testing. | MH |
+| DEV-10 | When impersonation is active, a prominent amber banner is displayed at the top of every page: "Impersonating as @username — [Stop Impersonating]". A one-click "Stop Impersonating" button clears the override immediately and restores the developer's own session. | MH |
+
+**Critical guard:** The impersonation middleware must be structurally impossible to enable in non-development environments. The `DevTools:EnableImpersonation` key must never appear in `appsettings.json` (production defaults) or any environment-specific config outside `appsettings.Development.json`. The `IsDevelopment()` runtime check provides a secondary defense layer. Quality assurance and staging environments must not have this feature available.
+
+### 5.12 Discovery Search
+
+| ID | Requirement | Priority |
+|---|---|---|
+| SR-01 | A search bar is displayed on the main feed page. Search results are shown on a dedicated search results page at the route `/search?q={query}`. | MH |
+| SR-02 | Search covers poem content, author username and display name, and tags — all matched case-insensitively. | MH |
+| SR-03 | Results are ranked in the following priority order: (1) explicit hashtag matches, (2) poem content matches, (3) author matches. Within each tier, results are ordered by Hot score. | MH |
+| SR-04 | Matching search terms are highlighted in result snippets. | MH |
+| SR-05 | A stop words list is maintained in a `StopWords` table. The table is bootstrapped via `seed-data.sql` with approximately 100–150 common English stop words. Words on this list are excluded from search indexing and results. An additional static in-memory list serves as the primary filter, with the DB table as the secondary, admin-maintainable source. A NuGet library providing standard English stop words may also be referenced. | MH |
+| SR-06 | Stop words and single characters cannot be used as hashtags or word-link anchors. If a user types `#the` or `#a`, it is treated as plain text and not linked. | MH |
+| SR-07 | Search is accessible to unauthenticated users with the same functionality. | MH |
+| SR-08 | **(Future)** Stop words list management UI for privileged users (add/remove words without a deploy). | SH |
+
+### 5.13 Onboarding
+
+| ID | Requirement | Priority |
+|---|---|---|
+| ON-01 | After successful registration (and email verification, or auto-verification in development), a first-time user is shown an onboarding flow once. | MH |
+| ON-02 | The onboarding page displays: (a) a poetic welcome message, (b) a selection of popular poets to follow, and (c) a curation of popular recent poems to browse. | MH |
+| ON-03 | The user is prompted to optionally set their profile bio. The bio must satisfy a recognized poem structure (validated like any poem on publish). The user may skip this step. | MH |
+| ON-04 | The user may dismiss the onboarding flow at any point and proceed to the main feed. The onboarding is not shown again. | MH |
+
+### 5.14 Poem Reprocessing (Future)
+
+| ID | Requirement | Priority |
+|---|---|---|
+| RP-01 | An author may trigger reprocessing of their own published poems, either individually or in bulk (all their published poems). Reprocessing re-runs poem type detection and syllable validation against the current engine and updates the persisted `PoemType`, per-line syllable counts, and `TotalSyllables` on the poem record. | NH |
+| RP-02 | Reprocessing does not apply to draft poems. Drafts are already re-processed automatically on publish (at which point the current engine state is used). | NH |
+| RP-03 | An administrator may trigger reprocessing of: (a) an individual poem, (b) all poems by a given user, or (c) all poems in the system. | NH |
+| RP-04 | Reprocessing is an asynchronous operation. The user or administrator is notified when reprocessing completes (in-app or via the UI). Progress feedback is provided for bulk operations. | NH |
+| RP-05 | No vote scores, loves, bookmarks, moderation state, or other metadata is altered by reprocessing. Only the poem's type and syllable data are updated. | NH |
+| RP-06 | A record of the reprocessing action is logged (who triggered it, scope, timestamp) for audit purposes. | NH |
+
+### 5.15 Error Handling and Feedback
+
+| ID | Requirement | Priority |
+|---|---|---|
+| EH-01 | When a user hits a rate limit (HTTP 429), a clear message is displayed indicating that they have been rate-limited and specifying the cooldown period. This applies to both API and page requests. | MH |
+| EH-02 | All form submissions display per-field validation messages for each invalid input, inline next to the relevant field. | MH |
+| EH-03 | Continue and improve the existing `Status.razor` pattern (haiku-themed error pages) — ensure coverage for all HTTP status codes surfaced by the `UseStatusCodePagesWithReExecute` middleware, including 400, 403, 404, 429, and 500. Each error page must include a "Return Home" link. | MH |
 
 ---
 
@@ -321,10 +397,11 @@ Requirements are tagged **MH** (must-have, v1.0), **SH** (should-have, v1.1), or
 | ID | Requirement |
 |---|---|
 | A-01 | All interactive elements are keyboard-navigable with visible focus indicators. |
-| A-02 | Vote buttons carry meaningful `title` attributes describing their action. |
+| A-02 | Vote, love, and bookmark buttons carry dynamic `aria-label` attributes that update based on toggle state. |
 | A-03 | Loading states use ARIA `role="status"` on spinner elements. |
 | A-04 | Colour alone is not used to convey meaning (score direction is also indicated by `+` / `-` prefix). |
 | A-05 | A11y-compliant user interface (WCAG 2.1 AA target). |
+| A-06 | All micro-animations (vote pop, heart spin, score pulse) are disabled when `prefers-reduced-motion: reduce` is detected. Icons and scores snap to their active/inactive state instantly. |
 
 ### 6.5 Visual Aspects
 
@@ -399,6 +476,12 @@ The v1.0 syllable engine targets English only. The architecture does not preclud
 
 > **As a moderator,** I want to approve or reject custom dictionary word suggestions, so that the syllable engine stays accurate.
 
+### Reprocessing
+
+> **As a poet,** I want to reprocess my published poems so that they reflect the latest poem type detection and syllable counting logic.
+
+> **As an administrator,** I want to reprocess all poems in the system so that engine improvements are applied retroactively without requiring authors to act individually.
+
 ### Development
 
 > **As a developer,** I want to run the app locally without an email server, with verification bypassed and emails logged to the console, so I can iterate quickly.
@@ -429,52 +512,39 @@ The v1.0 syllable engine targets English only. The architecture does not preclud
 
 ### 8.2 Layer Diagram
 
-```
-┌─────────────────────────────────────────────────┐
-│  Web (Blazor Server)                            │
-│  Pages: Feed, PoetPage, TagPage, WordPage,      │
-│         Login, Register, Bookmarks, Admin       │
-│  Components: HaikuCard, ComposeBox, Pagination, │
-│              WordCloud, TrendingTags             │
-│  Shared: NavBar, MainLayout                     │
-└────────────────────┬────────────────────────────┘
-                     │ injects
-┌────────────────────▼────────────────────────────┐
-│  Services                                       │
-│  AuthService — registration, login, BCrypt      │
-│  HaikuService — validation, posting, syllables  │
-│  UserSession — per-circuit auth state (Scoped)  │
-│  EmailService — IEmailSender dispatch           │
-│  ModerationService — hide, disable, reinstate   │
-└────────────────────┬────────────────────────────┘
-                     │ injects
-┌────────────────────▼────────────────────────────┐
-│  Infrastructure / Repositories                  │
-│  HaikuRepository, UserRepository,               │
-│  VoteRepository, BookmarkRepository,            │
-│  LoveRepository, DictionaryRepository,          │
-│  ModerationRepository                           │
-└────────────────────┬────────────────────────────┘
-                      │ EF Core DbContext (Scoped)
-┌────────────────────▼────────────────────────────┐
-│  Domain                                         │
-│  Entities: User, Haiku, Tag, HaikuTag,          │
-│            Vote, Love, Follow, Bookmark,        │
-│            CustomDictionaryWord,                 │
-│            CustomDictionarySuggestion,           │
-│            UserPrivilege,                       │
-│            UserVerificationToken,               │
-│            PasswordResetToken,                  │
-│            ModerationAction,                    │
-│            TagDailyCount                        │
-│  Mappings: EF Core Fluent API in OnModelCreating│
-└────────────────────┬────────────────────────────┘
-                     │
-┌────────────────────▼────────────────────────────┐
-│  SQL Server                                     │
-│  T-SQL schema; NEWSEQUENTIALID PKs;             │
-│  Covering indexes; Hot-ranked feed query        │
-└─────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph W["Web (Blazor Server)"]
+        P1["Pages: Feed, PoetPage, TagPage, WordPage, Login, Register, Bookmarks, Admin"]
+        C1["Components: HaikuCard, ComposeBox, Pagination, WordCloud, TrendingTags"]
+        SH1["Shared: NavBar, MainLayout"]
+    end
+
+    subgraph S["Services"]
+        A1["AuthService"]
+        A2["HaikuService"]
+        A3["UserSession"]
+        A4["EmailService"]
+        A5["ModerationService"]
+    end
+
+    subgraph I["Infrastructure / Repositories"]
+        R1["HaikuRepository, UserRepository, VoteRepository, BookmarkRepository, LoveRepository, DictionaryRepository, ModerationRepository"]
+    end
+
+    subgraph D["Domain"]
+        E1["Entities: User, Haiku, Tag, HaikuTag, Vote, Love, Follow, Bookmark, CustomDictionaryWord, CustomDictionarySuggestion, UserPrivilege, UserVerificationToken, PasswordResetToken, ModerationAction, TagDailyCount"]
+        E2["Mappings: EF Core Fluent API in OnModelCreating"]
+    end
+
+    subgraph DB["SQL Server"]
+        SQL["T-SQL schema; NEWSEQUENTIALID PKs; Covering indexes; Hot-ranked feed query"]
+    end
+
+    W --> S
+    S --> I
+    I --> D
+    D --> DB
 ```
 
 ### 8.3 Session and Auth Model
@@ -497,7 +567,7 @@ public interface IEmailSender
 }
 ```
 
-| Implementation | Environment | Behaviour |
+| Implementation | Environment | Behavior |
 |---|---|---|
 | `SmtpEmailSender` | Production | Sends via configured SMTP server |
 | `ConsoleEmailSender` | Development | Logs subject, body, and recipient to `ILogger` (developer sees links in stdout) |
@@ -524,6 +594,7 @@ Configuration:
 ```
 
 When `RequireVerification = false`:
+
 - Registration auto-verifies the user (`EmailVerifiedAt` set immediately).
 - Verification tokens are still generated and stored (for audit).
 - Email-sending calls go to `ConsoleEmailSender` — the developer sees the verification/reset link in the console log.
@@ -567,25 +638,32 @@ On creation, the system analyzes the input to determine the poem type:
 
 ### 9.1 Entity-Relationship Overview
 
-```
-Users ──< Haikus ──< HaikuTags >── Tags
-  │          │
-  │          ├──< Votes >──── Users
-  │          ├──< Loves >──── Users
-  │          ├──< Bookmarks >── Users
-  │          │
-  │          └──< ModerationActions
-  │
-  ├──< Follows (self-referential) >── Users
-  │
-  ├──< UserPrivileges
-  ├──< UserVerificationTokens
-  ├──< PasswordResetTokens
-  ├──< CustomDictionarySuggestions
-  │
-  └──< CustomDictionaryWords
+```mermaid
+erDiagram
+    Users ||--o{ Haikus : "authors"
+    Users ||--o{ Votes : "casts"
+    Users ||--o{ Loves : "hearts"
+    Users ||--o{ Bookmarks : "saves"
+    Users ||--o{ UserPrivileges : "has"
+    Users ||--o{ UserVerificationTokens : "has"
+    Users ||--o{ PasswordResetTokens : "has"
+    Users ||--o{ CustomDictionarySuggestions : "submits"
+    Users ||--o{ CustomDictionaryWords : "adds"
+    Users ||--o{ Follows : "follows"
+    Haikus ||--o{ HaikuTags : "tagged with"
+    Haikus ||--o{ Votes : "receives"
+    Haikus ||--o{ Loves : "receives"
+    Haikus ||--o{ Bookmarks : "receives"
+    Haikus ||--o{ ModerationActions : "moderated by"
+    Tags ||--o{ HaikuTags : "used in"
+    Tags ||--o{ TagDailyCounts : "counted daily"
 
-Tags ──< TagDailyCounts
+    Follows }|--|| Users : "follower"
+    Follows }|--|| Users : "followee"
+    ModerationActions }|--|| Users : "actioned by"
+    CustomDictionarySuggestions }|--|| Users : "reviewed by"
+    UserVerificationTokens }|--|| Users : "owner"
+    PasswordResetTokens }|--|| Users : "owner"
 ```
 
 ### 9.2 Table Summary
@@ -619,6 +697,9 @@ Tags ──< TagDailyCounts
 | `PasswordResetTokens` | `UNIQUEIDENTIFIER` | `UserId FK`, `Token VARCHAR(128)`, `CreatedAt DATETIME2`, `ExpiresAt DATETIME2`, `UsedAt DATETIME2 NULL` | Index on `Token` | One-time; expires 1 hour after creation |
 | `ModerationActions` | `UNIQUEIDENTIFIER` | `ActionType VARCHAR(50)`, `TargetType VARCHAR(20)`, `TargetId UNIQUEIDENTIFIER`, `ActionedByUserId FK`, `Reason NVARCHAR(500)`, `CreatedAt DATETIME2` | | `ActionType`: `Hide`, `Unhide`, `Disable`, `Reinstate` |
 | `TagDailyCounts` | Composite `(TagId, Date)` | `TagId FK`, `Date DATE`, `Count INT` | `PK(TagId, Date)` | Updated nightly; feeds trending sidebar |
+| `UserSessions` | `UNIQUEIDENTIFIER` | `UserId FK`, `SeriesToken VARCHAR(128)`, `DeviceInfo NVARCHAR(500)`, `IpAddress VARCHAR(45)`, `LastActiveAt DATETIME2`, `CreatedAt DATETIME2` | `UNIQUE(SeriesToken)`, FK → Users | Supports per-session revocation; series+token security stamp |
+| `Reports` | `UNIQUEIDENTIFIER` | `HaikuId FK`, `ReportedByUserId FK`, `Reason VARCHAR(20)`, `Details NVARCHAR(1000) NULL`, `Status VARCHAR(20)`, `ReviewedByUserId FK NULL`, `ReviewedAt DATETIME2 NULL`, `CreatedAt DATETIME2` | FK → Haikus, Users | Status: `Pending`, `Dismissed`, `Actioned`; feeds moderation queue |
+| `StopWords` | `UNIQUEIDENTIFIER` | `Word NVARCHAR(100)`, `AddedByUserId FK`, `AddedAt DATETIME2` | `UNIQUE(Word)` | Case-insensitive; seeded via `seed-data.sql`; admin-maintainable |
 
 ### 9.3 Indexing Strategy
 
@@ -631,6 +712,9 @@ Tags ──< TagDailyCounts
 | `IX_Loves_HaikuId` | Love count per poem |
 | `IX_TagDailyCounts_Date_Count` | Trending hashtags — top tags by date |
 | `IX_CustomDictionaryWords_Word` | Dictionary lookup — case-insensitive word search |
+| `IX_UserSessions_UserId` | Session lookup — all sessions for a user |
+| `IX_Reports_Status` | Moderation queue — unreviewed reports |
+| `IX_StopWords_Word` | Search — stop word exclusion lookup |
 
 ---
 
@@ -649,6 +733,11 @@ Tags ──< TagDailyCounts
 | `/bookmarks` | `BookmarksPage.razor` | User's private bookmarks |
 | `/loves` | `LovesPage.razor` | User's loved poems |
 | `/admin` | `AdminPage.razor` | Admin dashboard (moderation, dictionary, logs) |
+| `/search` | `SearchPage.razor` | Search results for poem content, authors, and tags; ranked by hashtag > content > author |
+| `/drafts` | `DraftsPage.razor` | Paginated list of user's drafts with publish/delete actions |
+| `/sessions` | `SessionsPage.razor` | Active sessions list with per-session revoke |
+| `/onboarding` | `OnboardingPage.razor` | Post-registration welcome flow (shown once) |
+| `/moderation/queue` | `ModerationQueue.razor` | Moderation queue of unreviewed reports |
 
 ### 10.2 Reusable Components
 
@@ -661,6 +750,9 @@ Tags ──< TagDailyCounts
 | `MainLayout` | Wraps `NavBar` and a `<main>` container; included by all pages |
 | `WordCloud` | Sidebar widget showing top N words by frequency, each linking to word-filtered feed |
 | `TrendingTags` | Sidebar widget showing top tags from the last 24 hours, each linking to tag-filtered feed |
+| `SearchBar` | Search input with results dropdown; navigates to `/search?q=...` on submit |
+| `ReportButton` | Flag icon on `HaikuCard`; opens a reason picker modal (Spam, NSFW, Copyright, Other) |
+| `CookieConsentBanner` | Dismissable GDPR cookie consent banner shown on first visit |
 
 ### 10.3 Services (DI-registered)
 
@@ -677,7 +769,9 @@ Tags ──< TagDailyCounts
 | `EmailService` | Scoped | Dispatches email through configured `IEmailSender` |
 | `HaikuService` | Scoped | Business rules, syllable counting, poem type detection, tag extraction, word tokenisation |
 | `DictionaryService` | Scoped | Custom dictionary CRUD, suggestion workflow, in-memory cache refresh |
-| `ModerationService` | Scoped | Hide/unhide poems, disable/reinstate users, audit logging |
+| `ModerationService` | Scoped | Hide/unhide poems, disable/reinstate users, audit logging, report triage |
+| `SearchService` | Scoped | Full-text search across poems, authors, and tags; stop word filtering; result ranking |
+| `SessionService` | Scoped | Session listing, revocation, series+token management |
 
 ---
 
@@ -703,6 +797,15 @@ Tags ──< TagDailyCounts
 - Minimal moderation (hide poems, disable users) with privilege system
 - Internal admin REST API
 - Development mode: email verification bypass, console email logger, relaxed cookie security
+- Draft management page with unpublished count badge
+- Content reporting (report button + moderation queue)
+- Discovery search with stop words, case-insensitive matching, hashtag-ranked results
+- Onboarding flow (poetic welcome, suggested poets, popular poems, optional poem-structured bio)
+- Session management page with per-session revocation
+- GDPR cookie consent banner
+- Haiku-themed error pages for all HTTP status codes (400, 403, 404, 429, 500)
+- Rate-limit feedback UI
+- Per-field validation messages on all forms
 
 ### 11.2 v1.1 — Community
 
@@ -711,7 +814,6 @@ Tags ──< TagDailyCounts
 | Personalized feed (followed authors) | Low | High — core social feature |
 | Follow / unfollow | Low | High — enables personalized feed |
 | Profile edit (bio, avatar) | Low | Medium |
-| Report / flag system | Medium | High — community health |
 | Push notifications | Medium | Medium |
 
 ### 11.3 v1.2 — Discovery and Quality
@@ -723,10 +825,12 @@ Tags ──< TagDailyCounts
 | @mentions with notifications | Medium | High — social engagement |
 | Admin dashboard improvements | Medium | Medium |
 | Analytics dashboard for authors (views, vote history) | Medium | Medium |
+| Stop words management UI for privileged users | Low (DB exists) | Medium |
 
 ### 11.4 Future Consideration
 
-- OAuth social login
+- OAuth 2.0 social login (Google, GitHub, etc.) with account linking to existing email+password accounts
+- Profile image provider integration (Gravatar hash resolution, automatic identicon/initials fallback, custom URL override)
 - Mobile apps (React Native or MAUI)
 - Verified poet badge
 - International syllable engines (Japanese, French)
@@ -735,6 +839,13 @@ Tags ──< TagDailyCounts
 - Moderator draft access
 - Poem editing within a grace window
 - SEO / server-side rendering for poem detail pages
+- User blocking (block/unblock other users; blocked user's poems hidden from feed, cannot follow, votes hidden)
+- "Log out of all devices" option (bulk session revocation via password change)
+- Poem collections / anthologies — users can create named, shareable collections (e.g. "Autumn Poems") and add any published poem to them; each collection has a permalink
+- Scheduled / delayed publishing — set a future `PublishAt` timestamp on a draft; system publishes automatically (to be considered — not committed to any version)
+- RSS / Atom feeds — machine-readable feeds for the main Hot feed, tag pages, word pages, and author profiles (to be considered — not committed to any version)
+- Bulk poem export — authenticated users may export their own published poems as JSON, including permalink, poem type, per-line syllable counts, total syllables, tags, love count, net vote score, and published timestamp. Export of other authors' poems is not permitted (to be considered — not committed to any version)
+- Poem reprocessing — authors and administrators may re-run poem type detection and syllable validation on published poems. Authors can reprocess their own poems individually or in bulk; administrators can reprocess a single poem, all poems by a user, or all poems system-wide. Drafts are excluded — they are automatically re-processed on publish.
 
 ---
 
@@ -803,6 +914,10 @@ The following are explicitly excluded from v1.0 and should not be built without 
 | OQ-10 | Should the daily TagDailyCounts aggregation run as a scheduled job (SQL Agent, Hangfire) or on-demand? | Engineering | Open |
 | OQ-11 | What is the expiry duration for the persistent auth cookie? | Product / Eng | Open |
 | OQ-12 | Should Hot feed ranking use a fixed decay constant or should it be configurable? | Engineering | Open |
+| OQ-13 | How are stop words maintained for search? | Product / Eng | **Decided:** Static bootstrap + DB table (`StopWords`) + NuGet library reference; seed via `seed-data.sql`; admin-maintainable |
+| OQ-14 | How are search results ranked? | Product | **Decided:** Hashtag match > poem content match > author match, then Hot score within tiers |
+| OQ-15 | Should users have visibility and control over active sessions? | Product / Eng | **Decided:** Sessions page with per-session revoke in v1.0; bulk logout via password change in future |
+| OQ-16 | Should v1.0 include a user-facing content reporting flow or rely on manual moderator discovery? | Product | **Decided:** User-facing report button + moderation queue in v1.0 |
 
 ---
 
@@ -822,6 +937,7 @@ The following are explicitly excluded from v1.0 and should not be built without 
 | Freeform | Freeform | 1-5 lines, under 150 words total. Must be explicitly chosen by the user | false |
 
 **Poem type detection rules:**
+
 1. Split content by newline characters → obtain line count.
 2. If line count is 1 and total syllables ≤ 17 → Monoku.
 3. If line count is 3 → attempt to match: 5-7-5, 3-5-3, 2-3-2, 4-6-4, equal-line.
@@ -832,24 +948,18 @@ The following are explicitly excluded from v1.0 and should not be built without 
 
 ### 15.2 Syllable Resolution Chain
 
-```
-Word input
-Custom Dictionary (loaded at startup from DB)
-    │ found? → return syllable count
-    │ not found?
-    ▼
-CMU Pronouncing Dictionary (loaded at startup from embedded resource, ≈134k entries)
-    │ found? → return syllable count
-    │ not found?
-    ▼
-Syllabify rule-based engine (NuGet: Syllabify)
-    │ result > 0? → return syllable count
-    │ throws or returns 0?
-    ▼
-Vowel-group heuristic
-    │ count consecutive vowel groups
-    │ subtract silent terminal 'e' where applicable
-    └─→ return max(count, 1)
+```mermaid
+flowchart TD
+    Input["Word input"] --> CD{"Custom Dictionary<br/>(loaded at startup from DB)"}
+    CD -->|found| CD_OK["return syllable count"]
+    CD -->|not found| CMU{"CMU Pronouncing Dictionary<br/>(loaded at startup, ~134k entries)"}
+    CMU -->|found| CMU_OK["return syllable count"]
+    CMU -->|not found| SYL{"Syllabify rule-based engine<br/>(NuGet: Syllabify)"}
+    SYL -->|result > 0| SYL_OK["return syllable count"]
+    SYL -->|throws or returns 0| HEUR["Vowel-group heuristic"]
+    HEUR --> HEUR1["count consecutive vowel groups"]
+    HEUR1 --> HEUR2["subtract silent terminal 'e' where applicable"]
+    HEUR2 --> RESULT["return max(count, 1)"]
 ```
 
 ### 15.3 Hot Ranking Algorithm
@@ -863,6 +973,7 @@ HotScore = LOG10(ABS(ISNULL(SUM(v.Value), 0)) + 1)
 ```
 
 This formula:
+
 - Uses `LOG10` of absolute net score (plus 1 for zero-score posts to avoid `-infinity`).
 - Adds the age component in seconds divided by 45,000 (12.5 hours), scaled by the sign of the score.
 - New posts with positive votes rank highest; older posts and negatively scored posts decay.
