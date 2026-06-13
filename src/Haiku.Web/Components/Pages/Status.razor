@@ -1,0 +1,71 @@
+@page "/status/{StatusCode:int}"
+@layout MainLayout
+
+<PageTitle>@Title</PageTitle>
+
+<div class="page-section">
+    <div class="container text-center">
+        <h1 class="display-1 fw-light text-muted mb-4">@StatusCode</h1>
+        <div class="status-poem">
+            @switch (StatusCode)
+            {
+                case 404:
+                    <p class="mb-3">
+                        I searched every word<br>
+                        Through pages and through pathways<br>
+                        You were never here
+                    </p>
+                    <p class="text-muted fst-italic mb-3">The thing you seek does not exist in this space.</p>
+                    break;
+                case 500:
+                    <p class="mb-3">
+                        Even broken things<br>
+                        Hold a purpose in this world<br>
+                        A crack lets light in
+                    </p>
+                    <p class="text-muted fst-italic mb-3">Something went wrong, but even errors have their place.</p>
+                    break;
+                case 400:
+                    <p class="mb-3">
+                        The fault is not yours<br>
+                        Though the request went astray<br>
+                        It is me, not you
+                    </p>
+                    <p class="text-muted fst-italic mb-3">The message was unclear — the error is on our side.</p>
+                    break;
+                case 403:
+                    <p class="mb-3">
+                        A door stands silent<br>
+                        Not for every passer-by<br>
+                        Some paths stay secret
+                    </p>
+                    <p class="text-muted fst-italic mb-3">You do not have permission to enter here.</p>
+                    break;
+                default:
+                    <p class="mb-3">
+                        Between the transitions<br>
+                        Where one page becomes the next<br>
+                        I have lost my way
+                    </p>
+                    <p class="text-muted fst-italic mb-3">You have wandered into uncharted territory.</p>
+                    break;
+            }
+        </div>
+        <a href="/" class="btn btn-primary mt-3">
+            <i class="fas fa-home me-2"></i>Return Home
+        </a>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int StatusCode { get; set; }
+
+    private string Title => StatusCode switch
+    {
+        404 => "Not Found",
+        500 => "Server Error",
+        400 => "Bad Request",
+        403 => "Forbidden",
+        _ => "Status"
+    };
+}

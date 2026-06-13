@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Haiku.Web.Tests</Title>
+    <Description>Unit tests for Haiku web UI layer</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Haiku.Web\Haiku.Web.csproj" />
+  </ItemGroup>
+</Project>

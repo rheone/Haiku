@@ -1,0 +1,80 @@
+# .NET Publish Workflow — builds and pushes container image to GitHub Container Registry
+
+name: Publish
+
+permissions:
+  contents: read
+  packages: write
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+      - "v*.*.*-*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Extract version
+        id: extract_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
+      - name: Restore dependencies
+        run: dotnet restore Haiku.slnx
+
+      - name: Build
+        run: dotnet build Haiku.slnx --no-restore --configuration Release /p:VersionFromCI=${{ env.VERSION }}
+
+      - name: Test
+        run: dotnet test Haiku.slnx --no-build --configuration Release --verbosity normal
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for container image
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+
+      - name: Build and push container image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BUILD_CONFIGURATION=Release

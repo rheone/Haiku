@@ -4,8 +4,39 @@
     <Project Path="src/Haiku.Infrastructure/Haiku.Infrastructure.csproj" />
     <Project Path="src/Haiku.Services/Haiku.Services.csproj" />
     <Project Path="src/Haiku.Web/Haiku.Web.csproj" />
+    <Project Path="src/MicroMediator/MicroMediator.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Haiku.Tests/Haiku.Tests.csproj" />
+    <Project Path="tests/Haiku.Domain.Tests/Haiku.Domain.Tests.csproj" />
+    <Project Path="tests/Haiku.Services.Tests/Haiku.Services.Tests.csproj" />
+    <Project Path="tests/Haiku.Infrastructure.Tests/Haiku.Infrastructure.Tests.csproj" />
+    <Project Path="tests/Haiku.Web.Tests/Haiku.Web.Tests.csproj" />
+    <Project Path="tests/MicroMediator.Tests/MicroMediator.Tests.csproj" />
+  </Folder>
+  <Folder Name="/deploy/">
+    <Project Path="deploy/docker-compose.yml" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="docker-compose.prod" />
+    <Project Path="deploy/db/init-db.sql" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="init-db" />
+    <Project Path="deploy/db/seed-data.sql" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="seed-data" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <Project Path="dictionary.dic" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="dictionary" />
+    <Project Path="AGENTS.md" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" />
+    <Project Path="global.json" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" />
+    <Project Path="Dockerfile" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" />
+    <Project Path="docker-compose.yml" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="docker-compose.dev" />
+    <Project Path=".env.example" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName=".env.example" />
+  </Folder>
+  <Folder Name="/Build/">
+    <Project Path=".csharpierrc.json" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName=".csharpierrc" />
+    <Project Path="stylecop.json" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" />
+    <Project Path=".editorconfig" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName=".editorconfig" />
+    <Project Path=".gitattributes" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName=".gitattributes" />
+    <Project Path=".gitignore" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName=".gitignore" />
+  </Folder>
+  <Folder Name="/.github/">
+    <Project Path=".github/workflows/build.yml" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="build" />
+    <Project Path=".github/workflows/publish.yml" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="publish" />
+    <Project Path=".github/dependabot.yml" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="dependabot" />
   </Folder>
 </Solution>

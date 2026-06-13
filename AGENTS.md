@@ -2,7 +2,7 @@
 
 ### Repo: Haiku
 
-Blazor Server (.NET 10) social platform for haiku poetry — FluentNHibernate, SQL Server, Docker.
+Blazor Server (.NET 10) social platform for haiku poetry — EF Core, SQL Server, Docker.
 
 ### Quick start
 
@@ -10,7 +10,7 @@ Blazor Server (.NET 10) social platform for haiku poetry — FluentNHibernate, S
 cp .env.example .env
 docker compose up -d      # starts SQL Server + web app on http://localhost:5000
 dotnet build              # or: dotnet build Haiku.slnx
-dotnet test               # xUnit + NSubstitute, VSTest runner, no MTP
+dotnet test               # xUnit v3 + NSubstitute, MTP runner
 dotnet run --project src/Haiku.Web    # local dev (needs SQL Server on localhost:1433, DB: Haiku_Dev)
 ```
 
@@ -18,46 +18,57 @@ dotnet run --project src/Haiku.Web    # local dev (needs SQL Server on localhost
 
 | Project | Description |
 |---|---|
-| `Haiku.Domain` | Entities (virtual props for NHibernate lazy loading), enums, repository interfaces, value objects |
-| `Haiku.Infrastructure` | FluentNHibernate mappings + session factory, repository implementations, email senders |
-| `Haiku.Services` | Business logic: `AuthService`, `HaikuService`, `PoemEngine`, `SyllableEngine`, `DictionaryService`, `ModerationService` |
-| `Haiku.Web` | Blazor Server UI — `Program.cs` wires DI, cookie auth, NHibernate |
-| `Haiku.Tests` | xUnit + NSubstitute (19 tests across auth, syllable, email) |
+| `Haiku.Domain` | Entities (DataAnnotations for EF Core), enums, repository interfaces, value objects |
+| `Haiku.Infrastructure` | EF Core `HaikuDbContext`, repository implementations, email senders |
+| `Haiku.Services` | Business logic + 11 CQRS Slices, `PoemEngine`, `SyllableEngine`, `DictionaryService` |
+| `Haiku.Web` | Blazor Server UI — `Program.cs` wires DI, cookie auth, EF Core |
+| `MicroMediator` | Custom lightweight CQRS mediator (the only packable project) |
+| `Haiku.Tests` | xUnit + NSubstitute (32 tests — auth, syllable, email, slices) |
+| `Haiku.Services.Tests` | Slice handler tests (47 tests) |
+| `MicroMediator.Tests` | Mediator unit tests (5 tests) |
+| 3 other test projects | Empty scaffolding (Domain, Infrastructure, Web) |
 
-### Architecture notes
-
-- **NHibernate session**: Singleton `NHibernateSessionFactory` → Scoped `ScopedSession`. Mappings auto-discovered from `NHibernateSessionFactory` assembly.
-- **DI wiring** in `Program.cs`: repositories → services → Blazor components. `SyllableEngine` is singleton; all services are scoped.
-- **Auth cookie**: named `haiku-auth`, 7-day sliding expiry. Dev mode relaxes Secure/SameSite for HTTP.
-- **Email**: `IEmailSender` interface → `SmtpEmailSender` (prod) / `ConsoleEmailSender` (dev). `FakeEmailSender` used in tests.
-- **Dev config** (`appsettings.Development.json`): uses `Haiku_Dev` DB on localhost, `RequireVerification = false`, `Console` email provider.
-- **Two syllable engines**: `PoemEngine` (used by `HaikuService`, full CMU dict loading, rhyme detection, generation) and `SyllableEngine` (simpler, constructor-injected dictionaries, used directly in tests).
-- **Poem type detection**: `PoemType` enum with 13 types (Haiku, Tanka, Monoku, Sonnet, Limerick, etc.). `DetectPoemType()` in `HaikuService` is static and instance overloads exist.
+84 total passing tests. All packages locked via `packages.lock.json`.
 
 ### Testing quirks
 
-- xUnit v2 (`[Fact]` only, no `[Theory]` used yet), VSTest runner (no MTP).
-- Tests reference `Haiku.Domain` + `Haiku.Services` directly.
-- `AuthService` tests use `BCrypt.Net.BCrypt.HashPassword` with work factor 12.
+- **xUnit v3** — tests use `TestContext.Current.CancellationToken` for cancellation tokens.
+- **MTP runner** — filters use MTP syntax: `--filter-class AuthServiceTests`, `--filter-trait "Category=Unit"`.
+- `dotnet test tests/Haiku.Tests` to run a single project.
+- `AuthService` tests use `BCrypt.Net.BCrypt.HashPassword` with work factor 12 (~300ms per hash).
 - No integration tests — all unit tests with NSubstitute mocks.
+- CMU pronunciation dictionary (`dictionary.dic`) loaded relative to working directory — run tests from solution root.
+
+### Architecture notes
+
+- **EF Core**: Scoped `HaikuDbContext` per request via `AddDbContext`. Fluent API in `OnModelCreating` for relationships and indexes; DataAnnotations on entities for table/column/key mapping. No `virtual` on entity properties.
+- **Slice/CQRS**: 11 feature slices under `src/Haiku.Services/Slices/` (Auth, Poems, Votes, Loves, Bookmarks, Tags, PoetProfile, Dictionary, Moderation, Email, WordSearch). Each slice has Command/Query + Handler pairs dispatched via `MicroMediator`.
+- **DI wiring** in `Program.cs`: repositories → services → Blazor components. `SyllableEngine` and `PoemEngine` are **singletons** (hold CMU dictionary in memory); all other services are **scoped**.
+- **Auth cookie**: named `haiku-auth`, 7-day sliding expiry. Dev mode relaxes Secure/SameSite for HTTP.
+- **Email**: `IEmailSender` → `SmtpEmailSender` (prod) / `ConsoleEmailSender` (dev). Configured via `Email:Sender:Provider` setting.
+- **Dev config** (`appsettings.Development.json`): `Haiku_Dev` DB, `RequireVerification = false`, `Console` email.
+- **Two syllable engines**: `PoemEngine` (full CMU dict, rhyme, generation) and `SyllableEngine` (simpler, constructor-injected dictionaries, used in tests).
+- **Poem type detection**: `PoemType` enum with 15 types. `DetectPoemType()` in `HaikuService`. Matcher chain in `PoemMatcherChain` with priority-order matchers.
+- **InternalsVisibleTo**: `Haiku.Services` exposes internals to `Haiku.Services.Tests` and `Haiku.Web`.
+
+### Docker
+
+- **Root `docker-compose.yml`** — dev stack, uses `.env` for config.
+- **`deploy/docker-compose.yml`** — production stack, hardcoded values, build context is `..` (one level up).
+- SQL Server auto-initialized via `deploy/db/init-db.sql` + `seed-data.sql` mounted to `/docker-entrypoint-initdb.d/`.
+- Web container health-check: waits for `haiku-db` to be healthy.
+- `BlazorDisableThrowNavigationException=true` in `Haiku.Web.csproj` — do not remove.
 
 ### Code conventions
 
-- **Formatting**: CSharpier (`.editorconfig`: LF, 4-space indent for C#/shell, 2-space for JSON/YAML).
-- **Entity properties**: all `virtual` (NHibernate requirement).
-- **Build flags**: `Nullable=enable`, `ImplicitUsings=enable`, `BlazorDisableThrowNavigationException=true` in Web.csproj.
+- **Formatting**: CSharpier (`.csharpierrc.json`: 128 col, 4-space tabs) + StyleCop + Roslynator. Enforced via pre-commit (`dotnet husky run`). Run manually: `dotnet format style && dotnet format analyzers && dotnet csharpier format .`
+- **Line endings**: CRLF for `.cs` files per `.editorconfig`.
+- **Build flags**: `Nullable=enable`, `ImplicitUsings=enable`, `Deterministic=true`, SourceLink with GitHub.
 - **Env vars**: `NUGET_XMLDOC_MODE=skip` set in devcontainer (silences XML doc warnings).
 
 ### Deployment
 
-- `deploy/docker-compose.yml` — production-style stack (SQL Server + web). Build context one level up.
-- `deploy/db/init-db.sql` + `seed-data.sql` — auto-init on container start (mounted to `/docker-entrypoint-initdb.d/`).
 - Dockerfile runs `dotnet test` before `dotnet publish` (tests gate the build).
 - No GitHub Actions CI found.
-
-### Gotchas
-
-- `docker compose up` from root uses the root `docker-compose.yml` (dev); `deploy/docker-compose.yml` is for production.
-- `.slnx` format requires .NET 8+ SDK (the root `Haiku.slnx` is not a legacy `.sln`).
-- DB port defaults to 1433, web port defaults to 5000 — override via `.env` (`DB_PORT`, `WEB_PORT`).
-- `BlazorDisableThrowNavigationException=true` suppresses Blazor navigation exceptions — do not remove.
+- `.slnx` format requires .NET 8+ SDK.
+- DB port defaults to 1433, web port to 5000 — override via `.env` (`DB_PORT`, `WEB_PORT`).

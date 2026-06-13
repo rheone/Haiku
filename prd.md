@@ -311,8 +311,8 @@ Requirements are tagged **MH** (must-have, v1.0), **SH** (should-have, v1.1), or
 | ID | Requirement |
 |---|---|
 | R-01 | The application targets 99.5% monthly uptime. |
-| R-02 | Database schema migrations use NHibernate `SchemaUpdate` (non-destructive) in production; `SchemaExport` is development-only. |
-| R-03 | NHibernate session lifecycle is scoped to the HTTP request; sessions are never shared across requests. |
+| R-02 | Database schema migrations use EF Core migrations (`dotnet ef migrations add` + `dotnet ef database update`). |
+| R-03 | EF Core `DbContext` lifecycle is scoped to the HTTP request; contexts are never shared across requests. |
 | R-04 | Application logging via structured logger (e.g. Serilog). |
 | R-05 | StackExchange.Exceptional database exception logging. |
 
@@ -416,7 +416,7 @@ The v1.0 syllable engine targets English only. The architecture does not preclud
 | UI framework | Blazor Server (.NET 10) | Full C# stack; no JS build pipeline; real-time interactivity via SignalR |
 | UI components | Bootstrap 5 + custom CSS | Widely understood; easy to override; no licensing concerns |
 | UI Glyphs | Free tier of FontAwesome for imagery | |
-| ORM | FluentNHibernate 3.x | Fluent mapping API; mature SQL Server support; avoids raw SQL for most queries |
+| ORM | Entity Framework Core 10.x | Full-featured ORM; LINQ provider; Fluent API + DataAnnotations; mature SQL Server support |
 | Database | SQL Server (T-SQL) | Requirement; NEWSEQUENTIALID reduces index fragmentation vs random Guid |
 | Password hashing | BCrypt.Net-Next (work=12) | Industry standard; ≈300 ms per hash on modern hardware; resistant to GPU attacks |
 | Syllable counting | Custom dictionary → CMU dict → Syllabify → vowel-group | Tiered for accuracy vs coverage; CMU highest accuracy for known English words |
@@ -455,7 +455,7 @@ The v1.0 syllable engine targets English only. The architecture does not preclud
 │  LoveRepository, DictionaryRepository,          │
 │  ModerationRepository                           │
 └────────────────────┬────────────────────────────┘
-                     │ NHibernate ISession (Scoped)
+                      │ EF Core DbContext (Scoped)
 ┌────────────────────▼────────────────────────────┐
 │  Domain                                         │
 │  Entities: User, Haiku, Tag, HaikuTag,          │
@@ -467,7 +467,7 @@ The v1.0 syllable engine targets English only. The architecture does not preclud
 │            PasswordResetToken,                  │
 │            ModerationAction,                    │
 │            TagDailyCount                        │
-│  Mappings: FluentNHibernate ClassMaps           │
+│  Mappings: EF Core Fluent API in OnModelCreating│
 └────────────────────┬────────────────────────────┘
                      │
 ┌────────────────────▼────────────────────────────┐
@@ -666,8 +666,7 @@ Tags ──< TagDailyCounts
 
 | Service | Lifetime | Responsibility |
 |---|---|---|
-| `NHibernateSessionFactory` | Singleton | Builds and holds the NHibernate `ISessionFactory` |
-| `ScopedSession` | Scoped | Wraps a single `ISession` per HTTP request |
+| `HaikuDbContext` | Scoped | EF Core `DbContext`; provides entity DbSets per HTTP request |
 | `HaikuRepository` | Scoped | Poem CRUD, paginated queries, tag attachment, Hot-ranked feed query |
 | `UserRepository` | Scoped | User lookup, existence checks, creation, deletion |
 | `VoteRepository` | Scoped | Vote upsert with toggle/flip logic |
@@ -872,10 +871,9 @@ This formula:
 
 | Term | Definition |
 |---|---|
-| **GuidComb** | A NHibernate GUID generation strategy that produces sequential GUIDs, reducing B-tree index fragmentation in SQL Server |
-| **ScopedSession** | The NHibernate `ISession` scoped to a single HTTP request / Blazor circuit |
+| **HaikuDbContext** | The EF Core `DbContext` scoped to a single HTTP request / Blazor circuit |
 | **Circuit** | A Blazor Server SignalR connection between browser and server; one per open browser tab |
-| **SchemaUpdate** | NHibernate DDL mode that adds missing tables/columns without dropping existing data |
+| **EF Core migrations** | Code-first schema evolution via `dotnet ef migrations add` and `dotnet ef database update` |
 | **Word token** | A single whitespace-delimited word in a poem line, annotated with whether it is an explicit hashtag |
 | **Hot score** | Reddit-style ranking score combining net vote count and age; computed per-query |
 | **Poem type** | The structural form of a poem (haiku, tanka, monoku, freeform, etc.) auto-detected at creation |

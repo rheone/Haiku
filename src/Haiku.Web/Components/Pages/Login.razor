@@ -10,24 +10,21 @@
                     <i class="fas fa-feather me-2"></i>Welcome Back
                 </h3>
 
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-control" placeholder="poet@example.com" />
-                </div>
+                <form method="post" action="/api/auth/login" @antiforgery="true">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="poet@example.com" required />
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" class="form-control" placeholder="Your password" />
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" placeholder="Your password" required />
+                    </div>
 
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="rememberMe" />
-                    <label class="form-check-label" for="rememberMe">Remember me</label>
-                </div>
-
-                <button class="btn btn-primary w-100 mb-3">
-                    <i class="fas fa-sign-in-alt me-2"></i>Log In
-                </button>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="fas fa-sign-in-alt me-2"></i>Log In
+                    </button>
+                </form>
 
                 <div class="text-center">
                     <a href="/register" class="text-decoration-none">Don't have an account? Register</a>
