@@ -1,20 +1,107 @@
+:root,
+[data-bs-theme="light"] {
+    --haiku-bg: #faf7f2;
+    --haiku-surface: #ffffff;
+    --haiku-text: #3d3a36;
+    --haiku-text-muted: #8a8580;
+    --haiku-primary: #7c9a7e;
+    --haiku-primary-dark: #5c7a5e;
+    --haiku-accent: #c4956a;
+    --haiku-border: #e8e2d8;
+    --haiku-card-shadow: rgba(0, 0, 0, 0.04);
+    --haiku-nav-bg: #3d3a36;
+    --haiku-heart: #c46a6a;
+    --haiku-success: #7c9a7e;
+    --haiku-code-bg: #f4f0ea;
+}
+
+[data-bs-theme="dark"] {
+    --haiku-bg: #1a1816;
+    --haiku-surface: #242220;
+    --haiku-text: #e0dcd6;
+    --haiku-text-muted: #9a9590;
+    --haiku-primary: #8ab88c;
+    --haiku-primary-dark: #6a9a6c;
+    --haiku-accent: #d4a57a;
+    --haiku-border: #353230;
+    --haiku-card-shadow: rgba(0, 0, 0, 0.2);
+    --haiku-nav-bg: #141312;
+    --haiku-heart: #d47a7a;
+    --haiku-success: #8ab88c;
+    --haiku-code-bg: #2a2826;
+}
+
 html, body {
     font-family: 'Georgia', 'Times New Roman', serif;
-    background-color: #f8f9fa;
+    background-color: var(--haiku-bg);
+    color: var(--haiku-text);
+}
+
+body {
+    min-height: 100vh;
+}
+
+.navbar {
+    background-color: var(--haiku-nav-bg) !important;
+    border-bottom: 1px solid var(--haiku-border);
+}
+
+.navbar-brand {
+    font-family: 'Georgia', serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+
+.theme-toggle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7) !important;
+    transition: color 0.2s;
+}
+
+.theme-toggle:hover {
+    color: rgba(255, 255, 255, 0.95) !important;
 }
 
 a, .btn-link {
-    color: #006bb7;
+    color: var(--haiku-primary-dark);
+    transition: color 0.2s;
+}
+
+a:hover, .btn-link:hover {
+    color: var(--haiku-primary);
 }
 
 .btn-primary {
     color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    background-color: var(--haiku-primary);
+    border-color: var(--haiku-primary-dark);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-primary:hover, .btn-primary:active {
+    background-color: var(--haiku-primary-dark) !important;
+    border-color: var(--haiku-primary-dark) !important;
+}
+
+.btn-outline-primary {
+    color: var(--haiku-primary-dark);
+    border-color: var(--haiku-primary-dark);
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: var(--haiku-primary-dark);
+    border-color: var(--haiku-primary-dark);
+}
+
+.card {
+    background-color: var(--haiku-surface);
+    border-color: var(--haiku-border);
+    box-shadow: 0 1px 3px var(--haiku-card-shadow);
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--haiku-primary);
 }
 
 h1:focus {
@@ -22,15 +109,15 @@ h1:focus {
 }
 
 .valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+    outline: 1px solid var(--haiku-success);
 }
 
 .invalid {
-    outline: 1px solid #e50000;
+    outline: 1px solid var(--haiku-heart);
 }
 
 .validation-message {
-    color: #e50000;
+    color: var(--haiku-heart);
 }
 
 .blazor-error-boundary {
@@ -57,30 +144,33 @@ h1:focus {
 }
 
 .haiku-card {
-    border-left: 4px solid #1b6ec2;
-    transition: box-shadow 0.2s;
+    border-left: 4px solid var(--haiku-accent);
+    border-radius: 0.5rem;
+    transition: box-shadow 0.2s, transform 0.2s;
 }
 
 .haiku-card:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px var(--haiku-card-shadow);
+    transform: translateY(-1px);
 }
 
 .haiku-content {
     font-family: 'Georgia', 'Times New Roman', serif;
     font-size: 1.1rem;
     line-height: 1.8;
+    color: var(--haiku-text);
 }
 
 .haiku-word {
-    color: #495057;
+    color: var(--haiku-primary-dark);
     text-decoration: none;
-    border-bottom: 1px dashed #adb5bd;
+    border-bottom: 1px dashed var(--haiku-accent);
     transition: color 0.15s, border-bottom-color 0.15s;
 }
 
 .haiku-word:hover {
-    color: #1b6ec2;
-    border-bottom-color: #1b6ec2;
+    color: var(--haiku-accent);
+    border-bottom-color: var(--haiku-accent);
 }
 
 .word-cloud .badge {
@@ -91,19 +181,146 @@ h1:focus {
     opacity: 0.8;
 }
 
-.navbar-brand {
-    font-family: 'Georgia', serif;
-    font-size: 1.4rem;
-}
-
 .score-positive {
-    color: #198754;
+    color: var(--haiku-success);
 }
 
 .score-negative {
-    color: #dc3545;
+    color: var(--haiku-heart);
 }
 
 .score-neutral {
-    color: #6c757d;
+    color: var(--haiku-text-muted);
+}
+
+.text-muted {
+    color: var(--haiku-text-muted) !important;
+}
+
+.alert-info {
+    background-color: color-mix(in srgb, var(--haiku-primary) 15%, transparent);
+    border-color: color-mix(in srgb, var(--haiku-primary) 30%, transparent);
+    color: var(--haiku-text);
+}
+
+.bg-light {
+    background-color: var(--haiku-surface) !important;
+}
+
+.border {
+    border-color: var(--haiku-border) !important;
+}
+
+.hero-section {
+    text-align: center;
+    padding: 4rem 0;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--haiku-primary) 10%, var(--haiku-bg)), color-mix(in srgb, var(--haiku-accent) 10%, var(--haiku-bg)));
+    border-bottom: 1px solid var(--haiku-border);
+}
+
+.hero-section h1 {
+    font-size: 2.5rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: var(--haiku-text);
+}
+
+.hero-section p {
+    font-size: 1.1rem;
+    color: var(--haiku-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.page-section {
+    padding: 2.5rem 0;
+}
+
+.section-title {
+    font-family: 'Georgia', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--haiku-text);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.3px;
+}
+
+.brutalist-card {
+    background-color: var(--haiku-surface);
+    border: 3px solid var(--haiku-text);
+    border-radius: 0;
+    box-shadow: 6px 6px 0 var(--haiku-text);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.brutalist-card h3 {
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--haiku-text);
+}
+
+.brutalist-card .btn {
+    border-radius: 0;
+    border-width: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.brutalist-title {
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--haiku-text);
+    border-bottom: 4px solid var(--haiku-text);
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.neo-brutalist-card {
+    background-color: var(--haiku-surface);
+    border: 2px solid var(--haiku-accent);
+    border-radius: 0.5rem;
+    box-shadow: 4px 4px 0 var(--haiku-accent);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.neo-brutalist-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0 var(--haiku-accent);
+}
+
+.neo-brutalist-card h3 {
+    font-family: 'Arial', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--haiku-accent);
+}
+
+.neo-brutalist-card .btn {
+    border-radius: 0.25rem;
+    border-width: 2px;
+    font-weight: 600;
+}
+
+.status-poem {
+    font-family: 'Georgia', serif;
+    font-size: 1.2rem;
+    line-height: 2;
+    color: var(--haiku-text);
+    max-width: 400px;
+    margin: 2rem auto;
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--haiku-surface);
+    border-left: 4px solid var(--haiku-accent);
+    border-radius: 0.5rem;
 }

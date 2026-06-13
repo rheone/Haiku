@@ -1,0 +1,60 @@
+# .NET Build and Test Workflow
+
+name: Build and Test
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
+      - name: Restore dependencies
+        run: dotnet restore Haiku.slnx
+
+      - name: Build
+        run: dotnet build Haiku.slnx --no-restore -p:VersionFromCI="0.0.0-cibuild"
+
+      - name: Check formatting
+        run: dotnet format Haiku.slnx --no-restore --verify-no-changes
+
+      - name: Test
+        run: dotnet test Haiku.slnx --no-build --verbosity normal
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/
+          if-no-files-found: ignore

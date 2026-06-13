@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Haiku.Services.Tests</Title>
+    <Description>Unit tests for Haiku business logic services</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Haiku.Services\Haiku.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Haiku.Domain.Enums" />
+    <Using Include="Haiku.Services.Poems.Matchers" />
+    <Using Include="Haiku.Services.Poems" />
+    <Using Include="Haiku.Services.Haiku" />
+    <Using Include="Haiku.Domain.Interfaces" />
+  </ItemGroup>
+</Project>

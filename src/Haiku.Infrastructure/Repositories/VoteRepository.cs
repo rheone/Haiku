@@ -1,42 +1,77 @@
 using Haiku.Domain.Entities;
 using Haiku.Domain.Interfaces;
-using NHibernate;
-using NHibernate.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Haiku.Infrastructure.Repositories;
 
+/// <summary>
+/// Persistence store for <see cref="Vote"/> entities using EF Core.
+/// </summary>
 public class VoteRepository : IVoteRepository
 {
-    private readonly ISession _session;
+    private readonly HaikuDbContext _db;
 
-    public VoteRepository(ScopedSession scopedSession)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VoteRepository"/> class.
+    /// </summary>
+    /// <param name="db">The database context.</param>
+    public VoteRepository(HaikuDbContext db)
     {
-        _session = scopedSession.Session;
+        _db = db;
     }
 
-    public async Task<Vote?> GetByUserAndHaikuAsync(Guid userId, Guid haikuId) =>
-        await _session.Query<Vote>()
-            .FirstOrDefaultAsync(v => v.User.Id == userId && v.Poem.Id == haikuId);
-
-    public async Task SaveAsync(Vote vote)
+    /// <summary>
+    /// Retrieves a vote cast by a specific user on a specific poem.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user who voted.</param>
+    /// <param name="haikuId">The unique identifier of the poem that was voted on.</param>
+    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
+    /// <returns>The vote if found; otherwise <c>null</c>.</returns>
+    public async Task<Vote?> GetByUserAndHaikuAsync(Guid userId, Guid haikuId, CancellationToken cancellationToken = default)
     {
-        await _session.SaveOrUpdateAsync(vote);
-        await _session.FlushAsync();
+        cancellationToken.ThrowIfCancellationRequested();
+        return await _db.Votes.FirstOrDefaultAsync(v => v.UserId == userId && v.PoemId == haikuId, cancellationToken);
     }
 
-    public async Task DeleteAsync(Vote vote)
+    /// <summary>
+    /// Persists a new vote or saves changes to an existing tracked vote.
+    /// </summary>
+    /// <param name="vote">The vote entity to save.</param>
+    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
+    /// <returns>A task representing the asynchronous save operation.</returns>
+    public async Task SaveAsync(Vote vote, CancellationToken cancellationToken = default)
     {
-        await _session.DeleteAsync(vote);
-        await _session.FlushAsync();
+        cancellationToken.ThrowIfCancellationRequested();
+        var entry = _db.Entry(vote);
+        if (entry.State == EntityState.Detached)
+        {
+            _db.Votes.Add(vote);
+        }
+        await _db.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<int> GetNetScoreAsync(Guid haikuId)
+    /// <summary>
+    /// Deletes a vote entity from the database.
+    /// </summary>
+    /// <param name="vote">The vote entity to remove.</param>
+    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
+    /// <returns>A task representing the asynchronous delete operation.</returns>
+    public async Task DeleteAsync(Vote vote, CancellationToken cancellationToken = default)
     {
-        var result = await _session.Query<Vote>()
-            .Where(v => v.Poem.Id == haikuId)
-            .Select(v => (int)v.Value)
-            .ToListAsync();
+        cancellationToken.ThrowIfCancellationRequested();
+        _db.Votes.Remove(vote);
+        await _db.SaveChangesAsync(cancellationToken);
+    }
 
-        return result.Sum();
+    /// <summary>
+    /// Calculates the net score (upvotes minus downvotes) for a poem.
+    /// </summary>
+    /// <param name="haikuId">The unique identifier of the poem.</param>
+    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
+    /// <returns>The net score as an integer.</returns>
+    public async Task<int> GetNetScoreAsync(Guid haikuId, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return await _db.Votes.Where(v => v.PoemId == haikuId).SumAsync(v => (int)v.Value, cancellationToken);
     }
 }

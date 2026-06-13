@@ -1,18 +1,39 @@
-# Force LF line endings for files that must run on Linux
-*.bash          text eol=lf
-*.editorconfig  text eol=lf
-*.sh            text eol=lf
+# Auto-normalize line endings
+* text=auto
 
-# Other text files — normalize to LF
-*.json          text eol=lf
-*.jsonc         text eol=lf
-*.md            text eol=lf
-*.yaml          text eol=lf
-*.yml           text eol=lf
-Dockerfile      text eol=lf
+# C# source
+*.cs text diff=csharp
 
-# Windows-only files — keep CRLF
-*.bat           text eol=crlf
-*.cmd           text eol=crlf
-*.cs            text eol=crlf
-*.ps1           text eol=crlf
+# Solution files (binary merge to avoid corruption)
+*.sln    merge=binary
+*.slnx   merge=binary
+*.csproj merge=binary
+*.props  merge=binary
+*.targets merge=binary
+
+# Build and config
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.config text eol=lf
+*.editorconfig text eol=lf
+
+# Scripts
+*.sh text eol=lf
+*.ps1 text eol=lf
+
+# Docker
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+
+# Documentation
+*.md text diff=markdown
+*.txt text
+
+# Binary files (never normalize)
+*.png binary
+*.jpg binary
+*.ico binary
+*.pfx binary
+*.snupkg binary
+*.nupkg binary

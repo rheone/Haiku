@@ -1,9 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Title>Haiku.Domain</Title>
+    <Description>Domain entities, enums, repository interfaces, and value objects for the Haiku platform</Description>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
-
 </Project>

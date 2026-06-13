@@ -132,6 +132,75 @@ END
 GO
 
 -- ============================================================================
+-- ADDITIONAL POEM TYPES
+-- ============================================================================
+IF NOT EXISTS (SELECT 1 FROM Haikus WHERE Id = '10000000-0000-0000-0000-000000000009')
+BEGIN
+    INSERT INTO Haikus (Id, AuthorId, Content, PoemType, TotalSyllables, IsDraft, CreatedAt)
+    VALUES
+        -- Katauta (5-7-7)
+        ('10000000-0000-0000-0000-000000000009', '00000000-0000-0000-0000-000000000010',
+         'distant thunder rolls' + CHAR(10) + 'echoes through the mountain pass' + CHAR(10) + 'waiting for the coming storm',
+         'Katauta', 19, 0, DATEADD(HOUR, -120, SYSUTCDATETIME())),
+
+        -- Sedoka (5-7-7-5-7-7)
+        ('10000000-0000-0000-0000-000000000010', '00000000-0000-0000-0000-000000000011',
+         'the morning sun glows' + CHAR(10) + 'over the green mountain top' + CHAR(10) + 'dew drops sparkle in the light' + CHAR(10) + 'birds begin their song' + CHAR(10) + 'welcoming a brand new day' + CHAR(10) + 'fresh with hope and endless grace',
+         'Sedoka', 38, 0, DATEADD(HOUR, -144, SYSUTCDATETIME())),
+
+        -- AmericanLune (3-5-3)
+        ('10000000-0000-0000-0000-000000000011', '00000000-0000-0000-0000-000000000012',
+         'soft wind blows' + CHAR(10) + 'through the willow tree' + CHAR(10) + 'leaves whisper',
+         'AmericanLune', 11, 0, DATEADD(HOUR, -168, SYSUTCDATETIME())),
+
+        -- KellyLune (5-3-5)
+        ('10000000-0000-0000-0000-000000000012', '00000000-0000-0000-0000-000000000010',
+         'rain falls on the roof' + CHAR(10) + 'steady pulse' + CHAR(10) + 'the world rests and dreams',
+         'KellyLune', 13, 0, DATEADD(HOUR, -192, SYSUTCDATETIME())),
+
+        -- AmericanCinquain (2-4-6-8-2)
+        ('10000000-0000-0000-0000-000000000013', '00000000-0000-0000-0000-000000000012',
+         'moonlight' + CHAR(10) + 'paints silver paths' + CHAR(10) + 'across the sleeping lake' + CHAR(10) + 'a trail of sparkles for the night' + CHAR(10) + 'to dream',
+         'AmericanCinquain', 22, 0, DATEADD(HOUR, -216, SYSUTCDATETIME())),
+
+        -- ReverseCinquain (2-8-6-4-2)
+        ('10000000-0000-0000-0000-000000000014', '00000000-0000-0000-0000-000000000011',
+         'autumn' + CHAR(10) + 'leaves spin and fall in golden swirls' + CHAR(10) + 'a carpet on the path' + CHAR(10) + 'crisp autumn chill' + CHAR(10) + 'is here',
+         'ReverseCinquain', 22, 0, DATEADD(HOUR, -240, SYSUTCDATETIME())),
+
+        -- MirrorCinquain (2-4-6-8-2-2-8-6-4-2)
+        ('10000000-0000-0000-0000-000000000015', '00000000-0000-0000-0000-000000000011',
+         'springtime' + CHAR(10) + 'cherry blooms fall' + CHAR(10) + 'petals dance on the breeze' + CHAR(10) + 'a pink and white blanket on the ground' + CHAR(10) + 'so brief' + CHAR(10) + 'yet sweet' + CHAR(10) + 'the scent of spring still fills the air' + CHAR(10) + 'a gentle memory' + CHAR(10) + 'a gentle sigh' + CHAR(10) + 'is gone',
+         'MirrorCinquain', 44, 0, DATEADD(HOUR, -264, SYSUTCDATETIME())),
+
+        -- ButterflyCinquain (2-4-6-8-2-8-6-4-2)
+        ('10000000-0000-0000-0000-000000000016', '00000000-0000-0000-0000-000000000010',
+         'sunset' + CHAR(10) + 'blazing in gold' + CHAR(10) + 'painting the horizon' + CHAR(10) + 'a final flash of golden light' + CHAR(10) + 'twilight' + CHAR(10) + 'the sky puts on a dark blue dress' + CHAR(10) + 'stars twinkle through the veil' + CHAR(10) + 'earth softly sighs' + CHAR(10) + 'night falls',
+         'ButterflyCinquain', 42, 0, DATEADD(HOUR, -288, SYSUTCDATETIME())),
+
+        -- Isosyllabic (3-3-3)
+        ('10000000-0000-0000-0000-000000000017', '00000000-0000-0000-0000-000000000012',
+         'stars shimmer' + CHAR(10) + 'on still lakes' + CHAR(10) + 'soft moon glow',
+         'Isosyllabic', 9, 0, DATEADD(HOUR, -312, SYSUTCDATETIME())),
+
+        -- Compressed (2-3-2)
+        ('10000000-0000-0000-0000-000000000018', '00000000-0000-0000-0000-000000000010',
+         'first snow' + CHAR(10) + 'covers ground' + CHAR(10) + 'so still',
+         'Compressed', 7, 0, DATEADD(HOUR, -336, SYSUTCDATETIME())),
+
+        -- NearTraditional (4-6-4)
+        ('10000000-0000-0000-0000-000000000019', '00000000-0000-0000-0000-000000000011',
+         'leaves turn to gold' + CHAR(10) + 'chill in the air tonight' + CHAR(10) + 'we wait for snow',
+         'NearTraditional', 14, 0, DATEADD(HOUR, -360, SYSUTCDATETIME())),
+
+        -- Choka (5-7-5-7-5-7-7)
+        ('10000000-0000-0000-0000-000000000020', '00000000-0000-0000-0000-000000000010',
+         'through misty morning' + CHAR(10) + 'a lone crane rises upward' + CHAR(10) + 'white wings spread in flight' + CHAR(10) + 'it disappears through the fog' + CHAR(10) + 'echoes through the reeds' + CHAR(10) + 'then silence claims the still pond' + CHAR(10) + 'a single feather descends',
+         'Choka', 43, 0, DATEADD(HOUR, -384, SYSUTCDATETIME()));
+END
+GO
+
+-- ============================================================================
 -- SEED TAGS
 -- ============================================================================
 IF NOT EXISTS (SELECT 1 FROM Tags WHERE Name = 'nature')
@@ -165,6 +234,40 @@ BEGIN
         ('10000000-0000-0000-0000-000000000007', (SELECT Id FROM Tags WHERE Name = 'spring')),
         ('10000000-0000-0000-0000-000000000008', (SELECT Id FROM Tags WHERE Name = 'nature')),
         ('10000000-0000-0000-0000-000000000008', (SELECT Id FROM Tags WHERE Name = 'silence'));
+END
+GO
+
+-- ============================================================================
+-- ADDITIONAL POEM-TAG RELATIONSHIPS
+-- ============================================================================
+IF NOT EXISTS (SELECT 1 FROM HaikuTags WHERE HaikuId = '10000000-0000-0000-0000-000000000009')
+BEGIN
+    INSERT INTO HaikuTags (HaikuId, TagId)
+    VALUES
+        ('10000000-0000-0000-0000-000000000009', (SELECT Id FROM Tags WHERE Name = 'nature')),
+        ('10000000-0000-0000-0000-000000000009', (SELECT Id FROM Tags WHERE Name = 'silence')),
+        ('10000000-0000-0000-0000-000000000010', (SELECT Id FROM Tags WHERE Name = 'nature')),
+        ('10000000-0000-0000-0000-000000000010', (SELECT Id FROM Tags WHERE Name = 'beauty')),
+        ('10000000-0000-0000-0000-000000000011', (SELECT Id FROM Tags WHERE Name = 'nature')),
+        ('10000000-0000-0000-0000-000000000011', (SELECT Id FROM Tags WHERE Name = 'peace')),
+        ('10000000-0000-0000-0000-000000000012', (SELECT Id FROM Tags WHERE Name = 'rain')),
+        ('10000000-0000-0000-0000-000000000012', (SELECT Id FROM Tags WHERE Name = 'peace')),
+        ('10000000-0000-0000-0000-000000000013', (SELECT Id FROM Tags WHERE Name = 'moon')),
+        ('10000000-0000-0000-0000-000000000013', (SELECT Id FROM Tags WHERE Name = 'nature')),
+        ('10000000-0000-0000-0000-000000000014', (SELECT Id FROM Tags WHERE Name = 'autumn')),
+        ('10000000-0000-0000-0000-000000000014', (SELECT Id FROM Tags WHERE Name = 'beauty')),
+        ('10000000-0000-0000-0000-000000000015', (SELECT Id FROM Tags WHERE Name = 'spring')),
+        ('10000000-0000-0000-0000-000000000015', (SELECT Id FROM Tags WHERE Name = 'beauty')),
+        ('10000000-0000-0000-0000-000000000016', (SELECT Id FROM Tags WHERE Name = 'nature')),
+        ('10000000-0000-0000-0000-000000000016', (SELECT Id FROM Tags WHERE Name = 'beauty')),
+        ('10000000-0000-0000-0000-000000000017', (SELECT Id FROM Tags WHERE Name = 'winter')),
+        ('10000000-0000-0000-0000-000000000017', (SELECT Id FROM Tags WHERE Name = 'silence')),
+        ('10000000-0000-0000-0000-000000000018', (SELECT Id FROM Tags WHERE Name = 'winter')),
+        ('10000000-0000-0000-0000-000000000018', (SELECT Id FROM Tags WHERE Name = 'peace')),
+        ('10000000-0000-0000-0000-000000000019', (SELECT Id FROM Tags WHERE Name = 'autumn')),
+        ('10000000-0000-0000-0000-000000000019', (SELECT Id FROM Tags WHERE Name = 'nature')),
+        ('10000000-0000-0000-0000-000000000020', (SELECT Id FROM Tags WHERE Name = 'nature')),
+        ('10000000-0000-0000-0000-000000000020', (SELECT Id FROM Tags WHERE Name = 'silence'));
 END
 GO
 

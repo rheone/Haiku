@@ -1,6 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/launchsettings.json",
     "profiles": {
+      "Debug": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+        "launchBrowser": true,
+        "applicationUrl": "http://localhost:5001",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Debug"
+        }
+      },
       "http": {
         "commandName": "Project",
         "dotnetRunMessages": true,

@@ -1,46 +1,47 @@
 @page "/admin"
+@attribute [Authorize]
 
 <PageTitle>Haiku - Admin</PageTitle>
 
-<h3 class="mb-4"><i class="fas fa-shield-alt me-2"></i>Admin Dashboard</h3>
+<div class="page-section">
+    <div class="container">
+        <h1 class="brutalist-title"><i class="fas fa-shield-alt me-3"></i>ADMIN</h1>
 
-<div class="row">
-    <div class="col-md-6 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-gavel me-2"></i>Moderation</h5>
-                <p class="card-text">Hide poems, disable users, and manage the community.</p>
-                <button class="btn btn-outline-primary">View Actions</button>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="brutalist-card">
+                    <h3><i class="fas fa-gavel me-2"></i>Moderation</h3>
+                    <p>Hide poems, disable users, and manage the community.</p>
+                    <button class="btn btn-dark w-100">VIEW ACTIONS</button>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-book me-2"></i>Dictionary</h5>
-                <p class="card-text">Manage the custom dictionary and approve word suggestions.</p>
-                <button class="btn btn-outline-primary">Manage Dictionary</button>
+            <div class="col-md-6">
+                <div class="brutalist-card">
+                    <h3><i class="fas fa-book me-2"></i>Dictionary</h3>
+                    <p>Manage the custom dictionary and approve word suggestions.</p>
+                    <button class="btn btn-dark w-100">MANAGE DICTIONARY</button>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-users-cog me-2"></i>User Privileges</h5>
-                <p class="card-text">Grant or revoke moderator privileges.</p>
-                <button class="btn btn-outline-primary">Manage Users</button>
+            <div class="col-md-6">
+                <div class="brutalist-card">
+                    <h3><i class="fas fa-users-cog me-2"></i>User Privileges</h3>
+                    <p>Grant or revoke moderator and administrator privileges.</p>
+                    <button class="btn btn-dark w-100">MANAGE USERS</button>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-chart-bar me-2"></i>Statistics</h5>
-                <p class="card-text">View platform statistics, logs, and errors.</p>
-                <button class="btn btn-outline-primary">View Stats</button>
+            <div class="col-md-6">
+                <div class="brutalist-card">
+                    <h3><i class="fas fa-chart-bar me-2"></i>Statistics</h3>
+                    <p>Platform statistics, error logs, and performance metrics.</p>
+                    <button class="btn btn-dark w-100">VIEW STATS</button>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="brutalist-card">
+                    <h3><i class="fas fa-exclamation-triangle me-2"></i>Exceptional Errors</h3>
+                    <p>Review captured exceptions from StackExchange.Exceptional.</p>
+                    <a href="/exceptions" class="btn btn-dark w-100">VIEW ERRORS</a>
+                </div>
             </div>
         </div>
     </div>
