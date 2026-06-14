@@ -24,13 +24,13 @@ public class VoteRepository : IVoteRepository
     /// Retrieves a vote cast by a specific user on a specific poem.
     /// </summary>
     /// <param name="userId">The unique identifier of the user who voted.</param>
-    /// <param name="haikuId">The unique identifier of the poem that was voted on.</param>
+    /// <param name="poemId">The unique identifier of the poem that was voted on.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>The vote if found; otherwise <c>null</c>.</returns>
-    public async Task<Vote?> GetByUserAndHaikuAsync(Guid userId, Guid haikuId, CancellationToken cancellationToken = default)
+    public async Task<Vote?> GetByUserAndPoemAsync(Guid userId, Guid poemId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return await _db.Votes.FirstOrDefaultAsync(v => v.UserId == userId && v.PoemId == haikuId, cancellationToken);
+        return await _db.Votes.FirstOrDefaultAsync(v => v.UserId == userId && v.PoemId == poemId, cancellationToken);
     }
 
     /// <summary>
@@ -66,12 +66,12 @@ public class VoteRepository : IVoteRepository
     /// <summary>
     /// Calculates the net score (upvotes minus downvotes) for a poem.
     /// </summary>
-    /// <param name="haikuId">The unique identifier of the poem.</param>
+    /// <param name="poemId">The unique identifier of the poem.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>The net score as an integer.</returns>
-    public async Task<int> GetNetScoreAsync(Guid haikuId, CancellationToken cancellationToken = default)
+    public async Task<int> GetNetScoreAsync(Guid poemId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return await _db.Votes.Where(v => v.PoemId == haikuId).SumAsync(v => (int)v.Value, cancellationToken);
+        return await _db.Votes.Where(v => v.PoemId == poemId).SumAsync(v => (int)v.Value, cancellationToken);
     }
 }

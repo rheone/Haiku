@@ -6,7 +6,7 @@ namespace Haiku.Domain.Enums;
 public static class PrivilegeNames
 {
     /// <summary>
-    /// Allows a user to moderate poems and haiku content.
+    /// Allows a user to moderate poems and poem content.
     /// </summary>
     public const string ModeratePoems = "moderate_poems";
 

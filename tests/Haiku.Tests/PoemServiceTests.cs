@@ -1,10 +1,10 @@
 using Haiku.Domain.Enums;
-using Haiku.Services.Haiku;
+using Haiku.Services.Poems;
 
 namespace Haiku.Tests;
 
-/// <summary>Unit tests for the static detection and extraction methods in <see cref="HaikuService"/>.</summary>
-public class HaikuServiceTests
+/// <summary>Unit tests for the static detection and extraction methods in <see cref="PoemService"/>.</summary>
+public class PoemServiceTests
 {
     [Fact]
     public void DetectPoemType_ReturnsHaiku_For575()
@@ -12,7 +12,7 @@ public class HaikuServiceTests
         var content = "line one\nline two\nline three";
         var counts = new List<int> { 5, 7, 5 };
 
-        var result = HaikuService.DetectPoemType(content, counts);
+        var result = PoemService.DetectPoemType(content, counts);
 
         Assert.Equal(PoemType.Haiku, result);
     }
@@ -23,7 +23,7 @@ public class HaikuServiceTests
         var content = "1\n2\n3\n4\n5";
         var counts = new List<int> { 5, 7, 5, 7, 7 };
 
-        var result = HaikuService.DetectPoemType(content, counts);
+        var result = PoemService.DetectPoemType(content, counts);
 
         Assert.Equal(PoemType.Tanka, result);
     }
@@ -34,7 +34,7 @@ public class HaikuServiceTests
         var content = "A single line of text";
         var counts = new List<int> { 7 };
 
-        var result = HaikuService.DetectPoemType(content, counts);
+        var result = PoemService.DetectPoemType(content, counts);
 
         Assert.Equal(PoemType.Monoku, result);
     }
@@ -45,7 +45,7 @@ public class HaikuServiceTests
         var content = "line one\nline two";
         var counts = new List<int> { 3, 9 };
 
-        var result = HaikuService.DetectPoemType(content, counts);
+        var result = PoemService.DetectPoemType(content, counts);
 
         Assert.Equal(PoemType.Freeform, result);
     }
@@ -55,7 +55,7 @@ public class HaikuServiceTests
     {
         var content = "This is #Nature at its #best #Nature";
 
-        var tags = HaikuService.ExtractTags(content);
+        var tags = PoemService.ExtractTags(content);
 
         Assert.Equal(2, tags.Count);
         Assert.Contains("nature", tags);
@@ -67,7 +67,7 @@ public class HaikuServiceTests
     {
         var content = "This has no tags at all";
 
-        var tags = HaikuService.ExtractTags(content);
+        var tags = PoemService.ExtractTags(content);
 
         Assert.Empty(tags);
     }

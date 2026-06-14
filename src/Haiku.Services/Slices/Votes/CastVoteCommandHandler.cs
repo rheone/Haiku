@@ -36,7 +36,7 @@ public class CastVoteCommandHandler : ICommandHandler<CastVoteCommand, bool>
             return false;
         }
 
-        var existing = await _voteRepository.GetByUserAndHaikuAsync(request.UserId, request.PoemId, cancellationToken);
+        var existing = await _voteRepository.GetByUserAndPoemAsync(request.UserId, request.PoemId, cancellationToken);
         if (existing != null)
         {
             if (existing.Value == request.Value)

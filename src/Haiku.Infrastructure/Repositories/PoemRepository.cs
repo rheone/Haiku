@@ -5,17 +5,17 @@ using Microsoft.EntityFrameworkCore;
 namespace Haiku.Infrastructure.Repositories;
 
 /// <summary>
-/// Persistence store for <see cref="Poem"/> (haiku) entities using EF Core.
+/// Persistence store for <see cref="Poem"/> entities using EF Core.
 /// </summary>
-public class HaikuRepository : IHaikuRepository
+public class PoemRepository : IPoemRepository
 {
     private readonly HaikuDbContext _db;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="HaikuRepository"/> class.
+    /// Initializes a new instance of the <see cref="PoemRepository"/> class.
     /// </summary>
     /// <param name="db">The database context.</param>
-    public HaikuRepository(HaikuDbContext db)
+    public PoemRepository(HaikuDbContext db)
     {
         _db = db;
     }

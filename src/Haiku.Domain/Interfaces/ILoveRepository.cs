@@ -3,18 +3,18 @@ using Haiku.Domain.Entities;
 namespace Haiku.Domain.Interfaces;
 
 /// <summary>
-/// Provides data access for haiku appreciation ("love") interactions.
+/// Provides data access for poem appreciation ("love") interactions.
 /// </summary>
 public interface ILoveRepository
 {
     /// <summary>
-    /// Retrieves a love record by its composite user and haiku identifier.
+    /// Retrieves a love record by its composite user and poem identifier.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
-    /// <param name="haikuId">The unique identifier of the haiku poem.</param>
+    /// <param name="poemId">The unique identifier of the poem.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>The matching love record, or <c>null</c> if none exists.</returns>
-    Task<Love?> GetByUserAndHaikuAsync(Guid userId, Guid haikuId, CancellationToken cancellationToken = default);
+    Task<Love?> GetByUserAndPoemAsync(Guid userId, Guid poemId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Persists a new or modified love record.
@@ -33,10 +33,10 @@ public interface ILoveRepository
     Task DeleteAsync(Love love, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Returns the total number of loves a haiku has received.
+    /// Returns the total number of loves a poem has received.
     /// </summary>
-    /// <param name="haikuId">The unique identifier of the haiku poem.</param>
+    /// <param name="poemId">The unique identifier of the poem.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>The love count.</returns>
-    Task<int> GetLoveCountAsync(Guid haikuId, CancellationToken cancellationToken = default);
+    Task<int> GetLoveCountAsync(Guid poemId, CancellationToken cancellationToken = default);
 }

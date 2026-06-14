@@ -6,8 +6,8 @@ namespace Haiku.Domain.Entities;
 /// <summary>
 /// Represents the many-to-many link between a poem and a tag.
 /// </summary>
-[Table("HaikuTags")]
-public class HaikuTag
+[Table("PoemTags")]
+public class PoemTag
 {
     /// <summary>
     /// Gets or sets the unique identifier of the tagged poem.
@@ -40,14 +40,14 @@ public class HaikuTag
     public Tag Tag { get; set; } = null!;
 
     /// <summary>
-    /// Determines whether the specified object is equal to the current haiku-tag link.
+    /// Determines whether the specified object is equal to the current poem-tag link.
     /// </summary>
     /// <param name="obj">The object to compare with the current instance.</param>
-    /// <returns><c>true</c> if the specified object is a <see cref="HaikuTag"/> with the same poem and tag identifiers; otherwise <c>false</c>.</returns>
-    public override bool Equals(object? obj) => obj is HaikuTag other && PoemId == other.PoemId && TagId == other.TagId;
+    /// <returns><c>true</c> if the specified object is a <see cref="PoemTag"/> with the same poem and tag identifiers; otherwise <c>false</c>.</returns>
+    public override bool Equals(object? obj) => obj is PoemTag other && PoemId == other.PoemId && TagId == other.TagId;
 
     /// <summary>
-    /// Returns a hash code for this haiku-tag link based on the composite poem and tag identifiers.
+    /// Returns a hash code for this poem-tag link based on the composite poem and tag identifiers.
     /// </summary>
     /// <returns>A hash code computed from <see cref="PoemId"/> and <see cref="TagId"/>.</returns>
     public override int GetHashCode() => HashCode.Combine(PoemId, TagId);

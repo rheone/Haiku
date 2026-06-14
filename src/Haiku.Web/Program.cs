@@ -42,7 +42,7 @@ builder.Services.AddDbContext<HaikuDbContext>(options =>
 
 // Repositories — scoped per request.
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IHaikuRepository, HaikuRepository>();
+builder.Services.AddScoped<IPoemRepository, PoemRepository>();
 builder.Services.AddScoped<IVoteRepository, VoteRepository>();
 builder.Services.AddScoped<ILoveRepository, LoveRepository>();
 builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
@@ -50,9 +50,9 @@ builder.Services.AddScoped<IDictionaryRepository, DictionaryRepository>();
 builder.Services.AddScoped<IModerationRepository, ModerationRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 
-// Application services — scoped per request (AuthService, HaikuService, etc.).
+// Application services — scoped per request (AuthService, PoemService, etc.).
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<HaikuService>();
+builder.Services.AddScoped<PoemService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<ModerationService>();
 builder.Services.AddScoped<DictionaryService>();

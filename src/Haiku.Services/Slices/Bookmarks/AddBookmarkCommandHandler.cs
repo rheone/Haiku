@@ -25,7 +25,7 @@ public class AddBookmarkCommandHandler : ICommandHandler<AddBookmarkCommand, boo
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var existing = await _bookmarkRepository.GetByUserAndHaikuAsync(request.UserId, request.PoemId, cancellationToken);
+        var existing = await _bookmarkRepository.GetByUserAndPoemAsync(request.UserId, request.PoemId, cancellationToken);
         if (existing != null)
         {
             return false;

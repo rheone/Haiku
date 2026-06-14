@@ -12,15 +12,15 @@ namespace Haiku.Services.Slices.WordSearch;
 /// </remarks>
 public class SearchPoemsByWordQueryHandler : IQueryHandler<SearchPoemsByWordQuery, List<Poem>>
 {
-    private readonly IHaikuRepository _haikuRepository;
+    private readonly IPoemRepository _poemRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SearchPoemsByWordQueryHandler"/> class.
     /// </summary>
-    /// <param name="haikuRepository">Repository for searching <see cref="Poem"/> entities.</param>
-    public SearchPoemsByWordQueryHandler(IHaikuRepository haikuRepository)
+    /// <param name="poemRepository">Repository for searching <see cref="Poem"/> entities.</param>
+    public SearchPoemsByWordQueryHandler(IPoemRepository poemRepository)
     {
-        _haikuRepository = haikuRepository;
+        _poemRepository = poemRepository;
     }
 
     /// <summary>

@@ -23,7 +23,7 @@ public class HaikuDbContext : DbContext
     public DbSet<User> Users => Set<User>();
 
     /// <summary>
-    /// Gets the set of poems (haiku) authored by users.
+    /// Gets the set of poems authored by users.
     /// </summary>
     /// <value>The <see cref="DbSet{Poem}"/> for querying and saving poems.</value>
     public DbSet<Poem> Poems => Set<Poem>();
@@ -37,8 +37,8 @@ public class HaikuDbContext : DbContext
     /// <summary>
     /// Gets the many-to-many join set linking poems to tags.
     /// </summary>
-    /// <value>The <see cref="DbSet{HaikuTag}"/> for querying and saving poem-tag associations.</value>
-    public DbSet<HaikuTag> HaikuTags => Set<HaikuTag>();
+    /// <value>The <see cref="DbSet{PoemTag}"/> for querying and saving poem-tag associations.</value>
+    public DbSet<PoemTag> PoemTags => Set<PoemTag>();
 
     /// <summary>
     /// Gets the set of upvote/downvote records on poems.
@@ -122,7 +122,7 @@ public class HaikuDbContext : DbContext
 
         modelBuilder.Entity<Poem>(entity =>
         {
-            entity.ToTable("Haikus");
+            entity.ToTable("Poems");
             entity.HasOne(e => e.Author).WithMany().HasForeignKey(e => e.AuthorId).OnDelete(DeleteBehavior.Restrict);
             entity.HasIndex(e => e.CreatedAt).HasFilter("[IsDraft] = 0 AND [IsHidden] = 0 AND [DeletedAt] IS NULL");
         });
@@ -133,9 +133,9 @@ public class HaikuDbContext : DbContext
             entity.HasIndex(e => e.Name).IsUnique();
         });
 
-        modelBuilder.Entity<HaikuTag>(entity =>
+        modelBuilder.Entity<PoemTag>(entity =>
         {
-            entity.ToTable("HaikuTags");
+            entity.ToTable("PoemTags");
             entity.HasKey(e => new { e.PoemId, e.TagId });
             entity.HasOne(e => e.Poem).WithMany().HasForeignKey(e => e.PoemId).OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.Tag).WithMany().HasForeignKey(e => e.TagId).OnDelete(DeleteBehavior.Cascade);

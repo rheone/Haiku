@@ -24,13 +24,13 @@ public class LoveRepository : ILoveRepository
     /// Retrieves a love (heart) record for a specific user on a specific poem.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
-    /// <param name="haikuId">The unique identifier of the poem.</param>
+    /// <param name="poemId">The unique identifier of the poem.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>The love record if found; otherwise <c>null</c>.</returns>
-    public async Task<Love?> GetByUserAndHaikuAsync(Guid userId, Guid haikuId, CancellationToken cancellationToken = default)
+    public async Task<Love?> GetByUserAndPoemAsync(Guid userId, Guid poemId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return await _db.Loves.FirstOrDefaultAsync(l => l.UserId == userId && l.PoemId == haikuId, cancellationToken);
+        return await _db.Loves.FirstOrDefaultAsync(l => l.UserId == userId && l.PoemId == poemId, cancellationToken);
     }
 
     /// <summary>
@@ -66,12 +66,12 @@ public class LoveRepository : ILoveRepository
     /// <summary>
     /// Counts the total number of loves (hearts) received by a poem.
     /// </summary>
-    /// <param name="haikuId">The unique identifier of the poem.</param>
+    /// <param name="poemId">The unique identifier of the poem.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>The total love count.</returns>
-    public async Task<int> GetLoveCountAsync(Guid haikuId, CancellationToken cancellationToken = default)
+    public async Task<int> GetLoveCountAsync(Guid poemId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return await _db.Loves.CountAsync(l => l.PoemId == haikuId, cancellationToken);
+        return await _db.Loves.CountAsync(l => l.PoemId == poemId, cancellationToken);
     }
 }

@@ -24,17 +24,13 @@ public class BookmarkRepository : IBookmarkRepository
     /// Retrieves a bookmark record for a specific user on a specific poem.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
-    /// <param name="haikuId">The unique identifier of the poem.</param>
+    /// <param name="poemId">The unique identifier of the poem.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>The bookmark if found; otherwise <c>null</c>.</returns>
-    public async Task<Bookmark?> GetByUserAndHaikuAsync(
-        Guid userId,
-        Guid haikuId,
-        CancellationToken cancellationToken = default
-    )
+    public async Task<Bookmark?> GetByUserAndPoemAsync(Guid userId, Guid poemId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return await _db.Bookmarks.FirstOrDefaultAsync(b => b.UserId == userId && b.PoemId == haikuId, cancellationToken);
+        return await _db.Bookmarks.FirstOrDefaultAsync(b => b.UserId == userId && b.PoemId == poemId, cancellationToken);
     }
 
     /// <summary>

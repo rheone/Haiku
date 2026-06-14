@@ -30,5 +30,5 @@ public record PoemDefinition
     /// Gets the required syllable counts per line, ordered by line position.
     /// </summary>
     /// <value>An array where each element represents the syllable count for the corresponding line.</value>
-    public int[] SyllablePattern { get; init; } = Array.Empty<int>();
+    public int[] SyllablePattern { get; init; } = [];
 }

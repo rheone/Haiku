@@ -10,23 +10,23 @@ namespace Haiku.Services.Moderation;
 public class ModerationService
 {
     private readonly IModerationRepository _moderationRepository;
-    private readonly IHaikuRepository _haikuRepository;
+    private readonly IPoemRepository _poemRepository;
     private readonly IUserRepository _userRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ModerationService"/> class.
     /// </summary>
     /// <param name="moderationRepository">Repository for moderation action audit records.</param>
-    /// <param name="haikuRepository">Repository for poem entities.</param>
+    /// <param name="poemRepository">Repository for poem entities.</param>
     /// <param name="userRepository">Repository for user entities.</param>
     public ModerationService(
         IModerationRepository moderationRepository,
-        IHaikuRepository haikuRepository,
+        IPoemRepository poemRepository,
         IUserRepository userRepository
     )
     {
         _moderationRepository = moderationRepository;
-        _haikuRepository = haikuRepository;
+        _poemRepository = poemRepository;
         _userRepository = userRepository;
     }
 
@@ -47,20 +47,20 @@ public class ModerationService
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var poem = await _haikuRepository.GetByIdAsync(poemId, cancellationToken);
+        var poem = await _poemRepository.GetByIdAsync(poemId, cancellationToken);
         if (poem == null)
         {
             return false;
         }
 
         poem.IsHidden = true;
-        await _haikuRepository.SaveAsync(poem, cancellationToken);
+        await _poemRepository.SaveAsync(poem, cancellationToken);
 
         var action = new ModerationAction
         {
             Id = Guid.NewGuid(),
             ActionType = ModerationActionTypes.Hide,
-            TargetType = TargetTypes.Haiku,
+            TargetType = TargetTypes.Poem,
             TargetId = poemId,
             ActionedBy = new User { Id = actionedByUserId },
             Reason = reason,
@@ -87,20 +87,20 @@ public class ModerationService
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var poem = await _haikuRepository.GetByIdAsync(poemId, cancellationToken);
+        var poem = await _poemRepository.GetByIdAsync(poemId, cancellationToken);
         if (poem == null)
         {
             return false;
         }
 
         poem.IsHidden = false;
-        await _haikuRepository.SaveAsync(poem, cancellationToken);
+        await _poemRepository.SaveAsync(poem, cancellationToken);
 
         var action = new ModerationAction
         {
             Id = Guid.NewGuid(),
             ActionType = ModerationActionTypes.Unhide,
-            TargetType = TargetTypes.Haiku,
+            TargetType = TargetTypes.Poem,
             TargetId = poemId,
             ActionedBy = new User { Id = actionedByUserId },
             Reason = reason,

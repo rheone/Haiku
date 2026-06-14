@@ -3,9 +3,9 @@ using Haiku.Domain.Entities;
 namespace Haiku.Domain.Interfaces;
 
 /// <summary>
-/// Provides data access for poem (haiku) entities.
+/// Provides data access for poem entities.
 /// </summary>
-public interface IHaikuRepository
+public interface IPoemRepository
 {
     /// <summary>
     /// Retrieves a poem by its unique identifier.

@@ -31,7 +31,7 @@ public class RemoveLoveCommandHandler : ICommandHandler<RemoveLoveCommand, bool>
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var existing = await _loveRepository.GetByUserAndHaikuAsync(request.UserId, request.PoemId, cancellationToken);
+        var existing = await _loveRepository.GetByUserAndPoemAsync(request.UserId, request.PoemId, cancellationToken);
         if (existing == null)
         {
             return false;

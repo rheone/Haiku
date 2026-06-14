@@ -25,7 +25,7 @@ public class ModerationAction
     public string ActionType { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the type of target the action was applied to (e.g., Haiku, User). See <see cref="Enums.TargetTypes"/>.
+    /// Gets or sets the type of target the action was applied to (e.g., Poem, User). See <see cref="Enums.TargetTypes"/>.
     /// </summary>
     /// <value>The target type string.</value>
     [Required]

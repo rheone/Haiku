@@ -52,14 +52,14 @@ public class SyllableEngine
     /// </summary>
     /// <param name="line">The line of text to evaluate.</param>
     /// <returns>A list of syllable counts, one per word. Returns an empty list for blank lines.</returns>
-    public virtual List<int> CountLineSyllables(string line)
+    public List<int> CountLineSyllables(string line)
     {
         if (string.IsNullOrWhiteSpace(line))
         {
-            return new List<int>();
+            return [];
         }
 
-        return line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(CountWordSyllables).ToList();
+        return [.. line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(CountWordSyllables)];
     }
 
     private static int VowelGroupHeuristic(string word)

@@ -6,9 +6,9 @@ namespace Haiku.Domain.Enums;
 public static class TargetTypes
 {
     /// <summary>
-    /// Identifies a haiku poem as the target of a moderation action.
+    /// Identifies a poem as the target of a moderation action.
     /// </summary>
-    public const string Haiku = "Haiku";
+    public const string Poem = "Poem";
 
     /// <summary>
     /// Identifies a user account as the target of a moderation action.

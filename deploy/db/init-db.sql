@@ -42,11 +42,11 @@ END
 GO
 
 -- ============================================================================
--- HAIKUS (Poems)
+-- POEMS
 -- ============================================================================
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Haikus')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Poems')
 BEGIN
-    CREATE TABLE Haikus (
+    CREATE TABLE Poems (
         Id              UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
         AuthorId        UNIQUEIDENTIFIER NOT NULL,
         Content         NVARCHAR(500)    NOT NULL,
@@ -57,16 +57,16 @@ BEGIN
         CreatedAt       DATETIME2        NOT NULL DEFAULT SYSUTCDATETIME(),
         DeletedAt       DATETIME2        NULL,
 
-        CONSTRAINT PK_Haikus PRIMARY KEY CLUSTERED (Id),
-        CONSTRAINT FK_Haikus_Users FOREIGN KEY (AuthorId) REFERENCES Users(Id)
+        CONSTRAINT PK_Poems PRIMARY KEY CLUSTERED (Id),
+        CONSTRAINT FK_Poems_Users FOREIGN KEY (AuthorId) REFERENCES Users(Id)
     );
 
-    CREATE INDEX IX_Haikus_CreatedAt
-        ON Haikus (CreatedAt DESC)
+    CREATE INDEX IX_Poems_CreatedAt
+        ON Poems (CreatedAt DESC)
         WHERE IsDraft = 0 AND IsHidden = 0 AND DeletedAt IS NULL;
 
-    CREATE INDEX IX_Haikus_Author_CreatedAt
-        ON Haikus (AuthorId, CreatedAt DESC);
+    CREATE INDEX IX_Poems_Author_CreatedAt
+        ON Poems (AuthorId, CreatedAt DESC);
 END
 GO
 
@@ -86,20 +86,20 @@ END
 GO
 
 -- ============================================================================
--- HAIKU TAGS (Junction)
+-- POEM TAGS (Junction)
 -- ============================================================================
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'HaikuTags')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'PoemTags')
 BEGIN
-    CREATE TABLE HaikuTags (
-        HaikuId UNIQUEIDENTIFIER NOT NULL,
+    CREATE TABLE PoemTags (
+        PoemId UNIQUEIDENTIFIER NOT NULL,
         TagId   INT              NOT NULL,
 
-        CONSTRAINT PK_HaikuTags PRIMARY KEY CLUSTERED (HaikuId, TagId),
-        CONSTRAINT FK_HaikuTags_Haikus FOREIGN KEY (HaikuId) REFERENCES Haikus(Id),
-        CONSTRAINT FK_HaikuTags_Tags FOREIGN KEY (TagId) REFERENCES Tags(Id)
+        CONSTRAINT PK_PoemTags PRIMARY KEY CLUSTERED (PoemId, TagId),
+        CONSTRAINT FK_PoemTags_Poems FOREIGN KEY (PoemId) REFERENCES Poems(Id),
+        CONSTRAINT FK_PoemTags_Tags FOREIGN KEY (TagId) REFERENCES Tags(Id)
     );
 
-    CREATE INDEX IX_HaikuTags_TagId ON HaikuTags (TagId);
+    CREATE INDEX IX_PoemTags_TagId ON PoemTags (TagId);
 END
 GO
 
@@ -110,19 +110,19 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Votes')
 BEGIN
     CREATE TABLE Votes (
         Id        UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
-        HaikuId   UNIQUEIDENTIFIER NOT NULL,
+        PoemId    UNIQUEIDENTIFIER NOT NULL,
         UserId    UNIQUEIDENTIFIER NOT NULL,
         Value     TINYINT          NOT NULL,
         CreatedAt DATETIME2        NOT NULL DEFAULT SYSUTCDATETIME(),
 
         CONSTRAINT PK_Votes PRIMARY KEY CLUSTERED (Id),
-        CONSTRAINT FK_Votes_Haikus FOREIGN KEY (HaikuId) REFERENCES Haikus(Id),
+        CONSTRAINT FK_Votes_Poems FOREIGN KEY (PoemId) REFERENCES Poems(Id),
         CONSTRAINT FK_Votes_Users FOREIGN KEY (UserId) REFERENCES Users(Id),
-        CONSTRAINT UQ_Votes_HaikuId_UserId UNIQUE (HaikuId, UserId),
+        CONSTRAINT UQ_Votes_PoemId_UserId UNIQUE (PoemId, UserId),
         CONSTRAINT CK_Votes_Value CHECK (Value IN (1, -1))
     );
 
-    CREATE INDEX IX_Votes_HaikuId ON Votes (HaikuId);
+    CREATE INDEX IX_Votes_PoemId ON Votes (PoemId);
 END
 GO
 
@@ -133,17 +133,17 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Loves')
 BEGIN
     CREATE TABLE Loves (
         Id        UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
-        HaikuId   UNIQUEIDENTIFIER NOT NULL,
+        PoemId    UNIQUEIDENTIFIER NOT NULL,
         UserId    UNIQUEIDENTIFIER NOT NULL,
         CreatedAt DATETIME2        NOT NULL DEFAULT SYSUTCDATETIME(),
 
         CONSTRAINT PK_Loves PRIMARY KEY CLUSTERED (Id),
-        CONSTRAINT FK_Loves_Haikus FOREIGN KEY (HaikuId) REFERENCES Haikus(Id),
+        CONSTRAINT FK_Loves_Poems FOREIGN KEY (PoemId) REFERENCES Poems(Id),
         CONSTRAINT FK_Loves_Users FOREIGN KEY (UserId) REFERENCES Users(Id),
-        CONSTRAINT UQ_Loves_HaikuId_UserId UNIQUE (HaikuId, UserId)
+        CONSTRAINT UQ_Loves_PoemId_UserId UNIQUE (PoemId, UserId)
     );
 
-    CREATE INDEX IX_Loves_HaikuId ON Loves (HaikuId);
+    CREATE INDEX IX_Loves_PoemId ON Loves (PoemId);
 END
 GO
 
@@ -175,13 +175,13 @@ BEGIN
     CREATE TABLE Bookmarks (
         Id        UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
         UserId    UNIQUEIDENTIFIER NOT NULL,
-        HaikuId   UNIQUEIDENTIFIER NOT NULL,
+        PoemId    UNIQUEIDENTIFIER NOT NULL,
         CreatedAt DATETIME2        NOT NULL DEFAULT SYSUTCDATETIME(),
 
         CONSTRAINT PK_Bookmarks PRIMARY KEY CLUSTERED (Id),
         CONSTRAINT FK_Bookmarks_Users FOREIGN KEY (UserId) REFERENCES Users(Id),
-        CONSTRAINT FK_Bookmarks_Haikus FOREIGN KEY (HaikuId) REFERENCES Haikus(Id),
-        CONSTRAINT UQ_Bookmarks_UserId_HaikuId UNIQUE (UserId, HaikuId)
+        CONSTRAINT FK_Bookmarks_Poems FOREIGN KEY (PoemId) REFERENCES Poems(Id),
+        CONSTRAINT UQ_Bookmarks_UserId_PoemId UNIQUE (UserId, PoemId)
     );
 END
 GO

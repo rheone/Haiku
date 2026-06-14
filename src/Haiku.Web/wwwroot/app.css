@@ -143,32 +143,32 @@ h1:focus {
     text-align: start;
 }
 
-.haiku-card {
+.poem-card {
     border-left: 4px solid var(--haiku-accent);
     border-radius: 0.5rem;
     transition: box-shadow 0.2s, transform 0.2s;
 }
 
-.haiku-card:hover {
+.poem-card:hover {
     box-shadow: 0 4px 12px var(--haiku-card-shadow);
     transform: translateY(-1px);
 }
 
-.haiku-content {
+.poem-content {
     font-family: 'Georgia', 'Times New Roman', serif;
     font-size: 1.1rem;
     line-height: 1.8;
     color: var(--haiku-text);
 }
 
-.haiku-word {
+.poem-word {
     color: var(--haiku-primary-dark);
     text-decoration: none;
     border-bottom: 1px dashed var(--haiku-accent);
     transition: color 0.15s, border-bottom-color 0.15s;
 }
 
-.haiku-word:hover {
+.poem-word:hover {
     color: var(--haiku-accent);
     border-bottom-color: var(--haiku-accent);
 }

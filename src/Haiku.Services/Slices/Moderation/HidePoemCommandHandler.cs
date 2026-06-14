@@ -10,17 +10,17 @@ namespace Haiku.Services.Slices.Moderation;
 /// </summary>
 public class HidePoemCommandHandler : ICommandHandler<HidePoemCommand, bool>
 {
-    private readonly IHaikuRepository _haikuRepository;
+    private readonly IPoemRepository _poemRepository;
     private readonly IModerationRepository _moderationRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HidePoemCommandHandler"/> class.
     /// </summary>
-    /// <param name="haikuRepository">The haiku repository for poem data access.</param>
+    /// <param name="poemRepository">The poem repository for poem data access.</param>
     /// <param name="moderationRepository">The moderation repository for audit logging.</param>
-    public HidePoemCommandHandler(IHaikuRepository haikuRepository, IModerationRepository moderationRepository)
+    public HidePoemCommandHandler(IPoemRepository poemRepository, IModerationRepository moderationRepository)
     {
-        _haikuRepository = haikuRepository;
+        _poemRepository = poemRepository;
         _moderationRepository = moderationRepository;
     }
 
@@ -38,20 +38,20 @@ public class HidePoemCommandHandler : ICommandHandler<HidePoemCommand, bool>
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var poem = await _haikuRepository.GetByIdAsync(request.PoemId, cancellationToken);
+        var poem = await _poemRepository.GetByIdAsync(request.PoemId, cancellationToken);
         if (poem == null)
         {
             return false;
         }
 
         poem.IsHidden = true;
-        await _haikuRepository.SaveAsync(poem, cancellationToken);
+        await _poemRepository.SaveAsync(poem, cancellationToken);
 
         var action = new ModerationAction
         {
             Id = Guid.NewGuid(),
             ActionType = ModerationActionTypes.Hide,
-            TargetType = TargetTypes.Haiku,
+            TargetType = TargetTypes.Poem,
             TargetId = request.PoemId,
             ActionedBy = new User { Id = request.ActionedByUserId },
             Reason = request.Reason,

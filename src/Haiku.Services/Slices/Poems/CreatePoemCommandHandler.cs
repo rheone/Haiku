@@ -12,7 +12,7 @@ namespace Haiku.Services.Slices.Poems;
 /// </summary>
 public class CreatePoemCommandHandler : ICommandHandler<CreatePoemCommand, Poem>
 {
-    private readonly IHaikuRepository _haikuRepository;
+    private readonly IPoemRepository _poemRepository;
     private readonly ITagRepository _tagRepository;
     private readonly IPoemInputService _poemInputService;
     private readonly IPoemMatcherChain _matcherChain;
@@ -20,18 +20,18 @@ public class CreatePoemCommandHandler : ICommandHandler<CreatePoemCommand, Poem>
     /// <summary>
     /// Initializes a new instance of the <see cref="CreatePoemCommandHandler"/> class.
     /// </summary>
-    /// <param name="haikuRepository">Repository for persisting <see cref="Poem"/> entities.</param>
+    /// <param name="poemRepository">Repository for persisting <see cref="Poem"/> entities.</param>
     /// <param name="tagRepository">Repository for get-or-create <see cref="Tag"/> entities.</param>
     /// <param name="poemInputService">Service for processing and validating poem input.</param>
     /// <param name="matcherChain">Chain of matchers for poem type detection.</param>
     public CreatePoemCommandHandler(
-        IHaikuRepository haikuRepository,
+        IPoemRepository poemRepository,
         ITagRepository tagRepository,
         IPoemInputService poemInputService,
         IPoemMatcherChain matcherChain
     )
     {
-        _haikuRepository = haikuRepository;
+        _poemRepository = poemRepository;
         _tagRepository = tagRepository;
         _poemInputService = poemInputService;
         _matcherChain = matcherChain;
@@ -68,7 +68,7 @@ public class CreatePoemCommandHandler : ICommandHandler<CreatePoemCommand, Poem>
             CreatedAt = DateTime.UtcNow,
         };
 
-        await _haikuRepository.SaveAsync(poem, cancellationToken);
+        await _poemRepository.SaveAsync(poem, cancellationToken);
 
         foreach (var tag in ExtractTags(request.Content))
         {

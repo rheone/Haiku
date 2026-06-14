@@ -8,15 +8,15 @@ namespace Haiku.Services.Slices.Poems;
 /// </summary>
 public class DeletePoemCommandHandler : ICommandHandler<DeletePoemCommand, bool>
 {
-    private readonly IHaikuRepository _haikuRepository;
+    private readonly IPoemRepository _poemRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DeletePoemCommandHandler"/> class.
     /// </summary>
-    /// <param name="haikuRepository">Repository for loading and saving <c>Poem</c> entities.</param>
-    public DeletePoemCommandHandler(IHaikuRepository haikuRepository)
+    /// <param name="poemRepository">Repository for loading and saving <c>Poem</c> entities.</param>
+    public DeletePoemCommandHandler(IPoemRepository poemRepository)
     {
-        _haikuRepository = haikuRepository;
+        _poemRepository = poemRepository;
     }
 
     /// <summary>
@@ -29,14 +29,14 @@ public class DeletePoemCommandHandler : ICommandHandler<DeletePoemCommand, bool>
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var poem = await _haikuRepository.GetByIdAsync(request.PoemId, cancellationToken);
+        var poem = await _poemRepository.GetByIdAsync(request.PoemId, cancellationToken);
         if (poem == null)
         {
             return false;
         }
 
         poem.DeletedAt = DateTime.UtcNow;
-        await _haikuRepository.SaveAsync(poem, cancellationToken);
+        await _poemRepository.SaveAsync(poem, cancellationToken);
         return true;
     }
 }

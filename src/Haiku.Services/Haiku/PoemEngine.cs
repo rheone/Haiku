@@ -8,7 +8,7 @@ namespace Haiku.Services.Haiku;
 /// Core poetry engine: loads the CMU pronunciation dictionary, counts syllables,
 /// validates poetic forms, detects poem types, generates poems, and analyzes rhyme.
 /// </summary>
-public class PoemEngine
+public partial class PoemEngine
 {
     private static readonly IReadOnlyDictionary<PoemType, PoemDefinition> Definitions = new Dictionary<PoemType, PoemDefinition>
     {
@@ -17,42 +17,42 @@ public class PoemEngine
             Type = PoemType.Haiku,
             Name = "Haiku",
             Description = "A traditional Japanese form with 5-7-5 syllable pattern across three lines.",
-            SyllablePattern = new[] { 5, 7, 5 },
+            SyllablePattern = [5, 7, 5],
         },
         [PoemType.Monoku] = new()
         {
             Type = PoemType.Monoku,
             Name = "Monoku",
             Description = "A single-line poem where total syllables must be between 4 and 17 inclusive.",
-            SyllablePattern = new[] { 0 },
+            SyllablePattern = [0],
         },
         [PoemType.Tanka] = new()
         {
             Type = PoemType.Tanka,
             Name = "Tanka",
             Description = "A five-line Japanese form with 5-7-5-7-7 syllable pattern.",
-            SyllablePattern = new[] { 5, 7, 5, 7, 7 },
+            SyllablePattern = [5, 7, 5, 7, 7],
         },
         [PoemType.Katauta] = new()
         {
             Type = PoemType.Katauta,
             Name = "Katauta",
             Description = "A three-line classical Japanese form with 5-7-7 syllable pattern.",
-            SyllablePattern = new[] { 5, 7, 7 },
+            SyllablePattern = [5, 7, 7],
         },
         [PoemType.Sedoka] = new()
         {
             Type = PoemType.Sedoka,
             Name = "Sedoka",
             Description = "A six-line poem equivalent to two joined katauta (5-7-7-5-7-7).",
-            SyllablePattern = new[] { 5, 7, 7, 5, 7, 7 },
+            SyllablePattern = [5, 7, 7, 5, 7, 7],
         },
         [PoemType.Choka] = new()
         {
             Type = PoemType.Choka,
             Name = "Choka",
             Description = "A long poem with alternating 5-7 syllable lines, ending with 5-7-7. Always an odd number of lines.",
-            SyllablePattern = Array.Empty<int>(),
+            SyllablePattern = [],
         },
         [PoemType.AmericanLune] = new()
         {
@@ -60,28 +60,28 @@ public class PoemEngine
             Name = "American Lune",
             Description =
                 "A three-line modern American adaptation of haiku with 3-5-3 syllable pattern. Formerly called Minimalist.",
-            SyllablePattern = new[] { 3, 5, 3 },
+            SyllablePattern = [3, 5, 3],
         },
         [PoemType.KellyLune] = new()
         {
             Type = PoemType.KellyLune,
             Name = "Kelly Lune",
             Description = "A three-line form created by Robert Kelly with 5-3-5 syllable pattern.",
-            SyllablePattern = new[] { 5, 3, 5 },
+            SyllablePattern = [5, 3, 5],
         },
         [PoemType.AmericanCinquain] = new()
         {
             Type = PoemType.AmericanCinquain,
             Name = "American Cinquain",
             Description = "A five-line poem with 2-4-6-8-2 syllable pattern, invented by Adelaide Crapsey.",
-            SyllablePattern = new[] { 2, 4, 6, 8, 2 },
+            SyllablePattern = [2, 4, 6, 8, 2],
         },
         [PoemType.ReverseCinquain] = new()
         {
             Type = PoemType.ReverseCinquain,
             Name = "Reverse Cinquain",
             Description = "A five-line poem with 2-8-6-4-2 syllable pattern, the reverse of the American cinquain.",
-            SyllablePattern = new[] { 2, 8, 6, 4, 2 },
+            SyllablePattern = [2, 8, 6, 4, 2],
         },
         [PoemType.MirrorCinquain] = new()
         {
@@ -89,7 +89,7 @@ public class PoemEngine
             Name = "Mirror Cinquain",
             Description =
                 "A ten-line poem formed by concatenating an American cinquain and a Reverse cinquain (2-4-6-8-2-2-8-6-4-2).",
-            SyllablePattern = new[] { 2, 4, 6, 8, 2, 2, 8, 6, 4, 2 },
+            SyllablePattern = [2, 4, 6, 8, 2, 2, 8, 6, 4, 2],
         },
         [PoemType.ButterflyCinquain] = new()
         {
@@ -97,42 +97,42 @@ public class PoemEngine
             Name = "Butterfly Cinquain",
             Description =
                 "A nine-line poem formed by merging an American cinquain with its reverse, dropping the center line (2-4-6-8-2-8-6-4-2).",
-            SyllablePattern = new[] { 2, 4, 6, 8, 2, 8, 6, 4, 2 },
+            SyllablePattern = [2, 4, 6, 8, 2, 8, 6, 4, 2],
         },
         [PoemType.Isosyllabic] = new()
         {
             Type = PoemType.Isosyllabic,
             Name = "Isosyllabic",
             Description = "A poem where every line has the same syllable count. Any number of lines n >= 2.",
-            SyllablePattern = Array.Empty<int>(),
+            SyllablePattern = [],
         },
         [PoemType.Compressed] = new()
         {
             Type = PoemType.Compressed,
             Name = "Compressed",
             Description = "A three-line nonstandard haiku-inspired ultra-short form with 2-3-2 syllable pattern.",
-            SyllablePattern = new[] { 2, 3, 2 },
+            SyllablePattern = [2, 3, 2],
         },
         [PoemType.NearTraditional] = new()
         {
             Type = PoemType.NearTraditional,
             Name = "Near-Traditional",
             Description = "A three-line nonstandard approximation of haiku with 4-6-4 syllable pattern.",
-            SyllablePattern = new[] { 4, 6, 4 },
+            SyllablePattern = [4, 6, 4],
         },
         [PoemType.Freeform] = new()
         {
             Type = PoemType.Freeform,
             Name = "Freeform",
-            Description = "A poem with no fixed syllable constraints. Must be explicitly chosen by the poet.",
-            SyllablePattern = Array.Empty<int>(),
+            Description = "A poem with no fixed syllable constraints.",
+            SyllablePattern = [],
         },
     };
 
     private readonly Dictionary<string, (int SyllableCount, string[] Phonemes)> _cmuCache = new(
         StringComparer.OrdinalIgnoreCase
     );
-    private readonly Dictionary<int, List<string>> _wordsBySyllableCount = new();
+    private readonly Dictionary<int, List<string>> _wordsBySyllableCount = [];
     private const string Vowels = "aeiouy";
 
     /// <summary>
@@ -203,43 +203,38 @@ public class PoemEngine
             }
 
             var rawWord = parts[0];
-            var word = Regex.Replace(rawWord, @"\(\d+\)$", string.Empty).ToLower();
+            var word = CmuDictRawWordExtraction().Replace(rawWord, string.Empty).ToLower();
 
             var phonemes = parts[1].Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var syllableCount = phonemes.Count(p => p.Any(char.IsDigit));
 
             if (_cmuCache.TryAdd(word, (syllableCount, phonemes)))
             {
-                if (!_wordsBySyllableCount.ContainsKey(syllableCount))
+                if (!_wordsBySyllableCount.TryGetValue(syllableCount, out var value))
                 {
-                    _wordsBySyllableCount[syllableCount] = new List<string>();
+                    value = [];
+                    _wordsBySyllableCount[syllableCount] = value;
                 }
 
-                if (!_wordsBySyllableCount[syllableCount].Contains(word))
+                if (!value.Contains(word))
                 {
-                    _wordsBySyllableCount[syllableCount].Add(word);
+                    value.Add(word);
                 }
             }
         }
     }
-
-    // =========================================================================
-    // Syllable Counting — two-tier resolution: CMU → vowel-group heuristic
-    // =========================================================================
 
     /// <summary>
     /// Counts the total syllables in a line of text.
     /// </summary>
     /// <param name="line">The line to evaluate.</param>
     /// <returns>The syllable count, or 0 for blank lines.</returns>
+    /// <remarks><para>Syllable Counting — two-tier resolution: CMU → vowel-group heuristic</para></remarks>
     public int CountLineSyllables(string line)
     {
-        if (string.IsNullOrWhiteSpace(line))
-        {
-            return 0;
-        }
-
-        return line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Sum(CountWordSyllables);
+        return string.IsNullOrWhiteSpace(line)
+            ? 0
+            : line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Sum(CountWordSyllables);
     }
 
     /// <summary>
@@ -249,18 +244,14 @@ public class PoemEngine
     /// <returns>The syllable count, or 0 for blank words.</returns>
     public int CountWordSyllables(string word)
     {
-        word = new string(word.Where(char.IsLetter).ToArray()).ToLower();
+        word = new string([.. word.Where(char.IsLetter)]).ToLower();
+
         if (string.IsNullOrEmpty(word))
         {
             return 0;
         }
 
-        if (_cmuCache.TryGetValue(word, out var entry))
-        {
-            return entry.SyllableCount;
-        }
-
-        return VowelGroupCount(word);
+        return _cmuCache.TryGetValue(word, out var entry) ? entry.SyllableCount : VowelGroupCount(word);
     }
 
     // =========================================================================
@@ -329,7 +320,7 @@ public class PoemEngine
 
         if (type == PoemType.Freeform)
         {
-            return Array.Empty<string>();
+            return [];
         }
 
         if (type == PoemType.Isosyllabic)
@@ -339,7 +330,7 @@ public class PoemEngine
 
         if (type == PoemType.Monoku)
         {
-            return new[] { BuildLine(rng.Next(4, 18), rng) };
+            return [BuildLine(rng.Next(4, 18), rng)];
         }
 
         if (type == PoemType.Choka)
@@ -347,7 +338,7 @@ public class PoemEngine
             return GenerateChokaPoem(rng);
         }
 
-        return definition.SyllablePattern.Select(target => BuildLine(target, rng)).ToArray();
+        return [.. definition.SyllablePattern.Select(target => BuildLine(target, rng))];
     }
 
     // =========================================================================
@@ -363,8 +354,9 @@ public class PoemEngine
     {
         return new PoemAnalysis
         {
-            Lines = lines
-                .Select(
+            Lines =
+            [
+                .. lines.Select(
                     (line, i) =>
                         new LineAnalysis
                         {
@@ -373,8 +365,8 @@ public class PoemEngine
                             TotalSyllables = CountLineSyllables(line),
                             WordBreakdown = AnalyzeLine(line),
                         }
-                )
-                .ToList(),
+                ),
+            ],
             DetectedType = DetectPoemType(lines),
             TotalSyllables = lines.Sum(CountLineSyllables),
         };
@@ -490,7 +482,8 @@ public class PoemEngine
 
     private static int CountWordSyllablesStatic(string word)
     {
-        word = new string(word.Where(char.IsLetter).ToArray()).ToLower();
+        word = new string([.. word.Where(char.IsLetter)]).ToLower();
+
         if (string.IsNullOrEmpty(word))
         {
             return 0;
@@ -515,12 +508,7 @@ public class PoemEngine
             }
         }
 
-        if (CountLineSyllables(lines[^2]) != 5 || CountLineSyllables(lines[^1]) != 7)
-        {
-            return false;
-        }
-
-        return true;
+        return CountLineSyllables(lines[^2]) == 5 && CountLineSyllables(lines[^1]) == 7;
     }
 
     // =========================================================================
@@ -599,7 +587,7 @@ public class PoemEngine
             .SelectMany(n => _wordsBySyllableCount[n])
             .ToList();
 
-        return pool.OrderBy(_ => rng.Next()).Take(50).ToList();
+        return [.. pool.OrderBy(_ => rng.Next()).Take(50)];
     }
 
     // =========================================================================
@@ -632,12 +620,13 @@ public class PoemEngine
         }
 
         var words = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
         if (words.Length == 0)
         {
             return null;
         }
 
-        return new string(words[^1].Where(char.IsLetter).ToArray()).ToLowerInvariant();
+        return new string([.. words[^1].Where(char.IsLetter)]).ToLowerInvariant();
     }
 
     // =========================================================================
@@ -645,19 +634,20 @@ public class PoemEngine
     // =========================================================================
 
     private List<WordAnalysis> AnalyzeLine(string line) =>
-        line.Split(' ', StringSplitOptions.RemoveEmptyEntries)
-            .Select(w =>
-            {
-                var clean = new string(w.Where(char.IsLetter).ToArray()).ToLowerInvariant();
-                var (count, tier) = ResolveWithTier(clean);
-                return new WordAnalysis
+        [
+            .. line.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Select(w =>
                 {
-                    Word = w,
-                    Syllables = count,
-                    Tier = tier,
-                };
-            })
-            .ToList();
+                    var clean = new string([.. w.Where(char.IsLetter)]).ToLowerInvariant();
+                    var (count, tier) = ResolveWithTier(clean);
+                    return new WordAnalysis
+                    {
+                        Word = w,
+                        Syllables = count,
+                        Tier = tier,
+                    };
+                }),
+        ];
 
     private (int Count, string Tier) ResolveWithTier(string word)
     {
@@ -727,7 +717,7 @@ public class PoemEngine
         /// Gets the per-line analysis results, one entry per line of the poem.
         /// </summary>
         /// <value>A list of <see cref="LineAnalysis"/> entries.</value>
-        public List<LineAnalysis> Lines { get; init; } = new();
+        public List<LineAnalysis> Lines { get; init; } = [];
 
         /// <summary>
         /// Gets the detected poem type, if any definition matched.
@@ -769,7 +759,7 @@ public class PoemEngine
         /// Gets the per-word syllable breakdown for this line.
         /// </summary>
         /// <value>A list of <see cref="WordAnalysis"/> entries.</value>
-        public List<WordAnalysis> WordBreakdown { get; init; } = new();
+        public List<WordAnalysis> WordBreakdown { get; init; } = [];
     }
 
     /// <summary>
@@ -795,4 +785,7 @@ public class PoemEngine
         /// <value>"CMU" if from the pronunciation dictionary, "VowelGroup" if from the fallback heuristic, or "none" if the word was empty.</value>
         public string Tier { get; init; } = string.Empty;
     }
+
+    [GeneratedRegex(@"\(\d+\)$")]
+    private static partial Regex CmuDictRawWordExtraction();
 }

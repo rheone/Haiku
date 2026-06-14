@@ -434,7 +434,7 @@ Two-column layout: left column (col-md-4) for poet metadata (avatar, display nam
 
 3. **Poem type badge:** Small, muted pill below the last poem line: e.g. "haiku · 17 syllables" in DM Mono 0.75rem, `--color-text-muted`. Visible always.
 
-4. **Action row:** `👍 {upvotes}` · `👎 {downvotes}` · Net score (coloured, prefixed +/−) · `♡ {loves}` · `🔖` bookmark toggle · `fa-flag` report · `fa-ellipsis-h` overflow
+4. **Action row:** `fa-thumbs-up {upvotes}` · `fa-thumbs-down {downvotes}` · Net score (coloured, prefixed +/−) · `fa-heart {loves}` · `fa-bookmark` toggle · `fa-ellipsis-h` overflow
 
 **Interaction behavior:**
 
@@ -447,8 +447,46 @@ Two-column layout: left column (col-md-4) for poet metadata (avatar, display nam
 **Unauthenticated state:**
 - Vote and love buttons are visible but disabled with contextual tooltips: "Log in to vote", "Log in to love this poem".
 - The bookmark button is disabled with tooltip "Log in to bookmark".
-- The report (`fa-flag`) button is hidden entirely.
+- The report action is hidden from the overflow menu.
 - Vote counts, net score, and love count remain visible as text.
+
+**Overflow menu (`fa-ellipsis-h`):**
+
+The overflow menu contains the following actions, shown as a Bootstrap dropdown when clicked:
+
+| Action | Authenticated | Unauthenticated |
+|---|---|---|
+| **Share** | Opens a popover with three format buttons (Plain Text, Markdown, HTML) plus a "Share via…" native share option. Clicking a format copies the formatted text to clipboard. The button flashes (brief background pulse to accent color, ≈200ms) on copy. | Same — always available |
+| **Copy Text** | One-click copies the poem as plain text (poem + author credit + permalink + author profile URL) directly to clipboard. Button flashes on copy. | Same — always available |
+| **Report** | Opens the report reason picker (Spam, NSFW, Copyright, Other). | Hidden |
+| **Info** | Navigates to the poem's dedicated detail page (`/poem/{id}`). | Same — always available |
+
+**Copy text format templates:**
+
+- **Plain Text:**
+  ```
+  {poem lines}
+
+  — @{author} ({permalink})
+    {author profile URL}
+  ```
+- **Markdown:**
+  ```
+  > {line 1}
+  > {line 2}
+  > …
+
+  — [@{author}]({author profile URL}) ([permalink]({permalink}))
+  ```
+- **HTML:**
+  ```html
+  <blockquote>
+    <p>{line 1}<br>
+    {line 2}<br>
+    …</p>
+  </blockquote>
+  <p>— <a href="{author profile URL}">@{author}</a> (<a href="{permalink}">permalink</a>)</p>
+  ```
 
 **Card visual treatment:**
 
@@ -486,19 +524,21 @@ Hashtags (`#word`) receive the same treatment as word links but use `--color-acc
 
 ### 10.4 Composer (`ComposeBox.razor`)
 
-**Collapsed state:** A single rounded-rectangle input row: avatar (32px) + placeholder text "Write a poem…" + `fa-feather-alt` icon right-aligned. Clicking/focusing expands.
+The composer is rendered only for authenticated users. It is always in the expanded state — there is no collapsed prompt state.
 
 **Expanded state (top to bottom):**
 
-1. **Poem input area:** A single `<textarea>`. Lines are delimited by newlines. Font: IM Fell English, 1.25rem. Per-line syllable count badges are displayed inline to the right of each line.
+1. **Poem input area:** A single `<textarea>`. Lines are delimited by newlines. Font: IM Fell English, 1.25rem. The textarea is the primary input tool.
 
-2. **Type badge + Freeform toggle row:** Read-only poem type badge (e.g. "haiku", "tanka") on the left, Freeform toggle on the right. The Freeform toggle is an explicit opt-in that overrides the detected type and bypasses syllable validation.
+2. **Type badge + Freeform toggle row:** Read-only poem type badge (text only, e.g. "haiku", "tanka") on the left, Freeform toggle on the right. The Freeform toggle is an explicit opt-in that overrides the detected type and bypasses syllable validation. The type badge is hidden when the textarea is empty; it appears once the system can confidently detect a type.
 
-3. **Count display line:** Character count, total syllable count, word count, and line count in order: `{chars} chars · {syl} syl · {words} words · {lines} lines`. Uses DM Mono, 0.8rem, `--color-text-muted`.
+3. **Count display line:** Character count, total syllable count, word count, and line count in order: `{chars} chars · {syl} syl · {words} words · {lines} lines`. Uses DM Mono, 0.8rem, `--color-text-muted`. When the textarea is empty, the count line shows dimmed zeros. A word is a whitespace-delimited token of one or more alphabetical characters, a numeral sequence, or a Roman numeral sequence. Only non-empty lines (containing at least one qualifying word token) are counted.
 
-4. **Theme picker row:** Horizontally scrollable chip list of Active themes. Each chip: `fa-{icon}` + theme name + color swatch circle. Selected chip has a solid border in `--color-accent`. Recommendation hint text appears above the row when confidence ≥ threshold.
+4. **Preview panel:** Below the count line, a live WYSIWYG preview renders the poem as it would appear when published. Each line is rendered in IM Fell English, 1.25rem, with every word wrapped in a hyperlink (`/word/{word}`) matching the published word-link styling. Per-line syllable badges are placed to the right of each rendered line, showing `{actual}/{target}` when the poem type is known or `{actual}` alone for Freeform. The preview panel is hidden when the textarea is empty.
 
-5. **Action bar:** [Generate `fa-dice`] [Save Draft] [Publish `fa-paper-plane`] — right-aligned. Publish is disabled (not hidden) when syllable validation fails for non-freeform poems, with a tooltip explaining the reason.
+5. **Theme picker row:** Horizontally scrollable chip list of Active themes. Each chip: `fa-{icon}` + theme name + color swatch circle. Selected chip has a solid border in `--color-accent`. Recommendation hint text appears above the row when confidence ≥ threshold. The theme picker is hidden when the textarea is empty.
+
+6. **Action bar:** [Generate `fa-dice`] [Save Draft] [Publish `fa-paper-plane`] — right-aligned. Publish is disabled (not hidden) when syllable validation fails for non-freeform poems, with a tooltip explaining the reason.
 
 
 **Debounce and paste behavior:**

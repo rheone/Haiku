@@ -187,14 +187,14 @@ Requirements are tagged **MH** (must-have, v1.0), **SH** (should-have, v1.1), or
 | HC-08 | Users can delete their own published poems. | MH |
 | HC-09 | Hashtags (`#word`) within poem lines are detected automatically and stored as normalized tags. | MH |
 | HC-10 | The composer provides a "Generate" button that produces a random poem using the CMU dictionary. Generated poems may be nonsensical; they must satisfy the syllable constraints of the selected poem type (including freeform). | MH |
-| HC-11 | The system attempts to guess the poem type based on line count and syllable structure at creation time. If the input does not match any known pattern it defaults to Freeform. The user may override the detected type. | MH |
+| HC-11 | The system attempts to guess the poem type based on line count and syllable structure at creation time. If the input does not match any known pattern it defaults to Freeform. The type is declared when confidently identified; an ambiguous type at publish time is treated as Freeform. The only manual override is the Freeform toggle. | MH |
 | HC-12 | Users may explicitly select "Freeform" mode to bypass syllable validation for non-standard structures. This must be an intentional opt-in via the UI. | MH |
 | HC-13 | On publish, the validated syllable counts, poem type, and total syllable count are persisted with the poem record. | MH |
 | HC-14 | A dedicated "My Drafts" page (`/drafts`) displays a paginated list of all the user's unpublished drafts, newest first. Each draft shows its preview text and has Publish and Delete actions. | MH |
 | HC-15 | A badge on the NavBar or composer area shows the count of unpublished drafts when the user has one or more drafts saved. | MH |
 | HC-16 | Users can delete a draft from the drafts page without publishing it. | MH |
 | HC-17 | The composer displays a count line below the input area showing character count, total syllable count, word count, and line count in that order. Format: `{chars} chars · {syl} syl · {words} words · {lines} lines` in monospace type. Updates are debounced at 800ms on keystroke and 50ms on paste. | MH |
-| HC-18 | The composer layout from top to bottom: (1) single textarea with per-line syllable badges, (2) poem type badge + Freeform toggle row, (3) count display line (chars · syl · words · lines), (4) theme picker chip row, (5) action bar. | MH |
+| HC-18 | The composer layout from top to bottom in its expanded state: (1) single textarea, (2) read-only poem type badge + Freeform toggle row, (3) count display line (chars · syl · words · lines), (4) preview panel mirroring the input with per-line syllable badges and word links, (5) theme picker chip row, (6) action bar. The composer is always expanded for authenticated users; there is no collapsed state. | MH |
 | HC-19 | The composer is hidden entirely for unauthenticated users. | MH |
 
 ### 5.3 Syllable Counting Engine
@@ -438,6 +438,12 @@ The v1.0 syllable engine targets English only. The architecture does not preclud
 
 > **As a poet,** I want a generate button that creates a random poem, so I can get inspiration or have fun with nonsensical output.
 
+> **As a poet,** I want to see real-time character, syllable, word, and line counts as I type, so I can track my poem's structure at a glance.
+
+> **As a poet,** I want a live preview of my poem that shows its final published appearance with word links and per-line syllable badges, so I know exactly how it will look before I publish.
+
+> **As a poet,** I want to optionally bypass syllable validation with a Freeform toggle, so I can write non-standard structures without being blocked.
+
 ### Discover
 
 > **As a reader,** I want the feed to show the hottest poems first (by vote score and recency), so I see what the community is enjoying right now.
@@ -459,6 +465,12 @@ The v1.0 syllable engine targets English only. The architecture does not preclud
 > **As a reader,** I want to see the net score of a poem so that I can quickly gauge community sentiment.
 
 > **As a reader,** I want to "heart" a poem that I especially liked, with my loves visible on my profile.
+
+> **As a reader,** I want satisfying visual feedback (an animation) when I vote or love a poem, so the interaction feels responsive and engaging.
+
+> **As a reader,** I want to share a beautiful poem with others by copying it in plain text, Markdown, or HTML, so I can post it wherever I like.
+
+> **As a reader,** I want to quickly copy a poem and its credit line to my clipboard in one click, so I can share it without manual formatting.
 
 ### Accounts
 

@@ -9,15 +9,15 @@ namespace Haiku.Services.Slices.Poems;
 /// </summary>
 public class GetPoemQueryHandler : IQueryHandler<GetPoemQuery, Poem?>
 {
-    private readonly IHaikuRepository _haikuRepository;
+    private readonly IPoemRepository _poemRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GetPoemQueryHandler"/> class.
     /// </summary>
-    /// <param name="haikuRepository">Repository for loading <see cref="Poem"/> entities.</param>
-    public GetPoemQueryHandler(IHaikuRepository haikuRepository)
+    /// <param name="poemRepository">Repository for loading <see cref="Poem"/> entities.</param>
+    public GetPoemQueryHandler(IPoemRepository poemRepository)
     {
-        _haikuRepository = haikuRepository;
+        _poemRepository = poemRepository;
     }
 
     /// <summary>
@@ -29,6 +29,6 @@ public class GetPoemQueryHandler : IQueryHandler<GetPoemQuery, Poem?>
     public async Task<Poem?> Handle(GetPoemQuery request, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return await _haikuRepository.GetByIdAsync(request.PoemId, cancellationToken);
+        return await _poemRepository.GetByIdAsync(request.PoemId, cancellationToken);
     }
 }

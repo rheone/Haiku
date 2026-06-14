@@ -1,35 +1,36 @@
 using Haiku.Domain.Entities;
 using Haiku.Domain.Enums;
 using Haiku.Domain.Interfaces;
+using Haiku.Services.Haiku;
 using Haiku.Services.Poems.Matchers;
 
-namespace Haiku.Services.Haiku;
+namespace Haiku.Services.Poems;
 
 /// <summary>
 /// Manages poem creation, retrieval, soft-deletion, tag extraction, and type detection.
 /// </summary>
-public class HaikuService
+public class PoemService
 {
-    private readonly IHaikuRepository _haikuRepository;
+    private readonly IPoemRepository _poemRepository;
     private readonly ITagRepository _tagRepository;
     private readonly PoemEngine _poemEngine;
     private readonly IPoemMatcherChain _matcherChain;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="HaikuService"/> class.
+    /// Initializes a new instance of the <see cref="PoemService"/> class.
     /// </summary>
-    /// <param name="haikuRepository">Repository for poem entities.</param>
+    /// <param name="poemRepository">Repository for poem entities.</param>
     /// <param name="tagRepository">Repository for tag entities.</param>
     /// <param name="poemEngine">Engine for syllable counting and poem type detection.</param>
     /// <param name="matcherChain">Chain of matchers for poem type detection.</param>
-    public HaikuService(
-        IHaikuRepository haikuRepository,
+    public PoemService(
+        IPoemRepository poemRepository,
         ITagRepository tagRepository,
         PoemEngine poemEngine,
         IPoemMatcherChain matcherChain
     )
     {
-        _haikuRepository = haikuRepository;
+        _poemRepository = poemRepository;
         _tagRepository = tagRepository;
         _poemEngine = poemEngine;
         _matcherChain = matcherChain;
@@ -68,7 +69,7 @@ public class HaikuService
             CreatedAt = DateTime.UtcNow,
         };
 
-        await _haikuRepository.SaveAsync(poem, cancellationToken);
+        await _poemRepository.SaveAsync(poem, cancellationToken);
 
         foreach (var tag in ExtractTags(content))
         {
@@ -111,7 +112,7 @@ public class HaikuService
     public async Task<Poem?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        return await _haikuRepository.GetByIdAsync(id, cancellationToken);
+        return await _poemRepository.GetByIdAsync(id, cancellationToken);
     }
 
     /// <summary>
@@ -124,7 +125,7 @@ public class HaikuService
     {
         cancellationToken.ThrowIfCancellationRequested();
         poem.DeletedAt = DateTime.UtcNow;
-        await _haikuRepository.SaveAsync(poem, cancellationToken);
+        await _poemRepository.SaveAsync(poem, cancellationToken);
     }
 
     /// <summary>
@@ -161,7 +162,6 @@ public class HaikuService
         var lineCount = lines.Length;
         var counts = lineSyllableCounts;
 
-        // 1. Monoku — single line, 4-17 syllables
         if (lineCount == 1 && counts.Count == 1 && counts[0] >= 4 && counts[0] <= 17)
         {
             return PoemType.Monoku;
@@ -169,32 +169,26 @@ public class HaikuService
 
         if (lineCount == 3 && counts.Count == 3)
         {
-            // 2. Haiku: 5-7-5
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 5)
             {
                 return PoemType.Haiku;
             }
-            // 3. Katauta: 5-7-7
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 7)
             {
                 return PoemType.Katauta;
             }
-            // 4. American Lune: 3-5-3
             if (counts[0] == 3 && counts[1] == 5 && counts[2] == 3)
             {
                 return PoemType.AmericanLune;
             }
-            // 5. Kelly Lune: 5-3-5
             if (counts[0] == 5 && counts[1] == 3 && counts[2] == 5)
             {
                 return PoemType.KellyLune;
             }
-            // 6. Compressed: 2-3-2
             if (counts[0] == 2 && counts[1] == 3 && counts[2] == 2)
             {
                 return PoemType.Compressed;
             }
-            // 7. Near-Traditional: 4-6-4
             if (counts[0] == 4 && counts[1] == 6 && counts[2] == 4)
             {
                 return PoemType.NearTraditional;
@@ -203,17 +197,14 @@ public class HaikuService
 
         if (lineCount == 5 && counts.Count == 5)
         {
-            // 8. Tanka: 5-7-5-7-7
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 5 && counts[3] == 7 && counts[4] == 7)
             {
                 return PoemType.Tanka;
             }
-            // 9. American Cinquain: 2-4-6-8-2
             if (counts[0] == 2 && counts[1] == 4 && counts[2] == 6 && counts[3] == 8 && counts[4] == 2)
             {
                 return PoemType.AmericanCinquain;
             }
-            // 10. Reverse Cinquain: 2-8-6-4-2
             if (counts[0] == 2 && counts[1] == 8 && counts[2] == 6 && counts[3] == 4 && counts[4] == 2)
             {
                 return PoemType.ReverseCinquain;
@@ -222,7 +213,6 @@ public class HaikuService
 
         if (lineCount == 6 && counts.Count == 6)
         {
-            // 11. Sedoka: 5-7-7-5-7-7
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 7 && counts[3] == 5 && counts[4] == 7 && counts[5] == 7)
             {
                 return PoemType.Sedoka;
@@ -231,7 +221,6 @@ public class HaikuService
 
         if (lineCount == 9 && counts.Count == 9)
         {
-            // 12. Butterfly Cinquain: 2-4-6-8-2-8-6-4-2
             if (
                 counts[0] == 2
                 && counts[1] == 4
@@ -250,7 +239,6 @@ public class HaikuService
 
         if (lineCount == 10 && counts.Count == 10)
         {
-            // 13. Mirror Cinquain: 2-4-6-8-2-2-8-6-4-2
             if (
                 counts[0] == 2
                 && counts[1] == 4
@@ -268,7 +256,6 @@ public class HaikuService
             }
         }
 
-        // 14. Choka: >=7 odd lines, alternating 5-7 + 5-7-7 ending
         if (lineCount >= 7 && lineCount % 2 == 1)
         {
             var choka = true;
@@ -288,7 +275,6 @@ public class HaikuService
             }
         }
 
-        // 15. Isosyllabic: >=2 lines, all same count
         if (lineCount >= 2 && counts.Count == lineCount)
         {
             var first = counts[0];

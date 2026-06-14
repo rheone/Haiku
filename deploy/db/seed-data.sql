@@ -91,9 +91,9 @@ GO
 -- ============================================================================
 -- SEED POEMS
 -- ============================================================================
-IF NOT EXISTS (SELECT 1 FROM Haikus WHERE Id = '10000000-0000-0000-0000-000000000001')
+IF NOT EXISTS (SELECT 1 FROM Poems WHERE Id = '10000000-0000-0000-0000-000000000001')
 BEGIN
-    INSERT INTO Haikus (Id, AuthorId, Content, PoemType, TotalSyllables, IsDraft, CreatedAt)
+    INSERT INTO Poems (Id, AuthorId, Content, PoemType, TotalSyllables, IsDraft, CreatedAt)
     VALUES
         ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000010',
          'An old silent pond' + CHAR(10) + 'A frog jumps into the pond' + CHAR(10) + 'Splash! Silence again',
@@ -134,9 +134,9 @@ GO
 -- ============================================================================
 -- ADDITIONAL POEM TYPES
 -- ============================================================================
-IF NOT EXISTS (SELECT 1 FROM Haikus WHERE Id = '10000000-0000-0000-0000-000000000009')
+IF NOT EXISTS (SELECT 1 FROM Poems WHERE Id = '10000000-0000-0000-0000-000000000009')
 BEGIN
-    INSERT INTO Haikus (Id, AuthorId, Content, PoemType, TotalSyllables, IsDraft, CreatedAt)
+    INSERT INTO Poems (Id, AuthorId, Content, PoemType, TotalSyllables, IsDraft, CreatedAt)
     VALUES
         -- Katauta (5-7-7)
         ('10000000-0000-0000-0000-000000000009', '00000000-0000-0000-0000-000000000010',
@@ -212,11 +212,11 @@ END
 GO
 
 -- ============================================================================
--- SEED HAIKU-TAG RELATIONSHIPS
+-- SEED POEM-TAG RELATIONSHIPS
 -- ============================================================================
-IF NOT EXISTS (SELECT 1 FROM HaikuTags WHERE HaikuId = '10000000-0000-0000-0000-000000000001')
+IF NOT EXISTS (SELECT 1 FROM PoemTags WHERE PoemId = '10000000-0000-0000-0000-000000000001')
 BEGIN
-    INSERT INTO HaikuTags (HaikuId, TagId)
+    INSERT INTO PoemTags (PoemId, TagId)
     VALUES
         ('10000000-0000-0000-0000-000000000001', (SELECT Id FROM Tags WHERE Name = 'nature')),
         ('10000000-0000-0000-0000-000000000001', (SELECT Id FROM Tags WHERE Name = 'silence')),
@@ -240,9 +240,9 @@ GO
 -- ============================================================================
 -- ADDITIONAL POEM-TAG RELATIONSHIPS
 -- ============================================================================
-IF NOT EXISTS (SELECT 1 FROM HaikuTags WHERE HaikuId = '10000000-0000-0000-0000-000000000009')
+IF NOT EXISTS (SELECT 1 FROM PoemTags WHERE PoemId = '10000000-0000-0000-0000-000000000009')
 BEGIN
-    INSERT INTO HaikuTags (HaikuId, TagId)
+    INSERT INTO PoemTags (PoemId, TagId)
     VALUES
         ('10000000-0000-0000-0000-000000000009', (SELECT Id FROM Tags WHERE Name = 'nature')),
         ('10000000-0000-0000-0000-000000000009', (SELECT Id FROM Tags WHERE Name = 'silence')),
@@ -274,9 +274,9 @@ GO
 -- ============================================================================
 -- SEED VOTES
 -- ============================================================================
-IF NOT EXISTS (SELECT 1 FROM Votes WHERE HaikuId = '10000000-0000-0000-0000-000000000001')
+IF NOT EXISTS (SELECT 1 FROM Votes WHERE PoemId = '10000000-0000-0000-0000-000000000001')
 BEGIN
-    INSERT INTO Votes (Id, HaikuId, UserId, Value, CreatedAt)
+    INSERT INTO Votes (Id, PoemId, UserId, Value, CreatedAt)
     VALUES
         (NEWID(), '10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000011', 1,  DATEADD(MINUTE, -30, SYSUTCDATETIME())),
         (NEWID(), '10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000012', 1,  DATEADD(MINUTE, -45, SYSUTCDATETIME())),
@@ -292,9 +292,9 @@ GO
 -- ============================================================================
 -- SEED LOVES
 -- ============================================================================
-IF NOT EXISTS (SELECT 1 FROM Loves WHERE HaikuId = '10000000-0000-0000-0000-000000000001')
+IF NOT EXISTS (SELECT 1 FROM Loves WHERE PoemId = '10000000-0000-0000-0000-000000000001')
 BEGIN
-    INSERT INTO Loves (Id, HaikuId, UserId, CreatedAt)
+    INSERT INTO Loves (Id, PoemId, UserId, CreatedAt)
     VALUES
         (NEWID(), '10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000012', DATEADD(MINUTE, -40, SYSUTCDATETIME())),
         (NEWID(), '10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000013', DATEADD(MINUTE, -55, SYSUTCDATETIME())),

@@ -8,13 +8,13 @@ namespace Haiku.Domain.Interfaces;
 public interface IBookmarkRepository
 {
     /// <summary>
-    /// Retrieves a bookmark by its composite user and haiku identifier.
+    /// Retrieves a bookmark by its composite user and poem identifier.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
-    /// <param name="haikuId">The unique identifier of the haiku poem.</param>
+    /// <param name="poemId">The unique identifier of the poem.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>The matching bookmark, or <c>null</c> if no bookmark exists.</returns>
-    Task<Bookmark?> GetByUserAndHaikuAsync(Guid userId, Guid haikuId, CancellationToken cancellationToken = default);
+    Task<Bookmark?> GetByUserAndPoemAsync(Guid userId, Guid poemId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Persists a new or modified bookmark.

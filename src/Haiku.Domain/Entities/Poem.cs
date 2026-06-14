@@ -5,9 +5,9 @@ using Haiku.Domain.Enums;
 namespace Haiku.Domain.Entities;
 
 /// <summary>
-/// Represents a haiku poem authored by a user.
+/// Represents a poem authored by a user.
 /// </summary>
-[Table("Haikus")]
+[Table("Poems")]
 public class Poem
 {
     /// <summary>

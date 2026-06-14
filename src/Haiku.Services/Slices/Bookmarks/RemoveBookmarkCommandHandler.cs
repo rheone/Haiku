@@ -24,7 +24,7 @@ public class RemoveBookmarkCommandHandler : ICommandHandler<RemoveBookmarkComman
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var existing = await _bookmarkRepository.GetByUserAndHaikuAsync(request.UserId, request.PoemId, cancellationToken);
+        var existing = await _bookmarkRepository.GetByUserAndPoemAsync(request.UserId, request.PoemId, cancellationToken);
         if (existing == null)
         {
             return false;
