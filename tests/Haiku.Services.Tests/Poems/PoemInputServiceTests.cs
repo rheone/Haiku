@@ -1,13 +1,27 @@
 namespace Haiku.Services.Tests.Poems;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.PoemInputService"/> covering input
+/// validation, normalization (trimming, line-ending conversion, zero-width character
+/// removal), and syllable analysis of raw poem text.
+/// </summary>
 public class PoemInputServiceTests
 {
     private readonly SyllableEngine _syllableEngine;
     private readonly IPoemMatcherChain _matcherChain;
     private readonly PoemInputService _service;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PoemInputServiceTests"/> class.
+    /// Creates a partial substitute of <see cref="SyllableEngine"/> with empty
+    /// dictionary and CMU word sets, and a mock <see cref="IPoemMatcherChain"/>
+    /// that defaults to returning <see cref="PoemType.Haiku"/>.
+    /// </summary>
     public PoemInputServiceTests()
     {
+        // Partial substitute: allows real method execution while mocking abstract
+        // base behavior. SyllableEngine is a singleton that loads dictionary.dic;
+        // providing empty collections avoids file I/O in unit tests.
         _syllableEngine = Substitute.For<SyllableEngine>(new Dictionary<string, int>(), new HashSet<string>());
         _matcherChain = Substitute.For<IPoemMatcherChain>();
         _matcherChain.Match(Arg.Any<string[]>(), Arg.Any<int[]>()).Returns(PoemType.Haiku);

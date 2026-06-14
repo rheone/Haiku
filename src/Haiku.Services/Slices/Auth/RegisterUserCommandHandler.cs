@@ -41,7 +41,9 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, U
             Id = Guid.NewGuid(),
             Email = request.Email,
             Username = request.Username,
+            // Default display name to username; user can customize later in profile settings.
             DisplayName = request.Username,
+            // Work factor 12 targets ~300ms per hash, balancing brute-force resistance with UX.
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12),
             CreatedAt = DateTime.UtcNow,
         };

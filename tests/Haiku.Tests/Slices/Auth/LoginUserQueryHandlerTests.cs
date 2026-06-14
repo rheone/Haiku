@@ -17,6 +17,7 @@ public class LoginUserQueryHandlerTests
             Id = Guid.NewGuid(),
             Email = "test@example.com",
             Username = "testuser",
+            // Work factor 12 matches production cost; each hash takes ~300ms.
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("correct_password", workFactor: 12),
             IsDisabled = false,
         };
@@ -40,6 +41,7 @@ public class LoginUserQueryHandlerTests
         {
             Id = Guid.NewGuid(),
             Email = "test@example.com",
+            // Work factor 12 matches production cost; each hash takes ~300ms.
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("correct_password", workFactor: 12),
         };
         userRepo.GetByEmailAsync("test@example.com", TestContext.Current.CancellationToken).Returns(user);
@@ -76,6 +78,7 @@ public class LoginUserQueryHandlerTests
         {
             Id = Guid.NewGuid(),
             Email = "disabled@example.com",
+            // Work factor 12 matches production cost; each hash takes ~300ms.
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("password", workFactor: 12),
             IsDisabled = true,
         };

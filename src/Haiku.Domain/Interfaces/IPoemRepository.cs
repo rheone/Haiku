@@ -2,9 +2,18 @@ using Haiku.Domain.Entities;
 
 namespace Haiku.Domain.Interfaces;
 
+// Standard CRUD access for poem entities. Poems are the central content type
+// in the platform — all social features (bookmark, love, vote) revolve around them.
+
 /// <summary>
 /// Provides data access for poem entities.
 /// </summary>
+/// <remarks>
+/// <para>Poems are the core content entity on the platform. This repository provides
+/// basic CRUD operations. Queries for lists (feed, search, user poems) are handled
+/// by feature-specific query handlers rather than this repository, following the
+/// CQRS principle of separating read and write concerns.</para>
+/// </remarks>
 public interface IPoemRepository
 {
     /// <summary>

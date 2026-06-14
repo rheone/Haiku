@@ -3,11 +3,20 @@ using Haiku.Services.Haiku;
 namespace Haiku.Tests;
 
 /// <summary>Unit tests for <see cref="SyllableEngine"/> covering syllable counting with custom dictionaries and punctuation stripping.</summary>
+/// <remarks>
+/// <para>
+/// The syllable count resolution chain is: custom dictionary (highest priority) → CMU
+/// pronunciation dictionary → heuristic fallback. Tests verify each tier and the priority
+/// ordering between them. Counts default to 1 for unrecognized words that are non-empty.
+/// </para>
+/// </remarks>
 public class SyllableEngineTests
 {
     [Fact]
     public void CountWordSyllables_ReturnsCustomDictionaryCount_WhenWordExists()
     {
+        // Custom dictionary has top priority; CMU dictionary and heuristic are only consulted
+        // when a word is absent from the custom dict.
         var customDict = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { { "haiku", 2 } };
         var engine = new SyllableEngine(customDict);
 
@@ -19,6 +28,7 @@ public class SyllableEngineTests
     [Fact]
     public void CountWordSyllables_CustomDictionaryTakesPriority_OverCmuDictionary()
     {
+        // Both dictionaries claim "hello" with different counts; custom (1) must win over CMU.
         var customDict = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { { "hello", 1 } };
         var cmuDict = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "HELLO" };
         var engine = new SyllableEngine(customDict, cmuDict);

@@ -1,5 +1,10 @@
 namespace Haiku.Services.Tests.Poems.Matchers;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.Matchers.IsosyllabicMatcher"/> — verifying
+/// that poems with equal syllable counts per line are identified as isosyllabic
+/// regardless of line count, and that unequal syllable patterns are rejected.
+/// </summary>
 public class IsosyllabicMatcherTests
 {
     private readonly IsosyllabicMatcher _matcher = new();

@@ -1,5 +1,10 @@
 namespace Haiku.Services.Tests.Poems.Matchers;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.Matchers.MonokuMatcher"/> — verifying
+/// that single-line poems with 4-17 syllables are identified as monoku,
+/// while poems below 4 or above 17 syllables, or with multiple lines, are rejected.
+/// </summary>
 public class MonokuMatcherTests
 {
     private readonly MonokuMatcher _matcher = new();

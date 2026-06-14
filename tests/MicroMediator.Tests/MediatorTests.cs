@@ -6,6 +6,10 @@ namespace MicroMediator.Tests;
 /// <summary>Unit tests for <see cref="IMediator"/> covering command dispatch, query dispatch, and handler independence.</summary>
 public class MediatorTests
 {
+    /// <summary>
+    /// Verifies that sending a command with a return value resolves the correct handler
+    /// via the DI container and returns the expected result.
+    /// </summary>
     [Fact]
     public async Task Send_command_with_result_resolves_and_invokes_handler()
     {
@@ -20,6 +24,10 @@ public class MediatorTests
         Assert.True(result);
     }
 
+    /// <summary>
+    /// Verifies that sending a void command (no return value) resolves and invokes
+    /// the handler, observable through a side effect on the handler's static state.
+    /// </summary>
     [Fact]
     public async Task Send_void_command_resolves_and_invokes_handler()
     {
@@ -33,6 +41,10 @@ public class MediatorTests
         Assert.True(TestVoidCommandHandler.Invoked);
     }
 
+    /// <summary>
+    /// Verifies that sending a query returns a correctly typed result computed by
+    /// the matching query handler.
+    /// </summary>
     [Fact]
     public async Task Send_query_resolves_and_invokes_handler()
     {
@@ -46,6 +58,11 @@ public class MediatorTests
         Assert.Equal("42", result);
     }
 
+    /// <summary>
+    /// Verifies that multiple mediator instances from the same service provider
+    /// produce independent handler invocations with no shared state interference.
+    /// This confirms scoped service resolution.
+    /// </summary>
     [Fact]
     public async Task Multiple_handlers_are_independent()
     {
@@ -64,6 +81,12 @@ public class MediatorTests
         Assert.True(r2);
     }
 
+    /// <summary>
+    /// Verifies that command and query handlers coexist in the same container
+    /// without handler-type collisions. A single mediator dispatches both
+    /// <c>ICommand&lt;TResult&gt;</c> and <c>IQuery&lt;TResult&gt;</c> messages
+    /// to their respective handler implementations.
+    /// </summary>
     [Fact]
     public async Task Different_handler_types_are_independent()
     {

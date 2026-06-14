@@ -1,5 +1,10 @@
 namespace Haiku.Services.Tests.Poems.Matchers;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.Matchers.HaikuMatcher"/> — verifying
+/// the 5-7-5 syllable pattern is correctly identified as a haiku and that
+/// patterns with wrong syllable counts or wrong line counts are rejected.
+/// </summary>
 public class HaikuMatcherTests
 {
     private readonly HaikuMatcher _matcher = new();

@@ -20,76 +20,48 @@ public class UserRepository : IUserRepository
         _db = db;
     }
 
-    /// <summary>
-    /// Retrieves a user by their unique identifier.
-    /// </summary>
-    /// <param name="id">The unique identifier of the user.</param>
-    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns>The user if found; otherwise <c>null</c>.</returns>
+    /// <inheritdoc/>
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return await _db.Users.FindAsync(new object[] { id }, cancellationToken);
     }
 
-    /// <summary>
-    /// Retrieves a user by their email address.
-    /// </summary>
-    /// <param name="email">The email address to search for.</param>
-    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns>The user if found; otherwise <c>null</c>.</returns>
+    /// <inheritdoc/>
     public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return await _db.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 
-    /// <summary>
-    /// Retrieves a user by their username.
-    /// </summary>
-    /// <param name="username">The username to search for.</param>
-    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns>The user if found; otherwise <c>null</c>.</returns>
+    /// <inheritdoc/>
     public async Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return await _db.Users.FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
     }
 
-    /// <summary>
-    /// Checks whether a user with the given email address already exists.
-    /// </summary>
-    /// <param name="email">The email address to check.</param>
-    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns><c>true</c> if a user with the specified email exists; otherwise <c>false</c>.</returns>
+    /// <inheritdoc/>
     public async Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return await _db.Users.AnyAsync(u => u.Email == email, cancellationToken);
     }
 
-    /// <summary>
-    /// Checks whether a user with the given username already exists.
-    /// </summary>
-    /// <param name="username">The username to check.</param>
-    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns><c>true</c> if a user with the specified username exists; otherwise <c>false</c>.</returns>
+    /// <inheritdoc/>
     public async Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return await _db.Users.AnyAsync(u => u.Username == username, cancellationToken);
     }
 
-    /// <summary>
-    /// Persists a new user or saves changes to an existing tracked user.
-    /// </summary>
-    /// <param name="user">The user entity to save.</param>
-    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns>A task representing the asynchronous save operation.</returns>
+    /// <inheritdoc/>
     public async Task SaveAsync(User user, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var entry = _db.Entry(user);
+        // If the entity is detached it is new and must be added to the change tracker.
+        // If already tracked, SaveChanges persists modifications automatically.
         if (entry.State == EntityState.Detached)
         {
             _db.Users.Add(user);
@@ -97,16 +69,14 @@ public class UserRepository : IUserRepository
         await _db.SaveChangesAsync(cancellationToken);
     }
 
-    /// <summary>
-    /// Updates an existing user entity in the database.
-    /// </summary>
-    /// <param name="user">The user entity with updated values.</param>
-    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns>A task representing the asynchronous update operation.</returns>
+    /// <inheritdoc/>
     public async Task UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var entry = _db.Entry(user);
+        // Attach a detached entity to the change tracker and mark it as Modified
+        // so EF Core sends an UPDATE for all properties, even when the entity was
+        // not retrieved by this DbContext instance.
         if (entry.State == EntityState.Detached)
         {
             _db.Users.Attach(user);
@@ -115,12 +85,7 @@ public class UserRepository : IUserRepository
         await _db.SaveChangesAsync(cancellationToken);
     }
 
-    /// <summary>
-    /// Deletes a user entity from the database.
-    /// </summary>
-    /// <param name="user">The user entity to remove.</param>
-    /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns>A task representing the asynchronous delete operation.</returns>
+    /// <inheritdoc/>
     public async Task DeleteAsync(User user, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

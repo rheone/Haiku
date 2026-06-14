@@ -19,6 +19,8 @@ public class EmailServiceTests
             TestContext.Current.CancellationToken
         );
 
+        // Verifies the sender was called; the subject and body are constructed inside EmailService
+        // and validated by EmailService integration tests, so we assert only that dispatch occurred.
         await sender
             .Received(1)
             .SendEmailAsync("test@example.com", Arg.Any<string>(), Arg.Any<string>(), TestContext.Current.CancellationToken);
@@ -36,6 +38,8 @@ public class EmailServiceTests
             TestContext.Current.CancellationToken
         );
 
+        // Verifies the sender was called; the subject and body are constructed inside EmailService
+        // and validated by EmailService integration tests, so we assert only that dispatch occurred.
         await sender
             .Received(1)
             .SendEmailAsync("test@example.com", Arg.Any<string>(), Arg.Any<string>(), TestContext.Current.CancellationToken);

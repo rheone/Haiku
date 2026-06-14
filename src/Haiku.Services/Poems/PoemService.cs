@@ -162,11 +162,14 @@ public class PoemService
         var lineCount = lines.Length;
         var counts = lineSyllableCounts;
 
+        // Monoku: single line, total syllables between 4 and 17 inclusive.
         if (lineCount == 1 && counts.Count == 1 && counts[0] >= 4 && counts[0] <= 17)
         {
             return PoemType.Monoku;
         }
 
+        // Three-line forms: Haiku, Katauta, American Lune, Kelly Lune,
+        // Compressed, Near-Traditional.
         if (lineCount == 3 && counts.Count == 3)
         {
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 5)
@@ -195,6 +198,7 @@ public class PoemService
             }
         }
 
+        // Five-line forms: Tanka, American Cinquain, Reverse Cinquain.
         if (lineCount == 5 && counts.Count == 5)
         {
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 5 && counts[3] == 7 && counts[4] == 7)
@@ -211,6 +215,7 @@ public class PoemService
             }
         }
 
+        // Sedoka: six-line form, equivalent to two joined Katauta (5-7-7-5-7-7).
         if (lineCount == 6 && counts.Count == 6)
         {
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 7 && counts[3] == 5 && counts[4] == 7 && counts[5] == 7)
@@ -219,6 +224,8 @@ public class PoemService
             }
         }
 
+        // Butterfly Cinquain: nine-line form merging an American Cinquain with
+        // its reverse, dropping the shared center line (2-4-6-8-2-8-6-4-2).
         if (lineCount == 9 && counts.Count == 9)
         {
             if (
@@ -237,6 +244,8 @@ public class PoemService
             }
         }
 
+        // Mirror Cinquain: ten-line form concatenating an American Cinquain
+        // and a Reverse Cinquain (2-4-6-8-2-2-8-6-4-2).
         if (lineCount == 10 && counts.Count == 10)
         {
             if (
@@ -256,6 +265,8 @@ public class PoemService
             }
         }
 
+        // Choka: long poem with an odd number of lines >= 7, alternating 5-7
+        // syllable pattern, ending in 5-7-7.
         if (lineCount >= 7 && lineCount % 2 == 1)
         {
             var choka = true;
@@ -275,6 +286,8 @@ public class PoemService
             }
         }
 
+        // Isosyllabic: any two or more lines where every line has the same
+        // syllable count.
         if (lineCount >= 2 && counts.Count == lineCount)
         {
             var first = counts[0];
@@ -284,6 +297,7 @@ public class PoemService
             }
         }
 
+        // No recognized pattern: classify as Freeform.
         return PoemType.Freeform;
     }
 

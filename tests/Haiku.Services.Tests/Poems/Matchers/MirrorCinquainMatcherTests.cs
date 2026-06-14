@@ -1,5 +1,10 @@
 namespace Haiku.Services.Tests.Poems.Matchers;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.Matchers.MirrorCinquainMatcher"/> — verifying
+/// the 2-4-6-8-2-2-8-6-4-2 ten-line palindromic syllable pattern is correctly
+/// identified as a mirror cinquain and that shorter patterns are rejected.
+/// </summary>
 public class MirrorCinquainMatcherTests
 {
     private readonly MirrorCinquainMatcher _matcher = new();

@@ -5,6 +5,13 @@ namespace MicroMediator;
 /// </summary>
 /// <typeparam name="TCommand">The concrete command type. Must implement <see cref="ICommand{TResult}"/>.</typeparam>
 /// <typeparam name="TResult">The type of the result produced by handling the command.</typeparam>
+/// <remarks>
+/// <para>
+/// Implement this interface when a command must return a value to the caller,
+/// such as the identifier of a newly created entity. The handler is resolved by the
+/// <see cref="IMediator"/> via the closed generic type <c>ICommandHandler{TCommand, TResult}</c>.
+/// </para>
+/// </remarks>
 public interface ICommandHandler<TCommand, TResult>
     where TCommand : ICommand<TResult>
 {

@@ -37,8 +37,10 @@ public class AddWordCommandHandler : ICommandHandler<AddWordCommand, bool>
             Id = Guid.NewGuid(),
             Word = request.Word,
             SyllableCount = request.SyllableCount,
+            // EF Core stub: sets the FK by attaching a reference without loading the full entity.
             AddedBy = new User { Id = request.AddedByUserId },
             AddedAt = DateTime.UtcNow,
+            // Bypasses moderation since this is a direct add (not a suggestion).
             IsApproved = true,
         };
         await _dictionaryRepository.SaveWordAsync(entry, cancellationToken);

@@ -1,5 +1,10 @@
 namespace Haiku.Services.Tests.Poems.Matchers;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.Matchers.ChokaMatcher"/> — verifying
+/// the alternating 5-7 syllable pattern ending in 7-7 is correctly identified
+/// as a choka, and that patterns with wrong endings or too few lines are rejected.
+/// </summary>
 public class ChokaMatcherTests
 {
     private readonly ChokaMatcher _matcher = new();

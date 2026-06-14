@@ -18,6 +18,8 @@ public class SendPasswordResetEmailCommandHandlerTests
             TestContext.Current.CancellationToken
         );
 
+        // Verifies dispatch with subject containing "reset" (case-insensitive). The exact
+        // subject-line template is tested by EmailService integration tests.
         await sender
             .Received(1)
             .SendEmailAsync(

@@ -2,9 +2,19 @@ using Haiku.Domain.Entities;
 
 namespace Haiku.Domain.Interfaces;
 
+// Both upvote and downvote are stored as a single Vote entity with a boolean
+// direction. GetNetScoreAsync aggregates the difference.
+
 /// <summary>
 /// Provides data access for upvote and downvote interactions on poems.
 /// </summary>
+/// <remarks>
+/// <para>Votes provide community-driven feedback on poems. The <c>Vote</c> entity
+/// stores whether the vote is an upvote or downvote via a boolean flag. The
+/// <see cref="GetNetScoreAsync"/> method computes the aggregate score (upvotes minus
+/// downvotes). A user may vote on a poem at most once; changing a vote replaces the
+/// existing record.</para>
+/// </remarks>
 public interface IVoteRepository
 {
     /// <summary>

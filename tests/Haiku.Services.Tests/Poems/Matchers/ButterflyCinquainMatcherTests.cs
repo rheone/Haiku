@@ -1,5 +1,10 @@
 namespace Haiku.Services.Tests.Poems.Matchers;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.Matchers.ButterflyCinquainMatcher"/> — verifying
+/// the 2-4-6-8-2-8-6-4-2 nine-line syllable pattern is correctly identified as a
+/// butterfly cinquain and that shorter patterns are rejected.
+/// </summary>
 public class ButterflyCinquainMatcherTests
 {
     private readonly ButterflyCinquainMatcher _matcher = new();

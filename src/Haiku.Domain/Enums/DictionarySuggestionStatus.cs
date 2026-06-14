@@ -1,8 +1,17 @@
 namespace Haiku.Domain.Enums;
 
+// Tracks each suggestion through a three-state lifecycle: Pending, then
+// either Approved or Rejected by a moderator.
+
 /// <summary>
 /// Represents the review state of a user-submitted dictionary word suggestion.
 /// </summary>
+/// <remarks>
+/// <para>Users submit new words to the custom dictionary through suggestions. Each
+/// suggestion transitions from Pending to either Approved (word is added to the
+/// dictionary) or Rejected (declined by a moderator). Approved suggestions become
+/// available as <see cref="CustomDictionaryWord"/> entries.</para>
+/// </remarks>
 public enum DictionarySuggestionStatus
 {
     /// <summary>

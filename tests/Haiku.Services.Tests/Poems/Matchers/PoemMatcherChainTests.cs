@@ -1,5 +1,11 @@
 namespace Haiku.Services.Tests.Poems.Matchers;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.Matchers.PoemMatcherChain"/> — verifying
+/// the chain-of-responsibility pattern correctly returns <see cref="PoemType.Freeform"/>
+/// as fallback when no matcher matches, returns the first matching type, and
+/// respects priority ordering among matchers.
+/// </summary>
 public class PoemMatcherChainTests
 {
     [Fact]

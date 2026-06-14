@@ -196,6 +196,8 @@ public partial class PoemEngine
                 continue;
             }
 
+            // CMU dictionary entries are formatted as "WORD  PHONEME1 PHONEME2 ..."
+            // with a double-space separator between the word and its transcription.
             var parts = line.Split("  ", 2, StringSplitOptions.None);
             if (parts.Length < 2)
             {
@@ -203,9 +205,13 @@ public partial class PoemEngine
             }
 
             var rawWord = parts[0];
+            // Strip parenthetical disambiguation suffixes (e.g., "WORD(2)") that
+            // mark duplicate entries for homographs in the CMU dictionary.
             var word = CmuDictRawWordExtraction().Replace(rawWord, string.Empty).ToLower();
 
             var phonemes = parts[1].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            // Syllable count = number of phonemes that carry a stress marker
+            // (digits 0, 1, or 2 in Arpabet notation).
             var syllableCount = phonemes.Count(p => p.Any(char.IsDigit));
 
             if (_cmuCache.TryAdd(word, (syllableCount, phonemes)))
@@ -517,6 +523,9 @@ public partial class PoemEngine
 
     private string BuildLine(int targetSyllables, Random rng)
     {
+        // Retry up to MaxAttempts times to assemble an exact-syllable line via
+        // random word selection. Falls back to a descriptive placeholder when no
+        // combination satisfies the target count.
         const int maxAttempts = 2000;
 
         for (var attempt = 0; attempt < maxAttempts; attempt++)
@@ -587,6 +596,8 @@ public partial class PoemEngine
             .SelectMany(n => _wordsBySyllableCount[n])
             .ToList();
 
+        // Shuffle and cap to 50 candidates to inject randomness while keeping
+        // selection cost predictable regardless of dictionary size.
         return [.. pool.OrderBy(_ => rng.Next()).Take(50)];
     }
 

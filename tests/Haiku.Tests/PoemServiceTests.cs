@@ -4,6 +4,14 @@ using Haiku.Services.Poems;
 namespace Haiku.Tests;
 
 /// <summary>Unit tests for the static detection and extraction methods in <see cref="PoemService"/>.</summary>
+/// <remarks>
+/// <para>
+/// Poem type detection relies on the <c>PoemMatcherChain</c> — a priority-ordered chain of
+/// matchers that test syllable-count patterns against known poetic forms (haiku, tanka,
+/// monoku, etc.). The chain returns the first match, so matcher order matters. See
+/// <see cref="PoemEngine"/> for the full set of supported forms.
+/// </para>
+/// </remarks>
 public class PoemServiceTests
 {
     [Fact]
@@ -20,6 +28,7 @@ public class PoemServiceTests
     [Fact]
     public void DetectPoemType_ReturnsTanka_For57577()
     {
+        // Tanka is a 5-line Japanese form with syllable pattern 5-7-5-7-7.
         var content = "1\n2\n3\n4\n5";
         var counts = new List<int> { 5, 7, 5, 7, 7 };
 
@@ -31,6 +40,7 @@ public class PoemServiceTests
     [Fact]
     public void DetectPoemType_ReturnsMonoku_ForSingleLine()
     {
+        // Monoku is a one-line haiku variant; the single line must fall within 4-17 syllables.
         var content = "A single line of text";
         var counts = new List<int> { 7 };
 

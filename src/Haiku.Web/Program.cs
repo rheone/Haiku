@@ -22,6 +22,7 @@ using StackExchange.Exceptional;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Serilog is configured from appsettings and enriches all output with request-scoped context.
 Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().CreateLogger();
 
 builder.Host.UseSerilog();
@@ -80,6 +81,8 @@ builder.Services.AddScoped<IPoemMatcher, MirrorCinquainMatcher>();
 builder.Services.AddScoped<IPoemMatcher, ChokaMatcher>();
 builder.Services.AddScoped<IPoemMatcher, IsosyllabicMatcher>();
 
+// Registers all Slice/CQRS command and query handlers (MicroMediator) and
+// FluentValidation validators from the Haiku.Services assembly.
 builder.Services.AddApplication();
 builder.Services.AddHttpContextAccessor();
 
@@ -133,6 +136,8 @@ app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Debug impersonation middleware auto-signs unauthenticated requests using
+// the Impersonation section from appsettings.Debug.json. Only active in Debug.
 if (app.Environment.IsEnvironment("Debug"))
 {
     app.UseMiddleware<DebugImpersonationMiddleware>();

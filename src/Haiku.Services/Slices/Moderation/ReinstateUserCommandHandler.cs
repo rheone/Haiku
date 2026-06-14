@@ -38,6 +38,7 @@ public class ReinstateUserCommandHandler : ICommandHandler<ReinstateUserCommand,
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        // Return false when the target user does not exist (no-op).
         var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
         if (user == null)
         {
@@ -47,6 +48,7 @@ public class ReinstateUserCommandHandler : ICommandHandler<ReinstateUserCommand,
         user.IsDisabled = false;
         await _userRepository.UpdateAsync(user, cancellationToken);
 
+        // Persist an audit trail recording who reinstated the user and why.
         var action = new ModerationAction
         {
             Id = Guid.NewGuid(),

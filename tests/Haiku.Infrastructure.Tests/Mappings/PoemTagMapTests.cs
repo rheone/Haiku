@@ -1,5 +1,5 @@
 /// <summary>
-/// Validates the mapping for the <see cref="Haiku.Domain.Entities.PoemTag"/> entity.
+/// Validates the FluentNHibernate <see cref="ClassMap{T}"/> for the <see cref="Haiku.Domain.Entities.PoemTag"/> entity, ensuring all properties and relationships are correctly configured.
 /// </summary>
 namespace Haiku.Infrastructure.Tests.Mappings;
 

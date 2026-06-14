@@ -15,10 +15,20 @@ public static class ServiceCollectionExtensions
     /// <param name="services">The service collection to register into.</param>
     /// <param name="assembly">The assembly to scan for handler implementations.</param>
     /// <returns>The same service collection for chaining.</returns>
+    /// <remarks>
+    /// <para>
+    /// The scan identifies all non-abstract, non-interface types that implement
+    /// <see cref="ICommandHandler{TCommand}"/>, <see cref="ICommandHandler{TCommand, TResult}"/>,
+    /// or <see cref="IQueryHandler{TQuery, TResult}"/> and registers each concrete handler
+    /// as its closed generic service interface. Handlers are scoped per request.
+    /// </para>
+    /// </remarks>
     public static IServiceCollection AddMediator(this IServiceCollection services, Assembly assembly)
     {
         services.AddScoped<IMediator, Mediator>();
 
+        // Scan the assembly for concrete handler types, matching each against the
+        // three supported handler interface shapes.
         var handlerTypes = assembly
             .GetExportedTypes()
             .Where(t => !t.IsAbstract && !t.IsInterface)

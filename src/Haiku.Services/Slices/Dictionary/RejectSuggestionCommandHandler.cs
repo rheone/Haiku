@@ -34,6 +34,7 @@ public class RejectSuggestionCommandHandler : ICommandHandler<RejectSuggestionCo
         }
 
         suggestion.Status = DictionarySuggestionStatus.Rejected;
+        // EF Core stub: sets the FK by attaching a reference without loading the full entity.
         suggestion.ReviewedBy = new User { Id = request.ReviewedByUserId };
         suggestion.ReviewedAt = DateTime.UtcNow;
         await _dictionaryRepository.SaveSuggestionAsync(suggestion, cancellationToken);

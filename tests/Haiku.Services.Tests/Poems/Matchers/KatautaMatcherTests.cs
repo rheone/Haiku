@@ -1,5 +1,10 @@
 namespace Haiku.Services.Tests.Poems.Matchers;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.Matchers.KatautaMatcher"/> — verifying
+/// the 5-7-7 syllable pattern is correctly identified as a katauta
+/// and that patterns like 5-7-5 (haiku) are rejected.
+/// </summary>
 public class KatautaMatcherTests
 {
     private readonly KatautaMatcher _matcher = new();

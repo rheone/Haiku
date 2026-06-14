@@ -33,6 +33,8 @@ public class DetectPoemTypeQueryHandler : IQueryHandler<DetectPoemTypeQuery, Poe
 
         PoemType result;
 
+        // Use pre-computed syllable counts when available (avoids redundant engine invocation),
+        // otherwise delegate to PoemEngine for content-based parsing and detection.
         if (request.LineSyllableCounts != null)
         {
             result = StaticDetect(request.Content, request.LineSyllableCounts);
@@ -58,55 +60,68 @@ public class DetectPoemTypeQueryHandler : IQueryHandler<DetectPoemTypeQuery, Poe
         var lineCount = lines.Length;
         var counts = lineSyllableCounts;
 
+        // 1-line poems with 4-17 syllables are classified as Monoku.
         if (lineCount == 1 && counts.Count == 1 && counts[0] >= 4 && counts[0] <= 17)
         {
             return PoemType.Monoku;
         }
 
+        // 3-line poems: check the 6 standard syllable patterns.
         if (lineCount == 3 && counts.Count == 3)
         {
+            // 5-7-5 pattern: traditional Haiku.
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 5)
             {
                 return PoemType.Haiku;
             }
+            // 5-7-7 pattern: Katauta (open-ended third line).
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 7)
             {
                 return PoemType.Katauta;
             }
+            // 3-5-3 pattern: American Lune.
             if (counts[0] == 3 && counts[1] == 5 && counts[2] == 3)
             {
                 return PoemType.AmericanLune;
             }
+            // 5-3-5 pattern: Kelly Lune.
             if (counts[0] == 5 && counts[1] == 3 && counts[2] == 5)
             {
                 return PoemType.KellyLune;
             }
+            // 2-3-2 pattern: compressed / minimalist verse.
             if (counts[0] == 2 && counts[1] == 3 && counts[2] == 2)
             {
                 return PoemType.Compressed;
             }
+            // 4-6-4 pattern: near-traditional (relaxed 5-7-5).
             if (counts[0] == 4 && counts[1] == 6 && counts[2] == 4)
             {
                 return PoemType.NearTraditional;
             }
         }
 
+        // 5-line poems: check Tanka and Cinquain variants.
         if (lineCount == 5 && counts.Count == 5)
         {
+            // 5-7-5-7-7 pattern: Tanka.
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 5 && counts[3] == 7 && counts[4] == 7)
             {
                 return PoemType.Tanka;
             }
+            // 2-4-6-8-2 pattern: American Cinquain.
             if (counts[0] == 2 && counts[1] == 4 && counts[2] == 6 && counts[3] == 8 && counts[4] == 2)
             {
                 return PoemType.AmericanCinquain;
             }
+            // 2-8-6-4-2 pattern: Reverse Cinquain (syllable counts mirrored).
             if (counts[0] == 2 && counts[1] == 8 && counts[2] == 6 && counts[3] == 4 && counts[4] == 2)
             {
                 return PoemType.ReverseCinquain;
             }
         }
 
+        // 6-line poems: 5-7-7-5-7-7 pattern is Sedoka (dialog verse).
         if (lineCount == 6 && counts.Count == 6)
         {
             if (counts[0] == 5 && counts[1] == 7 && counts[2] == 7 && counts[3] == 5 && counts[4] == 7 && counts[5] == 7)
@@ -115,6 +130,7 @@ public class DetectPoemTypeQueryHandler : IQueryHandler<DetectPoemTypeQuery, Poe
             }
         }
 
+        // 9-line poems: 2-4-6-8-2-8-6-4-2 pattern is Butterfly Cinquain.
         if (lineCount == 9 && counts.Count == 9)
         {
             if (
@@ -133,6 +149,7 @@ public class DetectPoemTypeQueryHandler : IQueryHandler<DetectPoemTypeQuery, Poe
             }
         }
 
+        // 10-line poems: 2-4-6-8-2-2-8-6-4-2 pattern is Mirror Cinquain.
         if (lineCount == 10 && counts.Count == 10)
         {
             if (
@@ -152,6 +169,8 @@ public class DetectPoemTypeQueryHandler : IQueryHandler<DetectPoemTypeQuery, Poe
             }
         }
 
+        // Odd-length poems with 7+ lines: check alternating 5-7 pattern
+        // ending with a 5-7-7 closing triplet (Choka structure).
         if (lineCount >= 7 && lineCount % 2 == 1)
         {
             var choka = true;
@@ -171,6 +190,7 @@ public class DetectPoemTypeQueryHandler : IQueryHandler<DetectPoemTypeQuery, Poe
             }
         }
 
+        // Poems with 2+ lines where every line has the same syllable count.
         if (lineCount >= 2 && counts.Count == lineCount)
         {
             var first = counts[0];

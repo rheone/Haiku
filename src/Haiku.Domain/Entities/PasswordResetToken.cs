@@ -4,34 +4,42 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Haiku.Domain.Entities;
 
 /// <summary>
-/// Represents a token used to authorize a password reset request.
+/// Represents a time-limited cryptographic token that authorizes a password reset.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Tokens are single-use: after a successful password reset the token is marked as used
+/// via <see cref="UsedAt"/> and subsequent attempts with the same token are rejected.
+/// Expired tokens (<see cref="IsExpired"/>) are also rejected regardless of use status.
+/// The token string itself is generated cryptographically and hashed before storage.
+/// </para>
+/// </remarks>
 [Table("PasswordResetTokens")]
 public class PasswordResetToken
 {
     /// <summary>
-    /// Gets or sets the unique identifier for the password reset token.
+    /// Gets or sets the primary key, a server-generated GUID.
     /// </summary>
-    /// <value>The unique identifier for the password reset token.</value>
+    /// <value>The token record's unique database identifier.</value>
     [Key]
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the unique identifier of the user requesting the reset.
+    /// Gets or sets the foreign key to the user requesting the reset.
     /// </summary>
-    /// <value>The unique identifier of the user.</value>
+    /// <value>The <see cref="User"/> identifier of the reset requestor.</value>
     [Required]
     public Guid UserId { get; set; }
 
     /// <summary>
-    /// Gets or sets the user requesting the password reset.
+    /// Gets or sets the navigation property to the user requesting the reset.
     /// </summary>
-    /// <value>The <see cref="User"/> requesting the reset.</value>
+    /// <value>The <see cref="User"/> who requested the password reset.</value>
     [ForeignKey(nameof(UserId))]
     public User User { get; set; } = null!;
 
     /// <summary>
-    /// Gets or sets the cryptographic token string sent to the user's email.
+    /// Gets or sets the opaque token string sent to the user's email, up to 128 characters.
     /// </summary>
     /// <value>The password reset token string.</value>
     [Required]
@@ -39,34 +47,40 @@ public class PasswordResetToken
     public string Token { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the timestamp when the token was created.
+    /// Gets or sets the timestamp (in UTC) when the token was created.
     /// </summary>
-    /// <value>The token creation timestamp.</value>
+    /// <value>The UTC creation timestamp.</value>
     public DateTime CreatedAt { get; set; }
 
     /// <summary>
-    /// Gets or sets the timestamp after which the token is no longer valid.
+    /// Gets or sets the timestamp (in UTC) after which the token is no longer valid.
     /// </summary>
-    /// <value>The token expiration timestamp.</value>
+    /// <value>The UTC expiration timestamp.</value>
     public DateTime ExpiresAt { get; set; }
 
     /// <summary>
-    /// Gets or sets the timestamp when the token was used, or <c>null</c> if still pending.
+    /// Gets or sets the timestamp (in UTC) when the token was consumed, or <c>null</c> if still active.
     /// </summary>
-    /// <value>The usage timestamp, or <c>null</c>.</value>
+    /// <value>The UTC usage timestamp, or <c>null</c> if the token has not been used.</value>
     public DateTime? UsedAt { get; set; }
 
     /// <summary>
-    /// Gets a value indicating whether the token has expired based on the current UTC time.
+    /// Gets a value indicating whether the token has expired.
     /// </summary>
-    /// <value><c>true</c> if the token is expired; otherwise <c>false</c>.</value>
+    /// <remarks>
+    /// <para>
+    /// This property is computed at runtime and is not persisted to the database.
+    /// Comparison uses the current UTC clock, so token validity depends on the server clock.
+    /// </para>
+    /// </remarks>
+    /// <value><c>true</c> if the current UTC time is past <see cref="ExpiresAt"/>; otherwise <c>false</c>.</value>
     [NotMapped]
-    public bool IsExpired => DateTime.UtcNow > ExpiresAt;
+    public bool IsExpired => DateTime.UtcNow > ExpiresAt; // Server-clock dependent; expiry check is runtime-only.
 
     /// <summary>
-    /// Gets a value indicating whether the token has already been used.
+    /// Gets a value indicating whether the token has already been consumed.
     /// </summary>
-    /// <value><c>true</c> if the token has been used; otherwise <c>false</c>.</value>
+    /// <value><c>true</c> if <see cref="UsedAt"/> has a value; otherwise <c>false</c>.</value>
     [NotMapped]
-    public bool IsUsed => UsedAt.HasValue;
+    public bool IsUsed => UsedAt.HasValue; // Once used, the token is permanently invalidated.
 }

@@ -4,6 +4,13 @@ namespace MicroMediator;
 /// Defines a handler for commands that do not return a result.
 /// </summary>
 /// <typeparam name="TCommand">The concrete command type. Must implement <see cref="ICommand"/>.</typeparam>
+/// <remarks>
+/// <para>
+/// Implement this interface to process a command that performs a side effect without
+/// producing a result. The handler is resolved by the <see cref="IMediator"/> via
+/// the closed generic type <c>ICommandHandler{TCommand}</c> at runtime.
+/// </para>
+/// </remarks>
 public interface ICommandHandler<in TCommand>
     where TCommand : ICommand
 {

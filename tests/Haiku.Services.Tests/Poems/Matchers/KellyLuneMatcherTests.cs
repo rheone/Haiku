@@ -1,5 +1,10 @@
 namespace Haiku.Services.Tests.Poems.Matchers;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.Matchers.KellyLuneMatcher"/> — verifying
+/// the 5-3-5 syllable pattern is correctly identified as a Kelly lune
+/// and that patterns like 3-5-3 (American lune) are rejected.
+/// </summary>
 public class KellyLuneMatcherTests
 {
     private readonly KellyLuneMatcher _matcher = new();

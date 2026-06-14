@@ -2,9 +2,19 @@ using Haiku.Domain.Entities;
 
 namespace Haiku.Domain.Interfaces;
 
+// Manages both the custom dictionary (approved words) and user-submitted suggestions.
+// The custom dictionary supplements the CMU-based syllable engine for domain-specific
+// words not in the standard pronunciation dictionary.
+
 /// <summary>
 /// Provides data access for the custom dictionary and user-submitted word suggestions.
 /// </summary>
+/// <remarks>
+/// <para>The syllable engine loads all words from the custom dictionary at startup,
+/// supplementing the built-in CMU pronunciation database. Users can suggest new words,
+/// which moderators approve or reject. Once approved, a word becomes available for
+/// syllable counting across all poems.</para>
+/// </remarks>
 public interface IDictionaryRepository
 {
     /// <summary>

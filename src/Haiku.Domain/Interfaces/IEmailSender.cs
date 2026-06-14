@@ -1,8 +1,17 @@
 namespace Haiku.Domain.Interfaces;
 
+// Abstraction over email delivery with implementations for SMTP (production)
+// and a no-op fake for development (see FakeEmailSender in tests).
+
 /// <summary>
 /// Provides an abstraction for sending email notifications.
 /// </summary>
+/// <remarks>
+/// <para>Email is used for account-related notifications (registration confirmation,
+/// password reset). The interface has a single sending method to keep implementations
+/// simple. Production uses SMTP via <c>SmtpEmailSender</c>; development and tests use
+/// <c>FakeEmailSender</c> which logs the message without delivering it.</para>
+/// </remarks>
 public interface IEmailSender
 {
     /// <summary>

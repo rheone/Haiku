@@ -2,9 +2,16 @@ using Haiku.Domain.Entities;
 
 namespace Haiku.Domain.Interfaces;
 
+// Repository for the bookmarking feature, keyed on (userId, poemId) composite.
+
 /// <summary>
 /// Provides data access for poem bookmarks.
 /// </summary>
+/// <remarks>
+/// <para>Bookmarks let users save poems for later reading. The composite key
+/// combines both the user and the poem — a user can bookmark a poem at most once.
+/// The bookmark entity itself carries no additional state beyond the key.</para>
+/// </remarks>
 public interface IBookmarkRepository
 {
     /// <summary>
