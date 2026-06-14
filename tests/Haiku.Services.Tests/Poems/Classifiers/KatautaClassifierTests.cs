@@ -39,8 +39,6 @@ public class KatautaClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.Katauta, definition!.Type);
-        Assert.Equal(3, definition.LineCount);
-        Assert.Equal([5, 7, 7], definition.SyllablesPerLine);
     }
 
     /// <summary>

@@ -1,14 +1,36 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the mirror cinquain form: exactly ten lines with a 2-4-6-8-2-2-8-6-4-2 syllable pattern.
+/// Formed by concatenating an American cinquain followed by a reverse cinquain.
+/// </summary>
 public sealed class MirrorCinquainClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 1300;
 
+    /// <summary>
+    /// Gets the type metadata for the mirror cinquain form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 2-4-6-8-2-2-8-6-4-2 syllable-based form.</value>
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.MirrorCinquain,
+            DisplayName: "Mirror Cinquain",
+            Description: "A ten-line poem formed by concatenating an American cinquain and a Reverse cinquain (2-4-6-8-2-2-8-6-4-2).",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: [2, 4, 6, 8, 2, 2, 8, 6, 4, 2],
+            WordPattern: null
+        );
+
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,
@@ -35,15 +57,7 @@ public sealed class MirrorCinquainClassifier : IPoemClassifier
             && syllableCounts[9] == 2
         )
         {
-            definition = new PoemDefinition
-            {
-                Type = PoemType.MirrorCinquain,
-                LineCount = 10,
-                SyllablesPerLine = [2, 4, 6, 8, 2, 2, 8, 6, 4, 2],
-                TotalSyllableCount = 44,
-                WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-                TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-            };
+            definition = ClassifierBuilder.Build(this);
             return true;
         }
 

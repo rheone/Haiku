@@ -10,7 +10,7 @@ namespace Haiku.Domain.Enums;
 /// <para>Users submit new words to the custom dictionary through suggestions. Each
 /// suggestion transitions from Pending to either Approved (word is added to the
 /// dictionary) or Rejected (declined by a moderator). Approved suggestions become
-/// available as <see cref="CustomDictionaryWord"/> entries.</para>
+/// available as <see cref="Haiku.Domain.Entities.CustomDictionaryWord"/> entries.</para>
 /// </remarks>
 public enum DictionarySuggestionStatus
 {

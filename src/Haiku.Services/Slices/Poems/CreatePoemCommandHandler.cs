@@ -15,6 +15,12 @@ public class CreatePoemCommandHandler : ICommandHandler<CreatePoemCommand, Poem>
     private readonly ITagRepository _tagRepository;
     private readonly IPoemInputService _poemInputService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CreatePoemCommandHandler"/> class.
+    /// </summary>
+    /// <param name="poemRepository">Repository for persisting <see cref="Poem"/> entities.</param>
+    /// <param name="tagRepository">Repository for get-or-create operations on hashtag-based <see cref="Tag"/> entities extracted from poem content.</param>
+    /// <param name="poemInputService">Service that validates, normalizes, and counts syllables in poem content before persistence.</param>
     public CreatePoemCommandHandler(
         IPoemRepository poemRepository,
         ITagRepository tagRepository,
@@ -33,6 +39,7 @@ public class CreatePoemCommandHandler : ICommandHandler<CreatePoemCommand, Poem>
     /// <param name="request">The command containing author, content, and optional metadata.</param>
     /// <param name="cancellationToken">Token to cancel the operation.</param>
     /// <returns>The newly created <see cref="Poem"/> entity.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when poem content fails validation (e.g., empty content, excessive syllable count, or unresolvable lines).</exception>
     public async Task<Poem> Handle(CreatePoemCommand request, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();

@@ -106,5 +106,28 @@ public class WordTokenizerTests
         Assert.Equal(["wellknown"], result.Words);
     }
 
+    /// <summary>
+    ///     Verifies that ordinal tokens like "1st", "2nd", "3rd" are kept as words.
+    /// </summary>
+    [Fact]
+    public void Tokenize_OrdinalTokens_KeptAsWords()
+    {
+        var result = _tokenizer.Tokenize("my 1st haiku on 2nd try");
+
+        Assert.Equal(["my", "1st", "haiku", "on", "2nd", "try"], result.Words);
+        Assert.Equal(6, result.WordCount);
+    }
+
+    /// <summary>
+    ///     Verifies that "th" suffixed ordinals and larger numbers work.
+    /// </summary>
+    [Fact]
+    public void Tokenize_OrdinalTokens_LargerNumbers()
+    {
+        var result = _tokenizer.Tokenize("the 42nd and 101st place");
+
+        Assert.Equal(["the", "42nd", "and", "101st", "place"], result.Words);
+    }
+
     #endregion
 }

@@ -110,17 +110,13 @@ public class HaikuDbContext : DbContext
     /// <summary>
     /// Gets the set of theme definitions.
     /// </summary>
-    /// <value>
-    /// <placeholder>The set of theme definitions.</placeholder>
-    /// </value>
+    /// <value>The <see cref="DbSet{Theme}"/> for querying and saving theme definitions.</value>
     public DbSet<Theme> Themes => Set<Theme>();
 
     /// <summary>
     /// Gets the set of theme keyword associations.
     /// </summary>
-    /// <value>
-    /// <placeholder>The set of theme keyword associations.</placeholder>
-    /// </value>
+    /// <value>The <see cref="DbSet{ThemeKeyword}"/> for querying and saving theme keyword associations.</value>
     public DbSet<ThemeKeyword> ThemeKeywords => Set<ThemeKeyword>();
 
     /// <summary>

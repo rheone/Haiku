@@ -2,7 +2,6 @@ using Haiku.Domain.Entities;
 using Haiku.Domain.Enums;
 using Haiku.Domain.Interfaces;
 using Haiku.Services.Haiku;
-using Haiku.Services.Poems.Matchers;
 
 namespace Haiku.Services.Poems;
 
@@ -14,7 +13,6 @@ public class PoemService
     private readonly IPoemRepository _poemRepository;
     private readonly ITagRepository _tagRepository;
     private readonly PoemEngine _poemEngine;
-    private readonly IPoemMatcherChain _matcherChain;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PoemService"/> class.
@@ -22,18 +20,11 @@ public class PoemService
     /// <param name="poemRepository">Repository for poem entities.</param>
     /// <param name="tagRepository">Repository for tag entities.</param>
     /// <param name="poemEngine">Engine for syllable counting and poem type detection.</param>
-    /// <param name="matcherChain">Chain of matchers for poem type detection.</param>
-    public PoemService(
-        IPoemRepository poemRepository,
-        ITagRepository tagRepository,
-        PoemEngine poemEngine,
-        IPoemMatcherChain matcherChain
-    )
+    public PoemService(IPoemRepository poemRepository, ITagRepository tagRepository, PoemEngine poemEngine)
     {
         _poemRepository = poemRepository;
         _tagRepository = tagRepository;
         _poemEngine = poemEngine;
-        _matcherChain = matcherChain;
     }
 
     /// <summary>
@@ -45,7 +36,8 @@ public class PoemService
     /// <param name="totalSyllables">The total syllable count for the poem.</param>
     /// <param name="isDraft">Whether the poem is saved as a draft.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns>The newly created <see cref="Poem"/>.</returns>
+    /// <returns>The newly created <see cref="Poem"/> entity.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<Poem> CreateAsync(
         Guid authorId,
         string content,
@@ -86,7 +78,8 @@ public class PoemService
     /// <param name="content">The full poem text.</param>
     /// <param name="isDraft">Whether the poem is saved as a draft. Defaults to <c>false</c>.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns>The newly created <see cref="Poem"/>.</returns>
+    /// <returns>The newly created <see cref="Poem"/> entity with auto-detected type.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<Poem> CreateAsync(
         Guid authorId,
         string content,
@@ -109,6 +102,7 @@ public class PoemService
     /// <param name="id">The poem ID.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>The <see cref="Poem"/> if found; otherwise <c>null</c>.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<Poem?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -116,11 +110,12 @@ public class PoemService
     }
 
     /// <summary>
-    /// Soft-deletes a poem by setting its deletion timestamp.
+    /// Soft-deletes a poem by setting its <see cref="Poem.DeletedAt"/> timestamp.
     /// </summary>
-    /// <param name="poem">The poem to delete.</param>
+    /// <param name="poem">The poem to delete. Must not be <c>null</c>.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task DeleteAsync(Poem poem, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -302,14 +297,13 @@ public class PoemService
     }
 
     /// <summary>
-    /// Detects the poem type for a single piece of content using the <see cref="IPoemMatcherChain"/> instance.
+    /// Detects the poem type for a single piece of content using <see cref="PoemEngine"/>.
     /// </summary>
     /// <param name="content">The full poem text.</param>
     /// <returns>The detected <see cref="PoemType"/>, or <see cref="PoemType.Freeform"/> if no specific pattern matches.</returns>
     public PoemType DetectPoemType(string content)
     {
         var lines = content.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        var counts = lines.Select(l => _poemEngine.CountLineSyllables(l)).ToArray();
-        return _matcherChain.Match(lines, counts);
+        return _poemEngine.DetectPoemType(lines) ?? PoemType.Freeform;
     }
 }

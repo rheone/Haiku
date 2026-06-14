@@ -1,14 +1,32 @@
 namespace Haiku.Services.Rhyming;
 
+/// <summary>
+///     Determines whether words or lines rhyme by consulting registered
+///     <see cref="IRhymeProvider"/> instances, falling back to a suffix-based
+///     heuristic when no provider produces a result.
+/// </summary>
 public sealed class RhymingEngine
 {
     private readonly IRhymeProvider[] _providers;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="RhymingEngine"/> class.
+    /// </summary>
+    /// <param name="providers">The rhyme providers to consult, in priority order.</param>
     public RhymingEngine(IEnumerable<IRhymeProvider> providers)
     {
         _providers = providers.ToArray();
     }
 
+    /// <summary>
+    ///     Determines whether two words rhyme.
+    /// </summary>
+    /// <param name="word1">The first word.</param>
+    /// <param name="word2">The second word.</param>
+    /// <returns>
+    ///     <c>true</c> if the words produce the same rhyme key from any registered
+    ///     provider, or if they match the suffix fallback heuristic; <c>false</c> otherwise.
+    /// </returns>
     public bool WordsRhyme(string word1, string word2)
     {
         if (string.Equals(word1, word2, StringComparison.OrdinalIgnoreCase))
@@ -31,6 +49,15 @@ public sealed class RhymingEngine
         return SuffixFallback(word1, word2);
     }
 
+    /// <summary>
+    ///     Determines whether the last words of two lines rhyme.
+    /// </summary>
+    /// <param name="line1">The first line of text.</param>
+    /// <param name="line2">The second line of text.</param>
+    /// <returns>
+    ///     <c>true</c> if both lines end with a rhyming word; <c>false</c> if either
+    ///     line is empty, punctuation-only, or the end-words do not rhyme.
+    /// </returns>
     public bool LinesRhyme(string line1, string line2)
     {
         var w1 = GetLastWord(line1);

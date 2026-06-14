@@ -94,7 +94,7 @@ public class AuthServiceTests
         // Arrange
         var userRepo = Substitute.For<IUserRepository>();
         var authService = new AuthService(userRepo);
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
         await cts.CancelAsync();
 
         // Act & Assert
@@ -231,7 +231,7 @@ public class AuthServiceTests
         // Arrange
         var userRepo = Substitute.For<IUserRepository>();
         var authService = new AuthService(userRepo);
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
         await cts.CancelAsync();
 
         // Act & Assert

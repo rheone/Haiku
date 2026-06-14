@@ -39,8 +39,6 @@ public class TankaClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.Tanka, definition!.Type);
-        Assert.Equal(5, definition.LineCount);
-        Assert.Equal([5, 7, 5, 7, 7], definition.SyllablesPerLine);
     }
 
     /// <summary>

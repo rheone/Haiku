@@ -1,8 +1,11 @@
 @using Haiku.Domain.Entities
 @using Haiku.Domain.Enums
 @using Haiku.Domain.ValueObjects
+@using Haiku.Services.Poems.Classifiers
+@using Haiku.Services.Poems.Classifiers.SequenceHelpers
 @inject IJSRuntime JS
 @inject PoemEngine PoemEngine
+@inject PoemClassifierChain ClassifierChain
 @inject ThemeRecommendationService ThemeRecService
 @rendermode InteractiveServer
 
@@ -146,14 +149,14 @@
         var allWords = text.Split(new[] { ' ', '\n' }, StringSplitOptions.RemoveEmptyEntries);
         WordCount = allWords.Length;
 
-        PoemDefinition? definition = null;
+        PoemEngine.PoemAnalysis? analysis = null;
         if (!string.IsNullOrWhiteSpace(text))
         {
             try
             {
-                definition = PoemEngine.Analyze(rawLines);
-                DetectedType = definition?.Type;
-                TotalSyllables = definition?.TotalSyllableCount ?? 0;
+                analysis = PoemEngine.Analyze(rawLines);
+                DetectedType = analysis?.DetectedType;
+                TotalSyllables = analysis?.TotalSyllables ?? 0;
             }
             catch
             {
@@ -169,18 +172,18 @@
         var pattern = DetectedType.HasValue && !IsFreeform
             ? GetSyllablePattern(DetectedType.Value)
             : [];
-        var defSyllables = definition?.SyllablesPerLine ?? [];
+        var lineAnalyses = analysis?.Lines ?? [];
 
         LineData = rawLines.Select((line, i) =>
         {
             var words = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var syl = i < defSyllables.Length ? defSyllables[i] : 0;
+            var syl = i < lineAnalyses.Count ? lineAnalyses[i].TotalSyllables : 0;
             if (syl == 0 && words.Length > 0)
             {
                 try
                 {
                     var lineDef = PoemEngine.Analyze(line);
-                    syl = lineDef?.TotalSyllableCount ?? 0;
+                    syl = lineDef.TotalSyllables;
                 }
                 catch { }
             }
@@ -228,32 +231,15 @@
         return "progress";
     }
 
-    private static int[] GetSyllablePattern(PoemType type)
+    private int[] GetSyllablePattern(PoemType type)
     {
-        return type switch
-        {
-            PoemType.Haiku => [5, 7, 5],
-            PoemType.Tanka => [5, 7, 5, 7, 7],
-            PoemType.Katauta => [5, 7, 7],
-            PoemType.Sedoka => [5, 7, 7, 5, 7, 7],
-            PoemType.AmericanLune => [3, 5, 3],
-            PoemType.KellyLune => [5, 3, 5],
-            PoemType.AmericanCinquain => [2, 4, 6, 8, 2],
-            PoemType.ReverseCinquain => [2, 8, 6, 4, 2],
-            PoemType.MirrorCinquain => [2, 4, 6, 8, 2, 2, 8, 6, 4, 2],
-            PoemType.ButterflyCinquain => [2, 4, 6, 8, 2, 8, 6, 4, 2],
-            PoemType.Compressed => [2, 3, 2],
-            PoemType.NearTraditional => [4, 6, 4],
-            _ => [],
-        };
+        var classifier = ClassifierChain.GetType(type);
+        return classifier is not null ? ClassifierBuilder.GetInfo(classifier).SyllablePattern ?? [] : [];
     }
 
-    private static string GetTypeDisplayName(PoemType type) => type switch
+    private string GetTypeDisplayName(PoemType type)
     {
-        PoemType.Haiku => "haiku",
-        PoemType.Tanka => "tanka",
-        PoemType.Freeform => "freeform",
-        PoemType.Monoku => "monoku",
-        _ => type.ToString().ToLowerInvariant()
-    };
+        var classifier = ClassifierChain.GetType(type);
+        return classifier is not null ? ClassifierBuilder.GetInfo(classifier).DisplayName : "freeform";
+    }
 }

@@ -1,14 +1,36 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the tanka form: exactly five lines with a 5-7-5-7-7 syllable pattern.
+/// A classical Japanese form extending the haiku with two additional 7-syllable lines.
+/// </summary>
 public sealed class TankaClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 800;
 
+    /// <summary>
+    /// Gets the type metadata for the tanka form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 5-7-5-7-7 syllable-based traditional form.</value>
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.Tanka,
+            DisplayName: "Tanka",
+            Description: "A five-line Japanese form with 5-7-5-7-7 syllable pattern.",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: [5, 7, 5, 7, 7],
+            WordPattern: null
+        );
+
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,
@@ -30,15 +52,7 @@ public sealed class TankaClassifier : IPoemClassifier
             && syllableCounts[4] == 7
         )
         {
-            definition = new PoemDefinition
-            {
-                Type = PoemType.Tanka,
-                LineCount = 5,
-                SyllablesPerLine = [5, 7, 5, 7, 7],
-                TotalSyllableCount = 31,
-                WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-                TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-            };
+            definition = ClassifierBuilder.Build(this);
             return true;
         }
 

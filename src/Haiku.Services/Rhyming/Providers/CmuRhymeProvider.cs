@@ -3,15 +3,25 @@ using Haiku.Services.Syllables.Providers;
 
 namespace Haiku.Services.Rhyming.Providers;
 
+/// <summary>
+///     Rhyme provider backed by the CMU Pronouncing Dictionary.
+///     Builds rhyme keys from phoneme arrays: the key consists of all phonemes from
+///     the last stressed vowel onward, with stress markers stripped.
+/// </summary>
 public sealed class CmuRhymeProvider : IRhymeProvider
 {
     private readonly CmuDictionaryProvider _cmuProvider;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="CmuRhymeProvider"/> class.
+    /// </summary>
+    /// <param name="cmuProvider">The CMU dictionary provider for phoneme lookups.</param>
     public CmuRhymeProvider(CmuDictionaryProvider cmuProvider)
     {
         _cmuProvider = cmuProvider;
     }
 
+    /// <inheritdoc/>
     public bool TryGetRhymeKey(string word, [NotNullWhen(true)] out string? key)
     {
         if (_cmuProvider.TryGetPhonemes(word, out var phonemes))

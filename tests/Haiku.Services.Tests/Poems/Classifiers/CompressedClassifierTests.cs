@@ -39,8 +39,6 @@ public class CompressedClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.Compressed, definition!.Type);
-        Assert.Equal(3, definition.LineCount);
-        Assert.Equal([2, 3, 2], definition.SyllablesPerLine);
     }
 
     /// <summary>

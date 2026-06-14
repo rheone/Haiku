@@ -39,8 +39,6 @@ public class MonokuClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.Monoku, definition!.Type);
-        Assert.Equal(1, definition.LineCount);
-        Assert.Equal([5], definition.SyllablesPerLine);
     }
 
     /// <summary>

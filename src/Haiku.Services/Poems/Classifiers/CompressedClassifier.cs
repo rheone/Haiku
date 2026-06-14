@@ -1,14 +1,35 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the compressed haiku-inspired form: exactly three lines with a 2-3-2 syllable pattern.
+/// </summary>
 public sealed class CompressedClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 600;
 
+    /// <summary>
+    /// Gets the type metadata for the compressed haiku-inspired form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 2-3-2 syllable-based ultra-short form.</value>
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.Compressed,
+            DisplayName: "Compressed",
+            Description: "A three-line nonstandard haiku-inspired ultra-short form with 2-3-2 syllable pattern.",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: [2, 3, 2],
+            WordPattern: null
+        );
+
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,
@@ -24,15 +45,7 @@ public sealed class CompressedClassifier : IPoemClassifier
 
         if (syllableCounts[0] == 2 && syllableCounts[1] == 3 && syllableCounts[2] == 2)
         {
-            definition = new PoemDefinition
-            {
-                Type = PoemType.Compressed,
-                LineCount = 3,
-                SyllablesPerLine = [2, 3, 2],
-                TotalSyllableCount = 7,
-                WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-                TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-            };
+            definition = ClassifierBuilder.Build(this);
             return true;
         }
 

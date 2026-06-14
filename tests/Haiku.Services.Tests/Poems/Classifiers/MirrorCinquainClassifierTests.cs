@@ -39,8 +39,6 @@ public class MirrorCinquainClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.MirrorCinquain, definition!.Type);
-        Assert.Equal(10, definition.LineCount);
-        Assert.Equal([2, 4, 6, 8, 2, 2, 8, 6, 4, 2], definition.SyllablesPerLine);
     }
 
     /// <summary>

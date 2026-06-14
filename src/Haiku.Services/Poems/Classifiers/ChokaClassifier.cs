@@ -1,14 +1,36 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the choka (long poem) form: an odd number of lines (minimum 7) with alternating
+/// 5-7 syllable counts, ending with a 5-7-7 closing triplet.
+/// </summary>
 public sealed class ChokaClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 1400;
 
+    /// <summary>
+    /// Gets the type metadata for the choka form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the alternating 5-7 long-form Japanese poem.</value>
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.Choka,
+            DisplayName: "Choka",
+            Description: "A long poem with alternating 5-7 syllable lines, ending with 5-7-7. Always an odd number of lines.",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: null,
+            WordPattern: null
+        );
+
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,
@@ -40,15 +62,7 @@ public sealed class ChokaClassifier : IPoemClassifier
             return false;
         }
 
-        definition = new PoemDefinition
-        {
-            Type = PoemType.Choka,
-            LineCount = n,
-            SyllablesPerLine = syllableCounts,
-            TotalSyllableCount = syllableCounts.Sum(),
-            WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-            TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-        };
+        definition = ClassifierBuilder.Build(this);
         return true;
     }
 }

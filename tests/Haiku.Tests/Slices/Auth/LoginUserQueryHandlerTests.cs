@@ -151,7 +151,7 @@ public class LoginUserQueryHandlerTests
         // Arrange
         var userRepo = Substitute.For<IUserRepository>();
         var handler = new LoginUserQueryHandler(userRepo);
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
         await cts.CancelAsync();
 
         // Act & Assert

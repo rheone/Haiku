@@ -5,17 +5,44 @@ using Microsoft.Extensions.Logging;
 
 namespace Haiku.Services;
 
+/// <summary>
+/// Scores poem text against active themes using weighted keyword matching and returns the best match above a confidence threshold.
+/// </summary>
 public class ThemeRecommendationService
 {
     private readonly IThemeRepository _themeRepository;
     private readonly ILogger<ThemeRecommendationService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ThemeRecommendationService"/> class.
+    /// </summary>
+    /// <param name="themeRepository">Repository for theme entities.</param>
+    /// <param name="logger">Logger for diagnostic output.</param>
     public ThemeRecommendationService(IThemeRepository themeRepository, ILogger<ThemeRecommendationService> logger)
     {
         _themeRepository = themeRepository;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Scores the provided poem text against all active themes and returns the best match.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The algorithm tokenizes the poem text by splitting on whitespace and punctuation,
+    /// lowercasing all tokens, and then scoring each active theme by counting keyword matches
+    /// weighted by each keyword's <c>Weight</c> property. The raw score is normalized by
+    /// total word count to produce a confidence value between 0 and 1.
+    /// </para>
+    /// <para>
+    /// Poems with more than 150 tokens or zero tokens after cleanup receive a confidence of 0.
+    /// The default theme is excluded from scoring. If no theme exceeds the <paramref name="threshold"/>,
+    /// a zero-confidence recommendation is returned.
+    /// </para>
+    /// </remarks>
+    /// <param name="poemText">The full text of the poem to analyze.</param>
+    /// <param name="threshold">Minimum confidence required to return a theme recommendation. Defaults to 0.55.</param>
+    /// <returns>A <see cref="ThemeRecommendation"/> containing the best matching theme and confidence score, or a zero-confidence result if no theme meets the threshold.</returns>
     public async Task<ThemeRecommendation> RecommendAsync(string poemText, double threshold = 0.55)
     {
         if (string.IsNullOrWhiteSpace(poemText))

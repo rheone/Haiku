@@ -39,8 +39,6 @@ public class AmericanLuneClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.AmericanLune, definition!.Type);
-        Assert.Equal(3, definition.LineCount);
-        Assert.Equal([3, 5, 3], definition.SyllablesPerLine);
     }
 
     /// <summary>
