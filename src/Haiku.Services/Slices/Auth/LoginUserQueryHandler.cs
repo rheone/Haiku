@@ -41,6 +41,8 @@ public class LoginUserQueryHandler : IQueryHandler<LoginUserQuery, User?>
             return null;
         }
 
+        // Silently reject disabled or deleted accounts to avoid leaking account status
+        // through differing error messages.
         if (user.IsDisabled || user.IsDeleted)
         {
             return null;

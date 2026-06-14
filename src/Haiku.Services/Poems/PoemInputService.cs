@@ -31,6 +31,10 @@ internal sealed class PoemInputService : IPoemInputService
 
         var normalized = rawContent.Trim();
         normalized = normalized.Replace("\r\n", "\n").Replace("\r", "\n");
+        // Strip zero-width and invisible Unicode codepoints (zero-width space,
+        // zero-width non-joiner, directional marks, byte-order mark) that users
+        // may inadvertently paste into poem text, which would distort display
+        // and throw off syllable counting.
         normalized = new string(
             normalized.Where(c => c != '\u200B' && c != '\u200C' && c != '\u200E' && c != '\u200F' && c != '\uFEFF').ToArray()
         );

@@ -19,6 +19,7 @@ public class RegisterUserCommandValidator : AbstractValidator<RegisterUserComman
             .WithMessage("Email is required.")
             .EmailAddress()
             .WithMessage("Invalid email format.")
+            // RFC 5321: maximum email address length is 320 characters.
             .MaximumLength(320);
 
         RuleFor(x => x.Username)

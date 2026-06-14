@@ -38,6 +38,7 @@ public class DisableUserCommandHandler : ICommandHandler<DisableUserCommand, boo
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        // Return false when the target user does not exist (no-op).
         var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
         if (user == null)
         {
@@ -47,6 +48,7 @@ public class DisableUserCommandHandler : ICommandHandler<DisableUserCommand, boo
         user.IsDisabled = true;
         await _userRepository.UpdateAsync(user, cancellationToken);
 
+        // Persist an audit trail recording who performed the disable and why.
         var action = new ModerationAction
         {
             Id = Guid.NewGuid(),

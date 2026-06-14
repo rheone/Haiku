@@ -3,9 +3,18 @@ using Haiku.Domain.Enums;
 
 namespace Haiku.Domain.Interfaces;
 
+// Combines moderation action audit logging with privilege (role) management.
+// These are grouped because both are moderation-related concerns.
+
 /// <summary>
 /// Provides data access for moderation actions and user privilege management.
 /// </summary>
+/// <remarks>
+/// <para>This interface serves two related moderation concerns: recording an audit
+/// trail of moderation actions (hide, unhide, disable, reinstate) and managing user
+/// privileges (granting and revoking fine-grained permissions). Privilege checks use
+/// the string identifiers defined in <see cref="PrivilegeNames"/>.</para>
+/// </remarks>
 public interface IModerationRepository
 {
     /// <summary>

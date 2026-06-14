@@ -32,6 +32,7 @@ public class SubmitSuggestionCommandHandler : ICommandHandler<SubmitSuggestionCo
             Id = Guid.NewGuid(),
             Word = request.Word,
             SuggestedSyllableCount = request.SyllableCount,
+            // EF Core stub: sets the FK by attaching a reference without loading the full entity.
             SuggestedBy = new User { Id = request.SuggestedByUserId },
             Justification = request.Justification,
             Status = DictionarySuggestionStatus.Pending,

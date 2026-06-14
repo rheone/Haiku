@@ -31,6 +31,7 @@ public class CastVoteCommandHandler : ICommandHandler<CastVoteCommand, bool>
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        // Only upvote (1) and downvote (-1) are accepted. Any other value is silently rejected.
         if (request.Value is not (1 or -1))
         {
             return false;
@@ -39,11 +40,13 @@ public class CastVoteCommandHandler : ICommandHandler<CastVoteCommand, bool>
         var existing = await _voteRepository.GetByUserAndPoemAsync(request.UserId, request.PoemId, cancellationToken);
         if (existing != null)
         {
+            // Same vote from the same user on the same poem is a no-op (idempotency).
             if (existing.Value == request.Value)
             {
                 return false;
             }
 
+            // Different value means a vote flip: update the existing record instead of creating a new one.
             existing.Value = request.Value;
             await _voteRepository.SaveAsync(existing, cancellationToken);
             return true;

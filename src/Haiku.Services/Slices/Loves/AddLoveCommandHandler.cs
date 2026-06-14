@@ -41,6 +41,7 @@ public class AddLoveCommandHandler : ICommandHandler<AddLoveCommand, bool>
         var love = new Love
         {
             Id = Guid.NewGuid(),
+            // EF Core stub: sets the FK by attaching a reference without loading the full entity.
             Poem = new Poem { Id = request.PoemId },
             User = new User { Id = request.UserId },
             CreatedAt = DateTime.UtcNow,

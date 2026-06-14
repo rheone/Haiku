@@ -1,143 +1,91 @@
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Poems;
 
+/// <summary>
+/// Tests for <see cref="Haiku.Services.Poems.PoemInputService"/> covering input
+/// validation, normalization (trimming, line-ending conversion, zero-width character
+/// removal), and syllable analysis of raw poem text.
+/// </summary>
 public class PoemInputServiceTests
 {
-    private readonly IWordTokenizer _tokenizer;
+    private readonly SyllableEngine _syllableEngine;
+    private readonly IPoemMatcherChain _matcherChain;
     private readonly PoemInputService _service;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PoemInputServiceTests"/> class.
+    /// Creates a partial substitute of <see cref="SyllableEngine"/> with empty
+    /// dictionary and CMU word sets, and a mock <see cref="IPoemMatcherChain"/>
+    /// that defaults to returning <see cref="PoemType.Haiku"/>.
+    /// </summary>
     public PoemInputServiceTests()
     {
-        _tokenizer = Substitute.For<IWordTokenizer>();
-
-        var provider = Substitute.For<ISyllableProvider>();
-        provider
-            .TryCountSyllables(Arg.Any<string>(), out Arg.Any<SyllableResult?>())
-            .Returns(x =>
-            {
-                x[1] = new SyllableResult("test", 1, "Heuristic");
-                return true;
-            });
-
-        var syllableEngine = new global::Haiku.Services.Syllables.SyllableEngine([provider], Substitute.For<IWordTokenizer>());
-
-        var classifier = Substitute.For<IPoemClassifier>();
-        classifier.Priority.Returns(1);
-        classifier
-            .TryClassify(Arg.Any<string[]>(), Arg.Any<int[]>(), Arg.Any<TokenizedLine[]>(), out Arg.Any<PoemDefinition?>())
-            .Returns(x =>
-            {
-                x[3] = new PoemDefinition { Type = PoemType.Haiku };
-                return true;
-            });
-
-        var classifierChain = new PoemClassifierChain([classifier]);
-        _service = new PoemInputService(syllableEngine, classifierChain, _tokenizer);
+        // Partial substitute: allows real method execution while mocking abstract
+        // base behavior. SyllableEngine is a singleton that loads dictionary.dic;
+        // providing empty collections avoids file I/O in unit tests.
+        _syllableEngine = Substitute.For<SyllableEngine>(new Dictionary<string, int>(), new HashSet<string>());
+        _matcherChain = Substitute.For<IPoemMatcherChain>();
+        _matcherChain.Match(Arg.Any<string[]>(), Arg.Any<int[]>()).Returns(PoemType.Haiku);
+        _service = new PoemInputService(_syllableEngine, _matcherChain);
     }
 
-    #region Process
-
-    /// <summary>
-    ///     Verifies that Process returns invalid with an error when input is empty.
-    /// </summary>
     [Fact]
     public void Process_EmptyInput_ReturnsInvalidWithError()
     {
-        // Arrange
         var result = _service.Process("");
 
-        // Act
-
-        // Assert
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("Poem is empty"));
     }
 
-    /// <summary>
-    ///     Verifies that Process returns invalid with an error when input is whitespace-only.
-    /// </summary>
     [Fact]
     public void Process_WhitespaceInput_ReturnsInvalidWithError()
     {
-        // Arrange
         var result = _service.Process("   ");
 
-        // Act
-
-        // Assert
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("Poem is empty"));
     }
 
-    /// <summary>
-    ///     Verifies that Process sets normalized content for valid input.
-    /// </summary>
     [Fact]
     public void Process_ValidInput_SetsNormalizedContent()
     {
-        // Arrange
-        _tokenizer.Tokenize(Arg.Any<string>()).Returns(new TokenizedLine { Words = ["hello", "world"], WordCount = 2 });
+        _syllableEngine.CountLineSyllables(Arg.Any<string>()).Returns(new List<int> { 1, 1 });
 
-        // Act
         var result = _service.Process("hello world");
 
-        // Assert
         Assert.True(result.IsValid);
         Assert.Equal("hello world", result.NormalizedContent);
     }
 
-    /// <summary>
-    ///     Verifies that Process trims leading and trailing whitespace from input.
-    /// </summary>
     [Fact]
     public void Process_InputWithLeadingTrailingWhitespace_TrimsContent()
     {
-        // Arrange
-        _tokenizer.Tokenize(Arg.Any<string>()).Returns(new TokenizedLine { Words = ["hello", "world"], WordCount = 2 });
+        _syllableEngine.CountLineSyllables(Arg.Any<string>()).Returns(new List<int> { 2 });
 
-        // Act
         var result = _service.Process("  hello world  ");
 
-        // Assert
         Assert.Equal("hello world", result.NormalizedContent);
     }
 
-    /// <summary>
-    ///     Verifies that Process normalizes line endings to newlines.
-    /// </summary>
     [Fact]
     public void Process_InputWithLineEndings_NormalizesToNewlines()
     {
-        // Arrange
-        _tokenizer.Tokenize(Arg.Any<string>()).Returns(new TokenizedLine { Words = ["hello"], WordCount = 1 });
+        _syllableEngine.CountLineSyllables(Arg.Any<string>()).Returns(new List<int> { 1 });
 
-        // Act
         var result = _service.Process("\r\nhello\r\nworld\r\n");
 
-        // Assert
         Assert.Equal(2, result.Lines.Length);
         Assert.Equal("hello", result.Lines[0]);
         Assert.Equal("world", result.Lines[1]);
     }
 
-    /// <summary>
-    ///     Verifies that Process removes zero-width characters from input.
-    /// </summary>
     [Fact]
     public void Process_InputWithZeroWidthChars_RemovesThem()
     {
-        // Arrange
-        _tokenizer.Tokenize(Arg.Any<string>()).Returns(new TokenizedLine { Words = ["helloworld"], WordCount = 1 });
+        _syllableEngine.CountLineSyllables(Arg.Any<string>()).Returns(new List<int> { 1 });
 
-        // Act
         var result = _service.Process("hel\u200Blo\u200Cworld");
 
-        // Assert
         Assert.Equal("helloworld", result.NormalizedContent);
     }
-
-    #endregion
 }

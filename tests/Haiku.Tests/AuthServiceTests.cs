@@ -6,6 +6,14 @@ using NSubstitute;
 namespace Haiku.Tests;
 
 /// <summary>Unit tests for <see cref="AuthService"/> covering registration and login flows.</summary>
+/// <remarks>
+/// <para>
+/// Test fixtures use BCrypt work factor 12 for password hashing, matching the production
+/// configuration. Each hash invocation adds approximately 300ms to test execution. When
+/// adding new credential-validation tests, prefer unit tests against the repository mock
+/// over integration tests to keep the feedback loop fast.
+/// </para>
+/// </remarks>
 public class AuthServiceTests
 {
     #region Register
@@ -109,6 +117,7 @@ public class AuthServiceTests
             Id = Guid.NewGuid(),
             Email = "test@example.com",
             Username = "testuser",
+            // Work factor 12 matches production cost; each hash takes ~300ms.
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("correct_password", workFactor: 12),
             IsDisabled = false,
         };
@@ -137,6 +146,7 @@ public class AuthServiceTests
         {
             Id = Guid.NewGuid(),
             Email = "test@example.com",
+            // Work factor 12 matches production cost; each hash takes ~300ms.
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("correct_password", workFactor: 12),
         };
         userRepo.GetByEmailAsync("test@example.com", TestContext.Current.CancellationToken).Returns(user);
@@ -175,6 +185,7 @@ public class AuthServiceTests
         {
             Id = Guid.NewGuid(),
             Email = "disabled@example.com",
+            // Work factor 12 matches production cost; each hash takes ~300ms.
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("password", workFactor: 12),
             IsDisabled = true,
         };

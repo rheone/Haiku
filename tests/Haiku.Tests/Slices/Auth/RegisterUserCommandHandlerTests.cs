@@ -6,6 +6,14 @@ using NSubstitute;
 namespace Haiku.Tests.Slices.Auth;
 
 /// <summary>Unit tests for <see cref="RegisterUserCommandHandler"/> covering unique constraint enforcement during registration.</summary>
+/// <remarks>
+/// <para>
+/// The handler returns <c>null</c> when either the email or username already exists, and
+/// returns a new <see cref="User"/> entity with a hashed password when both are unique.
+/// These tests verify only uniqueness constraints; password strength validation is tested
+/// separately in the validation layer.
+/// </para>
+/// </remarks>
 public class RegisterUserCommandHandlerTests
 {
     #region Handle
@@ -33,6 +41,7 @@ public class RegisterUserCommandHandlerTests
         Assert.NotNull(result);
         Assert.Equal("test@example.com", result.Email);
         Assert.Equal("testuser", result.Username);
+        // Verifies that BCrypt hashing occurred (hash differs from the plaintext password).
         Assert.NotEqual("password123", result.PasswordHash);
     }
 

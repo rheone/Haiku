@@ -1,8 +1,19 @@
 namespace Haiku.Domain.Enums;
 
+// These 15 types are detected by PoemMatcherChain in Haiku.Services.
+// Detection is primarily based on syllable pattern; Freeform must be user-specified
+// since it has no fixed constraints.
+
 /// <summary>
 /// Identifies the structural form or poetic style of a poem.
 /// </summary>
+/// <remarks>
+/// <para>Each value represents a distinct poetic form with specific syllable and line
+/// constraints. Types are detected automatically during poem creation using a chain
+/// of matchers in <c>PoemMatcherChain</c>. The Freeform type is an exception — it
+/// carries no constraints and must be explicitly selected by the author. When a poem
+/// matches multiple forms, the first matching form in priority order is assigned.</para>
+/// </remarks>
 public enum PoemType
 {
     /// <summary>

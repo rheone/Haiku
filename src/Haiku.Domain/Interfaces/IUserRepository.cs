@@ -2,9 +2,20 @@ using Haiku.Domain.Entities;
 
 namespace Haiku.Domain.Interfaces;
 
+// User lookups are available by id, email, or username. Existence checks
+// are separate methods to avoid fetching full user objects.
+
 /// <summary>
 /// Provides data access for user accounts.
 /// </summary>
+/// <remarks>
+/// <para>Users are the platform's authentication principals. Lookup methods support
+/// the three common identifiers (database id, email for login, username for profile
+/// display). The existence checks (<see cref="EmailExistsAsync"/>,
+/// <see cref="UsernameExistsAsync"/>) return a boolean without loading the full
+/// entity, optimized for registration validation. The SaveAsync method inserts or
+/// updates, while UpdateAsync is an explicit update for existing users.</para>
+/// </remarks>
 public interface IUserRepository
 {
     /// <summary>

@@ -34,6 +34,7 @@ public class AddBookmarkCommandHandler : ICommandHandler<AddBookmarkCommand, boo
         var bookmark = new Bookmark
         {
             Id = Guid.NewGuid(),
+            // EF Core stub: sets the FK by attaching a reference without loading the full entity.
             User = new User { Id = request.UserId },
             Poem = new Poem { Id = request.PoemId },
             CreatedAt = DateTime.UtcNow,

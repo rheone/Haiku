@@ -37,6 +37,7 @@ public class CreatePoemCommandHandler : ICommandHandler<CreatePoemCommand, Poem>
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        // Validate and normalize the poem content (syllable counting, line splitting, etc.).
         var result = _poemInputService.Process(request.Content);
         if (!result.IsValid)
         {
@@ -67,6 +68,8 @@ public class CreatePoemCommandHandler : ICommandHandler<CreatePoemCommand, Poem>
         return poem;
     }
 
+    // Extracts unique, lowercased hashtag names (e.g., #Nature -> "nature") from poem content.
+    // Tags are embedded inline using the #tag convention in the poem text.
     private static List<string> ExtractTags(string content)
     {
         return content

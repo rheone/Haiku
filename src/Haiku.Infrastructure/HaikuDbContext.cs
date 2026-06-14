@@ -130,6 +130,7 @@ public class HaikuDbContext : DbContext
     /// <param name="modelBuilder">The model builder used to configure the entity mappings.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Users: unique indexes on login identifiers prevent duplicate registration.
         modelBuilder.Entity<User>(entity =>
         {
             entity.ToTable("Users");
@@ -137,6 +138,10 @@ public class HaikuDbContext : DbContext
             entity.HasIndex(e => e.Username).IsUnique();
         });
 
+        // Poems: Restrict on Author FK prevents accidental cascade-delete of all
+        // poems when a user is removed. The filtered index on CreatedAt excludes
+        // drafts, hidden content, and soft-deleted rows so browse/list queries
+        // only see published, public poems.
         modelBuilder.Entity<Poem>(entity =>
         {
             entity.ToTable("Poems");
@@ -159,6 +164,10 @@ public class HaikuDbContext : DbContext
             entity.HasIndex(e => e.TagId);
         });
 
+        // Votes and Loves: Cascade on the poem FK cleans up interactions when a
+        // poem is deleted. Restrict on the user FK prevents data loss from
+        // accidental user deletion. The composite unique index enforces one
+        // vote/love per user per poem.
         modelBuilder.Entity<Vote>(entity =>
         {
             entity.ToTable("Votes");
@@ -177,6 +186,9 @@ public class HaikuDbContext : DbContext
             entity.HasIndex(e => e.PoemId);
         });
 
+        // Bookmarks: Restrict on the user FK prevents data loss; Cascade on the poem
+        // FK cleans up bookmarks when a poem is removed. Composite unique index
+        // enforces one bookmark per user per poem.
         modelBuilder.Entity<Bookmark>(entity =>
         {
             entity.ToTable("Bookmarks");
@@ -185,6 +197,8 @@ public class HaikuDbContext : DbContext
             entity.HasIndex(e => new { e.UserId, e.PoemId }).IsUnique();
         });
 
+        // Follows: Both FKs use Restrict to prevent circular cascade chains
+        // (e.g. deleting user A could cascade through follows and back to user B).
         modelBuilder.Entity<Follow>(entity =>
         {
             entity.ToTable("Follows");

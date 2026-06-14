@@ -2,9 +2,18 @@ using Haiku.Domain.Entities;
 
 namespace Haiku.Domain.Interfaces;
 
+// "Love" is the platform's appreciation gesture, similar to "like" on other
+// social platforms. A user can love a poem at most once.
+
 /// <summary>
 /// Provides data access for poem appreciation ("love") interactions.
 /// </summary>
+/// <remarks>
+/// <para>Loves are the platform's primary positive feedback mechanism — analogous to
+/// "likes" on other social platforms. Each user-poem pair may have at most one love
+/// record (toggling love adds or removes it). The aggregate count is exposed via
+/// <see cref="GetLoveCountAsync"/>.</para>
+/// </remarks>
 public interface ILoveRepository
 {
     /// <summary>

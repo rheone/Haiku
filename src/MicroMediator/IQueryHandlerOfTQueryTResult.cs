@@ -5,6 +5,13 @@ namespace MicroMediator;
 /// </summary>
 /// <typeparam name="TQuery">The concrete query type. Must implement <see cref="IQuery{TResult}"/>.</typeparam>
 /// <typeparam name="TResult">The type of the result produced by handling the query.</typeparam>
+/// <remarks>
+/// <para>
+/// Implement this interface to process a read-only query that returns domain data
+/// to the caller. The handler is resolved by the <see cref="IMediator"/> via the
+/// closed generic type <c>IQueryHandler{TQuery, TResult}</c>.
+/// </para>
+/// </remarks>
 public interface IQueryHandler<TQuery, TResult>
     where TQuery : IQuery<TResult>
 {

@@ -38,6 +38,7 @@ public class HidePoemCommandHandler : ICommandHandler<HidePoemCommand, bool>
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        // Return false when the target poem does not exist (no-op).
         var poem = await _poemRepository.GetByIdAsync(request.PoemId, cancellationToken);
         if (poem == null)
         {
@@ -47,6 +48,7 @@ public class HidePoemCommandHandler : ICommandHandler<HidePoemCommand, bool>
         poem.IsHidden = true;
         await _poemRepository.SaveAsync(poem, cancellationToken);
 
+        // Persist an audit trail recording who hid the poem and why.
         var action = new ModerationAction
         {
             Id = Guid.NewGuid(),

@@ -2,9 +2,18 @@ using Haiku.Domain.Entities;
 
 namespace Haiku.Domain.Interfaces;
 
+// Tags are shared across poems; GetOrCreateAsync ensures a single canonical
+// Tag row per name to avoid duplicates.
+
 /// <summary>
 /// Provides data access for poem tags.
 /// </summary>
+/// <remarks>
+/// <para>Tags are reusable labels shared across poems. The <see cref="GetOrCreateAsync"/>
+/// method implements a find-or-create pattern that ensures exactly one canonical
+/// <c>Tag</c> entity exists per tag name, preventing duplicate tags from being created
+/// when multiple authors use the same label.</para>
+/// </remarks>
 public interface ITagRepository
 {
     /// <summary>

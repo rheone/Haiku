@@ -23,6 +23,8 @@ public class HasPrivilegeQueryHandler : IQueryHandler<HasPrivilegeQuery, bool>
     public async Task<bool> Handle(HasPrivilegeQuery request, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
+        // Delegates to the repository which checks the user's role/permission assignments.
         return await _moderationRepository.HasPrivilegeAsync(request.UserId, request.Privilege, cancellationToken);
     }
 }

@@ -4,7 +4,7 @@ using MicroMediator;
 namespace Haiku.Services.Slices.Poems;
 
 /// <summary>
-/// Handles soft-deletion of poems by setting the <c>Poem.DeletedAt</c> timestamp rather than removing rows.
+/// Handles soft-deletion of poems by setting the <see cref="Poem.DeletedAt"/> timestamp rather than removing rows.
 /// </summary>
 public class DeletePoemCommandHandler : ICommandHandler<DeletePoemCommand, bool>
 {
@@ -13,7 +13,7 @@ public class DeletePoemCommandHandler : ICommandHandler<DeletePoemCommand, bool>
     /// <summary>
     /// Initializes a new instance of the <see cref="DeletePoemCommandHandler"/> class.
     /// </summary>
-    /// <param name="poemRepository">Repository for loading and saving <c>Poem</c> entities.</param>
+    /// <param name="poemRepository">Repository for loading and saving <see cref="Poem"/> entities.</param>
     public DeletePoemCommandHandler(IPoemRepository poemRepository)
     {
         _poemRepository = poemRepository;
@@ -29,12 +29,14 @@ public class DeletePoemCommandHandler : ICommandHandler<DeletePoemCommand, bool>
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        // Return false when the target poem does not exist (no-op).
         var poem = await _poemRepository.GetByIdAsync(request.PoemId, cancellationToken);
         if (poem == null)
         {
             return false;
         }
 
+        // Soft-delete: set the DeletedAt timestamp instead of removing the database row.
         poem.DeletedAt = DateTime.UtcNow;
         await _poemRepository.SaveAsync(poem, cancellationToken);
         return true;

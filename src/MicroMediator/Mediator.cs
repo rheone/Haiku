@@ -33,11 +33,18 @@ public sealed class Mediator : IMediator
     public async Task Send<TCommand>(TCommand command, CancellationToken cancellationToken = default)
         where TCommand : ICommand
     {
-        // Resolve ICommandHandler<TConcreteCommand> at runtime — the constraint is ICommand
-        // but we need the concrete type to build the closed generic handler type.
+        // The generic constraint only exposes ICommand at compile time; reflect on the
+        // concrete runtime type to construct the closed generic ICommandHandler<T>.
         var commandType = command.GetType();
         var handlerType = typeof(ICommandHandler<>).MakeGenericType(commandType);
+
+        // GetRequiredService throws InvalidOperationException if the handler
+        // was not registered by AddMediator.
         var handler = _serviceProvider.GetRequiredService(handlerType);
+
+        // Resolve the Handle(TCommand, CancellationToken) method by matching
+        // the concrete parameter types — the null-forgiving operator is safe
+        // because ICommandHandler<T> guarantees this method exists.
         var method = handlerType.GetMethod("Handle", [commandType, typeof(CancellationToken)])!;
         await (Task)method.Invoke(handler, [command, cancellationToken])!;
     }
@@ -46,6 +53,8 @@ public sealed class Mediator : IMediator
     /// <exception cref="InvalidOperationException">Thrown when no handler is registered for the command type.</exception>
     public async Task<TResult> Send<TResult>(ICommand<TResult> command, CancellationToken cancellationToken = default)
     {
+        // Same reflection dispatch as the void-command overload, but targeting
+        // ICommandHandler<TCommand, TResult> to produce a typed result.
         var commandType = command.GetType();
         var handlerType = typeof(ICommandHandler<,>).MakeGenericType(commandType, typeof(TResult));
         var handler = _serviceProvider.GetRequiredService(handlerType);
@@ -57,6 +66,8 @@ public sealed class Mediator : IMediator
     /// <exception cref="InvalidOperationException">Thrown when no handler is registered for the query type.</exception>
     public async Task<TResult> Send<TResult>(IQuery<TResult> query, CancellationToken cancellationToken = default)
     {
+        // Identical pattern to the command overloads, but resolving
+        // IQueryHandler<TQuery, TResult> instead.
         var queryType = query.GetType();
         var handlerType = typeof(IQueryHandler<,>).MakeGenericType(queryType, typeof(TResult));
         var handler = _serviceProvider.GetRequiredService(handlerType);

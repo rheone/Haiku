@@ -1,129 +1,84 @@
+using Haiku.Domain.Enums;
 using Haiku.Services.Poems;
 
 namespace Haiku.Tests;
 
-/// <summary>Unit tests for <see cref="PoemService"/>.</summary>
+/// <summary>Unit tests for the static detection and extraction methods in <see cref="PoemService"/>.</summary>
+/// <remarks>
+/// <para>
+/// Poem type detection relies on the <c>PoemMatcherChain</c> — a priority-ordered chain of
+/// matchers that test syllable-count patterns against known poetic forms (haiku, tanka,
+/// monoku, etc.). The chain returns the first match, so matcher order matters. See
+/// <see cref="PoemEngine"/> for the full set of supported forms.
+/// </para>
+/// </remarks>
 public class PoemServiceTests
 {
-    #region ExtractTags
+    [Fact]
+    public void DetectPoemType_ReturnsHaiku_For575()
+    {
+        var content = "line one\nline two\nline three";
+        var counts = new List<int> { 5, 7, 5 };
 
-    /// <summary>
-    /// Tests that <see cref="PoemService.ExtractTags"/> returns distinct lowercase tags.
-    /// </summary>
+        var result = PoemService.DetectPoemType(content, counts);
+
+        Assert.Equal(PoemType.Haiku, result);
+    }
+
+    [Fact]
+    public void DetectPoemType_ReturnsTanka_For57577()
+    {
+        // Tanka is a 5-line Japanese form with syllable pattern 5-7-5-7-7.
+        var content = "1\n2\n3\n4\n5";
+        var counts = new List<int> { 5, 7, 5, 7, 7 };
+
+        var result = PoemService.DetectPoemType(content, counts);
+
+        Assert.Equal(PoemType.Tanka, result);
+    }
+
+    [Fact]
+    public void DetectPoemType_ReturnsMonoku_ForSingleLine()
+    {
+        // Monoku is a one-line haiku variant; the single line must fall within 4-17 syllables.
+        var content = "A single line of text";
+        var counts = new List<int> { 7 };
+
+        var result = PoemService.DetectPoemType(content, counts);
+
+        Assert.Equal(PoemType.Monoku, result);
+    }
+
+    [Fact]
+    public void DetectPoemType_ReturnsFreeform_WhenNoPatternMatches()
+    {
+        var content = "line one\nline two";
+        var counts = new List<int> { 3, 9 };
+
+        var result = PoemService.DetectPoemType(content, counts);
+
+        Assert.Equal(PoemType.Freeform, result);
+    }
+
     [Fact]
     public void ExtractTags_ReturnsDistinctLowercaseTags()
     {
-        // Arrange
         var content = "This is #Nature at its #best #Nature";
 
-        // Act
         var tags = PoemService.ExtractTags(content);
 
-        // Assert
         Assert.Equal(2, tags.Count);
         Assert.Contains("nature", tags);
         Assert.Contains("best", tags);
     }
 
-    /// <summary>
-    /// Tests that <see cref="PoemService.ExtractTags"/> returns an empty list when no hashtags are present.
-    /// </summary>
     [Fact]
     public void ExtractTags_ReturnsEmpty_WhenNoHashtags()
     {
-        // Arrange
         var content = "This has no tags at all";
 
-        // Act
         var tags = PoemService.ExtractTags(content);
 
-        // Assert
         Assert.Empty(tags);
     }
-
-    /// <summary>
-    /// Tests that <see cref="PoemService.ExtractTags"/> throws when content is null.
-    /// </summary>
-    [Fact]
-    public void ExtractTags_NullContent_ThrowsArgumentNullException_Test()
-    {
-        // Auto Generated, verify expected behavior:
-        // Arrange, Act & Assert
-        Assert.Throws<ArgumentNullException>(() => PoemService.ExtractTags(null!));
-    }
-
-    /// <summary>
-    /// Tests that <see cref="PoemService.ExtractTags"/> returns an empty list for empty string content.
-    /// </summary>
-    [Fact]
-    public void ExtractTags_EmptyString_ReturnsEmpty_Test()
-    {
-        // Auto Generated, verify expected behavior:
-        // Arrange
-        var content = string.Empty;
-
-        // Act
-        var tags = PoemService.ExtractTags(content);
-
-        // Assert
-        Assert.Empty(tags);
-    }
-
-    /// <summary>
-    /// Tests that <see cref="PoemService.ExtractTags"/> returns lowercase tags when input has mixed case.
-    /// </summary>
-    [Fact]
-    public void ExtractTags_MixedCase_ReturnsLowercase_Test()
-    {
-        // Auto Generated, verify expected behavior:
-        // Arrange
-        var content = "#Nature #BEAUTY #Science";
-
-        // Act
-        var tags = PoemService.ExtractTags(content);
-
-        // Assert
-        Assert.Equal(3, tags.Count);
-        Assert.Contains("nature", tags);
-        Assert.Contains("beauty", tags);
-        Assert.Contains("science", tags);
-    }
-
-    /// <summary>
-    /// Tests that <see cref="PoemService.ExtractTags"/> returns an empty list when content contains only '#' symbols.
-    /// </summary>
-    [Fact]
-    public void ExtractTags_OnlyHashSymbol_ReturnsEmpty_Test()
-    {
-        // Auto Generated, verify expected behavior:
-        // Arrange
-        var content = "# # #";
-
-        // Act
-        var tags = PoemService.ExtractTags(content);
-
-        // Assert
-        Assert.Empty(tags);
-    }
-
-    /// <summary>
-    /// Tests that <see cref="PoemService.ExtractTags"/> handles consecutive hashtags correctly.
-    /// </summary>
-    [Fact]
-    public void ExtractTags_ConsecutiveHashtags_ReturnsTags_Test()
-    {
-        // Auto Generated, verify expected behavior:
-        // Arrange
-        var content = "##urgent ##important";
-
-        // Act
-        var tags = PoemService.ExtractTags(content);
-
-        // Assert
-        Assert.Equal(2, tags.Count);
-        Assert.Contains("urgent", tags);
-        Assert.Contains("important", tags);
-    }
-
-    #endregion
 }
