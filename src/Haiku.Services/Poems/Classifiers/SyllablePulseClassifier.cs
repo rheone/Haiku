@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Syllable Pulse form: per-line syllable counts alternate between
+/// two distinct values. Minimum 4 lines, even count.
+/// </summary>
 public sealed class SyllablePulseClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 3000;
 
+    /// <summary>
+    /// Gets the type metadata for the Syllable Pulse form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the alternating two-value syllable pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.SyllablePulse,
@@ -21,6 +30,7 @@ public sealed class SyllablePulseClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

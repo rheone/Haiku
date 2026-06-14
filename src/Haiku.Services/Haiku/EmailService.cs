@@ -25,6 +25,7 @@ public class EmailService
     /// <param name="verificationLink">The full URL for email verification.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task SendVerificationEmailAsync(
         string to,
         string verificationLink,
@@ -44,6 +45,7 @@ public class EmailService
     /// <param name="resetLink">The full URL for password reset.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task SendPasswordResetEmailAsync(string to, string resetLink, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

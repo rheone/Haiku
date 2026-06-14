@@ -40,6 +40,8 @@ internal static class FibonacciSequence
     /// <summary>
     /// Returns the first <paramref name="count"/> Fibonacci terms (F1=1, F2=1, ...).
     /// </summary>
+    /// <param name="count">The number of Fibonacci terms to return.</param>
+    /// <returns>An array of the first <paramref name="count"/> Fibonacci terms.</returns>
     public static int[] GetTerms(int count)
     {
         if (count <= 0)
@@ -59,6 +61,8 @@ internal static class FibonacciSequence
     /// Returns the first <paramref name="count"/> Fibonacci terms in reverse order
     /// (last term first, descending to 1).
     /// </summary>
+    /// <param name="count">The number of Fibonacci terms to reverse and return.</param>
+    /// <returns>An array of the first <paramref name="count"/> Fibonacci terms in descending order.</returns>
     public static int[] GetReverseTerms(int count)
     {
         var forward = GetTerms(count);
@@ -70,6 +74,8 @@ internal static class FibonacciSequence
     /// Returns <c>true</c> if <paramref name="counts"/> matches a prefix of
     /// the Fibonacci sequence (1, 1, 2, 3, 5, ...). Min 3 elements.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to compare.</param>
+    /// <returns><c>true</c> if the counts match a prefix of the Fibonacci sequence; otherwise <c>false</c>.</returns>
     public static bool IsFibMatch(int[] counts)
     {
         if (counts.Length < 3)
@@ -99,6 +105,8 @@ internal static class FibonacciSequence
     /// the reversed Fibonacci sequence (largest term first, descending to 1, 1).
     /// Min 3 elements.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to compare.</param>
+    /// <returns><c>true</c> if the counts match a prefix of the reversed Fibonacci sequence; otherwise <c>false</c>.</returns>
     public static bool IsReverseFibMatch(int[] counts)
     {
         if (counts.Length < 3)

@@ -37,6 +37,8 @@ internal static class PrimeHelper
     /// <summary>
     /// Returns <c>true</c> if <paramref name="n"/> is a prime number.
     /// </summary>
+    /// <param name="n">The integer to test for primality.</param>
+    /// <returns><c>true</c> if <paramref name="n"/> is prime; otherwise <c>false</c>.</returns>
     public static bool IsPrime(int n)
     {
         if (n < 2)

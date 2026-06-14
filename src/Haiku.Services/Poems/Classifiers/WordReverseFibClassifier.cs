@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Word Reverse Fib form: each line's word count follows the
+/// reversed prefix of the Fibonacci sequence. Minimum 3 lines.
+/// </summary>
 public sealed class WordReverseFibClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 2100;
 
+    /// <summary>
+    /// Gets the type metadata for the Word Reverse Fib form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the reverse-Fibonacci word pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.WordReverseFib,
@@ -21,6 +30,7 @@ public sealed class WordReverseFibClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

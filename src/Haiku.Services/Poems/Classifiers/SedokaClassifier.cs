@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the sedoka form: exactly six lines with a 5-7-7-5-7-7 syllable pattern.
+/// Structurally equivalent to two joined katauta stanzas.
+/// </summary>
 public sealed class SedokaClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 1100;
 
+    /// <summary>
+    /// Gets the type metadata for the sedoka form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 5-7-7-5-7-7 syllable-based traditional form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.Sedoka,
@@ -21,6 +30,7 @@ public sealed class SedokaClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

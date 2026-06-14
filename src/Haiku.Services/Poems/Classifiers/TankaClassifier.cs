@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the tanka form: exactly five lines with a 5-7-5-7-7 syllable pattern.
+/// A classical Japanese form extending the haiku with two additional 7-syllable lines.
+/// </summary>
 public sealed class TankaClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 800;
 
+    /// <summary>
+    /// Gets the type metadata for the tanka form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 5-7-5-7-7 syllable-based traditional form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.Tanka,
@@ -21,6 +30,7 @@ public sealed class TankaClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

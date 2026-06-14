@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Word Mountain form: per-line word counts start at 1 and
+/// increase by exactly 1 each line. Minimum 3 lines.
+/// </summary>
 public sealed class WordMountainClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 3900;
 
+    /// <summary>
+    /// Gets the type metadata for the Word Mountain form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the sequential-counting word pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.WordMountain,
@@ -21,6 +30,7 @@ public sealed class WordMountainClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

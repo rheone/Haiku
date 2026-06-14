@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Word Wave form: per-line word counts form a symmetric
+/// ascending-then-descending wave pattern with a single peak. Minimum 5 lines, odd.
+/// </summary>
 public sealed class WordWaveClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 2300;
 
+    /// <summary>
+    /// Gets the type metadata for the Word Wave form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the word-wave pattern-based form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.WordWave,
@@ -21,6 +30,7 @@ public sealed class WordWaveClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

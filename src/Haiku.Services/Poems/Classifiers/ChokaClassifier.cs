@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the choka (long poem) form: an odd number of lines (minimum 7) with alternating
+/// 5-7 syllable counts, ending with a 5-7-7 closing triplet.
+/// </summary>
 public sealed class ChokaClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 1400;
 
+    /// <summary>
+    /// Gets the type metadata for the choka form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the alternating 5-7 long-form Japanese poem.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.Choka,
@@ -21,6 +30,7 @@ public sealed class ChokaClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

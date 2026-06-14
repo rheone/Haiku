@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Word Erosion form: per-line word counts decrease by exactly 1
+/// each line, descending to 1. Minimum 3 lines.
+/// </summary>
 public sealed class WordErosionClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 3700;
 
+    /// <summary>
+    /// Gets the type metadata for the Word Erosion form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the descending-count word pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.WordErosion,
@@ -21,6 +30,7 @@ public sealed class WordErosionClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

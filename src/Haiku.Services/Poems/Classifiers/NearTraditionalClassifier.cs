@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the near-traditional haiku approximation: exactly three lines with a 4-6-4 syllable pattern.
+/// A relaxed variant that deviates from the strict 5-7-5 by one syllable per line.
+/// </summary>
 public sealed class NearTraditionalClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 700;
 
+    /// <summary>
+    /// Gets the type metadata for the near-traditional haiku approximation.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 4-6-4 syllable-based near-traditional form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.NearTraditional,
@@ -21,6 +30,7 @@ public sealed class NearTraditionalClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

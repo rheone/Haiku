@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Syllable Hailstone form: per-line syllable counts follow the
+/// Collatz (hailstone) sequence from a starting value down to 1. Minimum 3 lines.
+/// </summary>
 public sealed class SyllableHailstoneClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 3200;
 
+    /// <summary>
+    /// Gets the type metadata for the Syllable Hailstone form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the Collatz-sequence syllable pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.SyllableHailstone,
@@ -21,6 +30,7 @@ public sealed class SyllableHailstoneClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

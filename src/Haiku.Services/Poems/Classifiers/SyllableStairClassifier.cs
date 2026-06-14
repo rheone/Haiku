@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Syllable Stair form: per-line syllable counts increase by exactly 1
+/// each line. Minimum 3 lines.
+/// </summary>
 public sealed class SyllableStairClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 3400;
 
+    /// <summary>
+    /// Gets the type metadata for the Syllable Stair form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the stair-ascending syllable pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.SyllableStair,
@@ -21,6 +30,7 @@ public sealed class SyllableStairClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

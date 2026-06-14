@@ -21,19 +21,28 @@ namespace Haiku.Services.Poems.Classifiers;
 /// <para><b>TypeId convention:</b> The <see cref="PoemTypeInfo.TypeId"/> is derived
 /// automatically from the <see cref="PoemType"/> enum using kebab-case conversion.
 /// Pass the enum value to <see cref="PoemTypeInfo"/> and the TypeId follows — no manual
-/// string is accepted. The <see cref="ClassifierBuilder"/> reads <c>Info.PoemType</c>
+/// string is accepted. The <c>ClassifierBuilder</c> reads <c>Info.PoemType</c>
 /// directly, eliminating any mapping step.</para>
 /// <para>Static metadata is available via <c>TClassifier.Info</c> without needing
 /// an instance (e.g. <c>HaikuClassifier.Info.TypeId</c>).</para>
 /// </remarks>
 public interface IPoemClassifier
 {
-    /// <summary>Detection priority (lower runs first). Must be unique across all classifiers.</summary>
+    /// <summary>Gets the detection priority (lower runs first). Must be unique across all classifiers.</summary>
+    /// <value>The ordinal priority value; classifiers with lower values are evaluated first.</value>
     int Priority { get; }
 
     /// <summary>
     /// Attempts to classify the given poem lines into this type.
     /// </summary>
+    /// <param name="lines">The poem lines to classify.</param>
+    /// <param name="syllableCounts">The pre-computed syllable count for each line.</param>
+    /// <param name="tokenizedLines">The tokenized representation of each line.</param>
+    /// <param name="definition">
+    /// When successful, the <see cref="PoemDefinition"/> for this type populated with display metadata;
+    /// <c>null</c> when the lines do not match this classifier.
+    /// </param>
+    /// <returns><c>true</c> if the lines match this poem type; <c>false</c> otherwise.</returns>
     bool TryClassify(
         string[] lines,
         int[] syllableCounts,

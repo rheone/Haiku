@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the katauta form: exactly three lines with a 5-7-7 syllable pattern.
+/// A classical Japanese form that serves as a half-stanza for the sedoka.
+/// </summary>
 public sealed class KatautaClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 300;
 
+    /// <summary>
+    /// Gets the type metadata for the katauta form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 5-7-7 syllable-based classical Japanese form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.Katauta,
@@ -21,6 +30,7 @@ public sealed class KatautaClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

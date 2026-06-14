@@ -12,42 +12,51 @@ namespace Haiku.Domain.ValueObjects;
 /// </remarks>
 public record PoemDefinition
 {
-    /// <summary>Unique stable identifier from the matching classifier, e.g. "haiku", "syllable-pi".</summary>
+    /// <summary>Gets the unique stable identifier from the matching classifier, e.g. "haiku", "syllable-pi".</summary>
+    /// <value>A kebab-case string derived from the matching classifier.</value>
     public string TypeId { get; init; } = string.Empty;
 
-    /// <summary>Human-readable type name, e.g. "Syllable Pi".</summary>
+    /// <summary>Gets the human-readable type name, e.g. "Syllable Pi".</summary>
+    /// <value>The display name of the matched poem type.</value>
     public string DisplayName { get; init; } = string.Empty;
 
-    /// <summary>Description of the type's structural rules.</summary>
+    /// <summary>Gets the description of the type's structural rules.</summary>
+    /// <value>A prose description of the structural constraints.</value>
     public string Description { get; init; } = string.Empty;
 
-    /// <summary>Cultural lineage category.</summary>
+    /// <summary>Gets the cultural lineage category.</summary>
+    /// <value>A <see cref="PoemCategory"/> value indicating traditional or non-traditional origin.</value>
     public PoemCategory Category { get; init; }
 
-    /// <summary>Measurement axis for structural constraints.</summary>
+    /// <summary>Gets the measurement axis for structural constraints.</summary>
+    /// <value>A <see cref="PoemScaffold"/> value indicating syllable-based or word-based measurement.</value>
     public PoemScaffold Scaffold { get; init; }
 
     /// <summary>
-    /// Fixed syllable pattern per line, or <c>null</c> for sequence-based types.
+    /// Gets the fixed syllable pattern per line, or <c>null</c> for sequence-based types.
     /// </summary>
+    /// <value>An array of syllable counts per line, or <c>null</c> for sequence-based or word-based types.</value>
     public int[]? SyllablePattern { get; init; }
 
     /// <summary>
-    /// Fixed word-count pattern per line, or <c>null</c> for sequence-based types.
+    /// Gets the fixed word-count pattern per line, or <c>null</c> for sequence-based types.
     /// Obsolete — all word-based types use dynamic sequence generation via <c>PatternGenerator</c>.
     /// </summary>
+    /// <value>An array of word counts per line, or <c>null</c> for sequence-based or syllable-based types.</value>
     [Obsolete("Unused. All word-based types use dynamic sequence generation via PatternGenerator. Consider removal.")]
     public int[]? WordPattern { get; init; }
 
     /// <summary>
-    /// Backward-compatible enum value for DB storage.
+    /// Gets the backward-compatible enum value for DB storage.
     /// For traditional types this matches the enum; for new non-traditional types
     /// this returns <c>PoemType.Freeform</c> until the DB column is migrated to string.
     /// </summary>
+    /// <value>A <see cref="PoemType"/> enum value.</value>
     public PoemType Type { get; init; }
 
     /// <summary>
-    /// Backward-compatible display name (same as <see cref="DisplayName"/>).
+    /// Gets the backward-compatible display name (same as <see cref="DisplayName"/>).
     /// </summary>
+    /// <value>The display name string, identical to <see cref="DisplayName"/>.</value>
     public string Name { get; init; } = string.Empty;
 }

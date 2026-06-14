@@ -15,6 +15,15 @@ public sealed class PoemClassifierChain
     private readonly Dictionary<string, IPoemClassifier> _byTypeId;
     private readonly Dictionary<PoemType, IPoemClassifier> _byPoemType;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="PoemClassifierChain"/> class,
+    ///     sorting classifiers by priority and building lookup dictionaries for fast
+    ///     access by <see cref="PoemType"/> and TypeId string.
+    /// </summary>
+    /// <param name="classifiers">The set of classifiers to register.</param>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when two classifiers have the same <see cref="IPoemClassifier.Priority"/> value.
+    /// </exception>
     public PoemClassifierChain(IEnumerable<IPoemClassifier> classifiers)
     {
         _classifiers = classifiers.OrderBy(c => c.Priority).ToArray();
@@ -45,21 +54,33 @@ public sealed class PoemClassifierChain
         }
     }
 
-    /// <summary>All registered classifiers (ordered by priority).</summary>
+    /// <summary>Gets all registered classifiers (ordered by priority).</summary>
+    /// <value>A read-only view of the classifier array, sorted by ascending <see cref="IPoemClassifier.Priority"/>.</value>
     public IReadOnlyCollection<IPoemClassifier> AllTypes => _classifiers;
 
     /// <summary>Looks up a classifier by its TypeId string.</summary>
+    /// <param name="typeId">The classifier's unique type identifier (kebab-case, e.g. "haiku").</param>
+    /// <returns>The matching classifier, or <c>null</c> if not found.</returns>
     public IPoemClassifier? GetType(string typeId) => _byTypeId.GetValueOrDefault(typeId);
 
     /// <summary>
-    /// Looks up a classifier by its <see cref="PoemType"/> enum.
+    /// Looks up a classifier by its <see cref="PoemType"/> enum value.
     /// </summary>
+    /// <param name="poemType">The poem type enum value to look up.</param>
+    /// <returns>The matching classifier, or <c>null</c> if not found.</returns>
     public IPoemClassifier? GetType(PoemType poemType) => _byPoemType.GetValueOrDefault(poemType);
 
     /// <summary>
     /// Runs all classifiers in priority order and returns the first matching definition.
     /// Returns a Freeform definition if nothing matches.
     /// </summary>
+    /// <param name="lines">The poem lines to classify.</param>
+    /// <param name="syllableCounts">The pre-computed syllable count for each line.</param>
+    /// <param name="tokenizedLines">The tokenized representation of each line.</param>
+    /// <returns>
+    /// The matching <see cref="PoemDefinition"/> from the first classifier that succeeds,
+    /// or a minimal Freeform definition if none match.
+    /// </returns>
     public PoemDefinition Match(string[] lines, int[] syllableCounts, TokenizedLine[] tokenizedLines)
     {
         foreach (var classifier in _classifiers)

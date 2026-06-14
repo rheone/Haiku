@@ -1,6 +1,6 @@
 namespace Haiku.Domain.ValueObjects;
 
-/// <summary>Analysis result for a single word, produced by <see cref="Services.SyllableEngine"/>.</summary>
+/// <summary>Analysis result for a single word, produced by <c>SyllableEngine</c>.</summary>
 public record WordAnalysis
 {
     /// <summary>Gets the word in lowercase form.</summary>

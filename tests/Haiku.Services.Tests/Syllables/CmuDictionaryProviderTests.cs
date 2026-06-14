@@ -6,7 +6,7 @@ namespace Haiku.Services.Tests.Syllables;
 /// <summary>
 ///     Tests for <c>CmuDictionaryProvider</c> — verifying syllable lookups from a CMU pronunciation JSON file.
 /// </summary>
-public class CmuDictionaryProviderTests : IDisposable
+public sealed class CmuDictionaryProviderTests : IDisposable
 {
     private readonly string _testJsonPath;
 
@@ -280,7 +280,7 @@ public class CmuDictionaryProviderTests : IDisposable
         var success = provider.TryGetPhonemes("hello", out var phonemes);
 
         Assert.True(success);
-        Assert.Equal(["HH", "AH0", "L", "OW1"], phonemes);
+        Assert.Equal(["HH", "AH0", "L", "OW1"], phonemes!);
     }
 
     /// <summary>
@@ -300,6 +300,7 @@ public class CmuDictionaryProviderTests : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         if (File.Exists(_testJsonPath))
         {
             File.Delete(_testJsonPath);

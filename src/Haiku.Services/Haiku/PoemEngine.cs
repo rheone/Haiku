@@ -180,8 +180,12 @@ public sealed class PoemEngine
     }
 
     /// <summary>
-    ///     Validates that a set of lines matches a given poem definition.
+    ///     Validates that a set of lines matches a given poem definition by delegating
+    ///     to <see cref="IsValidPoem(PoemType,string[])"/> with the definition's type.
     /// </summary>
+    /// <param name="definition">The poem definition to validate against.</param>
+    /// <param name="lines">The poem lines to validate.</param>
+    /// <returns><c>true</c> if the lines conform to the definition's type constraints.</returns>
     public bool IsValidPoem(PoemDefinition definition, params string[] lines) => IsValidPoem(definition.Type, lines);
 
     // =========================================================================
@@ -325,8 +329,13 @@ public sealed class PoemEngine
     // =========================================================================
 
     /// <summary>
-    ///     Determines whether two words rhyme.
+    ///     Determines whether two words rhyme, delegating to the injected
+    ///     <see cref="RhymingEngine"/> when available. Falls back to a simple
+    ///     last-two-character suffix comparison for words of at least three characters.
     /// </summary>
+    /// <param name="word1">The first word to compare.</param>
+    /// <param name="word2">The second word to compare.</param>
+    /// <returns><c>true</c> if the words rhyme; otherwise <c>false</c>.</returns>
     public bool WordsRhyme(string word1, string word2)
     {
         if (_rhymingEngine is not null)
@@ -346,8 +355,13 @@ public sealed class PoemEngine
     }
 
     /// <summary>
-    ///     Determines whether two lines end with rhyming words.
+    ///     Determines whether two lines end with rhyming words, delegating to the
+    ///     injected <see cref="RhymingEngine"/> when available. Falls back to extracting
+    ///     the last word of each line and calling <see cref="WordsRhyme"/>.
     /// </summary>
+    /// <param name="line1">The first line to compare.</param>
+    /// <param name="line2">The second line to compare.</param>
+    /// <returns><c>true</c> if the final words of each line rhyme; otherwise <c>false</c>.</returns>
     public bool LinesRhyme(string line1, string line2)
     {
         if (_rhymingEngine is not null)
@@ -454,7 +468,7 @@ public sealed class PoemEngine
 
         for (var attempt = 0; attempt < maxAttempts; attempt++)
         {
-            if (_cmuDictionary.TryGetWords(targetWordCount, out var words, rng))
+            if (_cmuDictionary is not null && _cmuDictionary.TryGetWords(targetWordCount, out var words, rng))
             {
                 return string.Join(" ", words);
             }
@@ -536,16 +550,19 @@ public sealed class PoemEngine
         /// <summary>
         ///     Gets the per-line analysis results, one entry per line of the poem.
         /// </summary>
+        /// <value>The list of line-level analysis entries.</value>
         public List<LineAnalysis> Lines { get; init; } = [];
 
         /// <summary>
         ///     Gets the detected poem type, if any definition matched.
         /// </summary>
+        /// <value>The detected <see cref="PoemType"/>, or <c>null</c> if no classifier matched.</value>
         public PoemType? DetectedType { get; init; }
 
         /// <summary>
         ///     Gets the total syllable count across all lines.
         /// </summary>
+        /// <value>The sum of syllable counts for every line in the poem.</value>
         public int TotalSyllables { get; init; }
     }
 
@@ -557,21 +574,25 @@ public sealed class PoemEngine
         /// <summary>
         ///     Gets the one-based line number within the poem.
         /// </summary>
+        /// <value>The position of this line, starting from 1.</value>
         public int LineNumber { get; init; }
 
         /// <summary>
         ///     Gets the original text of the line.
         /// </summary>
+        /// <value>The line content as submitted.</value>
         public string Text { get; init; } = string.Empty;
 
         /// <summary>
         ///     Gets the total syllable count for this line.
         /// </summary>
+        /// <value>The sum of word syllable counts in this line.</value>
         public int TotalSyllables { get; init; }
 
         /// <summary>
         ///     Gets the per-word syllable breakdown for this line.
         /// </summary>
+        /// <value>The list of word-level analysis entries.</value>
         public List<WordAnalysis> WordBreakdown { get; init; } = [];
     }
 
@@ -583,16 +604,22 @@ public sealed class PoemEngine
         /// <summary>
         ///     Gets the original word text.
         /// </summary>
+        /// <value>The word as it appeared in the input.</value>
         public string Word { get; init; } = string.Empty;
 
         /// <summary>
         ///     Gets the number of syllables in this word.
         /// </summary>
+        /// <value>The syllable count.</value>
         public int Syllables { get; init; }
 
         /// <summary>
         ///     Gets the resolution tier that produced the syllable count.
         /// </summary>
+        /// <value>
+        ///     The name of the provider or algorithm that determined the count
+        ///     (e.g., "CMU", "Heuristic", "Numeral", "LetterName").
+        /// </value>
         public string Tier { get; init; } = string.Empty;
     }
 }

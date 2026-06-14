@@ -30,9 +30,7 @@ public record PoemTypeInfo(
         int[]? WordPattern
 )
 {
-    /// <summary>
-    /// Unique stable identifier derived from <see cref="PoemType"/> via kebab-case convention.
-    /// Example: <c>PoemType.SyllableCrestWave</c> → <c>"syllable-crest-wave"</c>.
-    /// </summary>
+    /// <summary>Gets the unique stable identifier derived from <see cref="PoemType"/> via kebab-case convention.</summary>
+    /// <value>A kebab-case string (e.g., <c>"syllable-crest-wave"</c>).</value>
     public string TypeId => PoemType.ToKebabCase();
 }

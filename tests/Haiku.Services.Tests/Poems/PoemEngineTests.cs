@@ -232,7 +232,7 @@ public class PatternGeneratorTests
     }
 }
 
-public class PoemEngineGenerationTests : IDisposable
+public sealed class PoemEngineGenerationTests : IDisposable
 {
     private readonly string _testJsonPath;
     private readonly ServicesPoemEngine _engine;
@@ -313,6 +313,7 @@ public class PoemEngineGenerationTests : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         if (File.Exists(_testJsonPath))
             File.Delete(_testJsonPath);
     }

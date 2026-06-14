@@ -4,8 +4,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Haiku.Infrastructure;
 
+/// <summary>
+/// Registers infrastructure services with the dependency injection container.
+/// Scans the infrastructure assembly for concrete repository implementations
+/// and registers each against its domain interface as a scoped service.
+/// </summary>
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Registers the EF Core <see cref="HaikuDbContext"/> and all repository implementations.
+    /// </summary>
+    /// <param name="services">The service collection to register into.</param>
+    /// <param name="connectionString">The SQL Server connection string for the EF Core context.</param>
+    /// <returns>The same service collection for chaining.</returns>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
     {
         services.AddDbContext<HaikuDbContext>(options =>

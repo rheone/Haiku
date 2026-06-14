@@ -35,8 +35,6 @@ public record PoemInputResult
     public PoemType? DetectedType { get; init; }
 
     /// <summary>Gets the full poem classification result, or <c>null</c> if detection was not performed.</summary>
-    /// <value>
-    /// <placeholder>The full poem classification result, or <c>null</c> if detection was not performed.</placeholder>
-    /// </value>
+    /// <value>The full poem classification result with display metadata, or <c>null</c> if detection was not performed.</value>
     public PoemDefinition? PoemDefinition { get; init; }
 }

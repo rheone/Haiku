@@ -7,7 +7,7 @@ namespace Haiku.Domain.Enums;
 /// Defines the target type identifiers used as string discriminators for moderation targets.
 /// </summary>
 /// <remarks>
-/// <para>Each <see cref="ModerationAction"/> records both an action (from
+/// <para>Each <see cref="Haiku.Domain.Entities.ModerationAction"/> records both an action (from
 /// <see cref="ModerationActionTypes"/>) and a target type (from this class). The
 /// target type tells the application which entity table to act upon when processing
 /// the moderation action.</para>

@@ -37,7 +37,8 @@ public sealed partial class SyllableEngine
     private readonly IWordTokenizer _tokenizer;
 
     /// <summary>
-    ///     Creates a new syllable engine with the given provider chain and tokenizer.
+    ///     Initializes a new instance of the <see cref="SyllableEngine"/> class
+    ///     with the given provider chain and tokenizer.
     /// </summary>
     /// <param name="providers">The chain of syllable providers, tried in order. The last provider
     /// should handle any remaining alphabetic words (typically <see cref="Providers.HeuristicSyllableProvider"/>).</param>

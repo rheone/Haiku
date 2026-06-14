@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Kelly Lune form: exactly three lines with a 5-3-5 syllable pattern.
+/// A modern American form created by poet Robert Kelly.
+/// </summary>
 public sealed class KellyLuneClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 500;
 
+    /// <summary>
+    /// Gets the type metadata for the Kelly Lune form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 5-3-5 syllable-based modern American form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.KellyLune,
@@ -21,6 +30,7 @@ public sealed class KellyLuneClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

@@ -3,7 +3,7 @@ using Haiku.Services.Syllables.Providers;
 
 namespace Haiku.Services.Tests.Rhyming;
 
-public class CmuRhymeProviderTests : IDisposable
+public sealed class CmuRhymeProviderTests : IDisposable
 {
     private readonly string _testJsonPath;
 
@@ -106,6 +106,7 @@ public class CmuRhymeProviderTests : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         if (File.Exists(_testJsonPath))
         {
             File.Delete(_testJsonPath);

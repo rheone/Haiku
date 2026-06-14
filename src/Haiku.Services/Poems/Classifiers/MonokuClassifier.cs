@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the monoku form: a single-line poem with total syllable count between 4 and 17 inclusive.
+/// The highest-priority classifier, evaluated first in the chain.
+/// </summary>
 public sealed class MonokuClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 100;
 
+    /// <summary>
+    /// Gets the type metadata for the monoku form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the single-line syllable-range-based form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.Monoku,
@@ -21,6 +30,7 @@ public sealed class MonokuClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

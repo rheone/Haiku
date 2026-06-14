@@ -13,6 +13,8 @@ internal static class WaveClassifierBase
     /// Min 5 elements, odd length, peak >= n+2, each element at distance d from
     /// the nearer edge equals n + d.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to check.</param>
+    /// <returns><c>true</c> if the counts form a single symmetric wave; otherwise <c>false</c>.</returns>
     public static bool IsSingleWave(int[] counts)
     {
         var len = counts.Length;
@@ -27,7 +29,7 @@ internal static class WaveClassifierBase
             return false;
         }
 
-        var peak = n + (len - 1) / 2;
+        var peak = n + ((len - 1) / 2);
         if (peak < n + 2)
         {
             return false;
@@ -50,6 +52,8 @@ internal static class WaveClassifierBase
     /// two or more complete waves of the same shape, each subsequent wave having
     /// a strictly smaller peak than the previous.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to check.</param>
+    /// <returns><c>true</c> if the counts form a cresting wave; otherwise <c>false</c>.</returns>
     public static bool IsCrestWave(int[] counts)
     {
         return IsMultiWave(counts, requireDescendingPeaks: true);
@@ -60,6 +64,8 @@ internal static class WaveClassifierBase
     /// two or more complete waves of the same shape, each subsequent wave having
     /// a strictly larger peak than the previous.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to check.</param>
+    /// <returns><c>true</c> if the counts form a crashing wave; otherwise <c>false</c>.</returns>
     public static bool IsCrashWave(int[] counts)
     {
         return IsMultiWave(counts, requireDescendingPeaks: false);
@@ -70,6 +76,9 @@ internal static class WaveClassifierBase
     /// that the first line is at <paramref name="startIndex"/>.
     /// Scans forward until the value returns to the starting value.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to scan.</param>
+    /// <param name="startIndex">The index at which the current wave begins.</param>
+    /// <returns>The number of elements in the wave starting at <paramref name="startIndex"/>.</returns>
     public static int GetWaveLength(int[] counts, int startIndex)
     {
         var startValue = counts[startIndex];
@@ -94,29 +103,29 @@ internal static class WaveClassifierBase
             return false;
         }
 
-        var L = GetWaveLength(counts, 0);
-        if (L < 5 || L % 2 != 1)
+        var waveLength = GetWaveLength(counts, 0);
+        if (waveLength < 5 || waveLength % 2 != 1)
         {
             return false;
         }
 
-        if (len % L != 0)
+        if (len % waveLength != 0)
         {
             return false;
         }
 
-        var numWaves = len / L;
+        var numWaves = len / waveLength;
         if (numWaves < 2)
         {
             return false;
         }
 
-        var halfSteps = (L - 1) / 2;
+        var halfSteps = (waveLength - 1) / 2;
         int? previousPeak = null;
 
         for (var w = 0; w < numWaves; w++)
         {
-            var offset = w * L;
+            var offset = w * waveLength;
             var n = counts[offset];
 
             if (n < 1)
@@ -124,9 +133,9 @@ internal static class WaveClassifierBase
                 return false;
             }
 
-            for (var i = 0; i < L; i++)
+            for (var i = 0; i < waveLength; i++)
             {
-                var expected = n + Math.Min(i, L - 1 - i);
+                var expected = n + Math.Min(i, waveLength - 1 - i);
                 if (counts[offset + i] != expected)
                 {
                     return false;

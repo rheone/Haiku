@@ -25,6 +25,9 @@ internal static class ClassifierBuilder
     /// <summary>
     /// Gets the <see cref="PoemTypeInfo"/> for a classifier instance (cached per type).
     /// </summary>
+    /// <param name="classifier">The classifier whose type metadata to retrieve.</param>
+    /// <returns>The <see cref="PoemTypeInfo"/> for the classifier's type, resolved via reflection and cached.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the classifier type does not declare a static abstract <c>Info</c> property.</exception>
     public static PoemTypeInfo GetInfo(IPoemClassifier classifier) =>
         InfoCache.GetOrAdd(
             classifier.GetType(),
@@ -44,6 +47,8 @@ internal static class ClassifierBuilder
     /// <summary>
     /// Creates a fully-populated <see cref="PoemDefinition"/> from a classifier instance.
     /// </summary>
+    /// <param name="classifier">The classifier whose metadata populates the definition.</param>
+    /// <returns>A <see cref="PoemDefinition"/> with all fields populated from the classifier's <see cref="PoemTypeInfo"/>.</returns>
     public static PoemDefinition Build(IPoemClassifier classifier)
     {
         var info = GetInfo(classifier);
@@ -55,7 +60,9 @@ internal static class ClassifierBuilder
             Category = info.Category,
             Scaffold = info.Scaffold,
             SyllablePattern = info.SyllablePattern,
+#pragma warning disable CS0618 // WordPattern is obsolete — retained for back-compat until migration completes
             WordPattern = info.WordPattern,
+#pragma warning restore CS0618
             Type = info.PoemType,
             Name = info.DisplayName,
         };

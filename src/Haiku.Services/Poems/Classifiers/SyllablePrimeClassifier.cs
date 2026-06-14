@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Syllable Prime form: every line's syllable count is a prime number.
+/// Minimum 3 lines.
+/// </summary>
 public sealed class SyllablePrimeClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 2800;
 
+    /// <summary>
+    /// Gets the type metadata for the Syllable Prime form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the prime-number syllable pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.SyllablePrime,
@@ -21,6 +30,7 @@ public sealed class SyllablePrimeClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Syllable Nautilus form: per-line syllable counts follow quadratic
+/// growth with a constant second difference. Minimum 3 lines.
+/// </summary>
 public sealed class SyllableNautilusClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 4000;
 
+    /// <summary>
+    /// Gets the type metadata for the Syllable Nautilus form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the quadratic-growth syllable pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.SyllableNautilus,
@@ -21,6 +30,7 @@ public sealed class SyllableNautilusClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

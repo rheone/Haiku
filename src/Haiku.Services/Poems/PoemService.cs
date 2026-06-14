@@ -36,7 +36,8 @@ public class PoemService
     /// <param name="totalSyllables">The total syllable count for the poem.</param>
     /// <param name="isDraft">Whether the poem is saved as a draft.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns>The newly created <see cref="Poem"/>.</returns>
+    /// <returns>The newly created <see cref="Poem"/> entity.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<Poem> CreateAsync(
         Guid authorId,
         string content,
@@ -77,7 +78,8 @@ public class PoemService
     /// <param name="content">The full poem text.</param>
     /// <param name="isDraft">Whether the poem is saved as a draft. Defaults to <c>false</c>.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    /// <returns>The newly created <see cref="Poem"/>.</returns>
+    /// <returns>The newly created <see cref="Poem"/> entity with auto-detected type.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<Poem> CreateAsync(
         Guid authorId,
         string content,
@@ -100,6 +102,7 @@ public class PoemService
     /// <param name="id">The poem ID.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>The <see cref="Poem"/> if found; otherwise <c>null</c>.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task<Poem?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -107,11 +110,12 @@ public class PoemService
     }
 
     /// <summary>
-    /// Soft-deletes a poem by setting its deletion timestamp.
+    /// Soft-deletes a poem by setting its <see cref="Poem.DeletedAt"/> timestamp.
     /// </summary>
-    /// <param name="poem">The poem to delete.</param>
+    /// <param name="poem">The poem to delete. Must not be <c>null</c>.</param>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when <paramref name="cancellationToken"/> is cancelled.</exception>
     public async Task DeleteAsync(Poem poem, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

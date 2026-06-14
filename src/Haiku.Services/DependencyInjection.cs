@@ -10,8 +10,28 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Haiku.Services;
 
+/// <summary>
+/// Registers application-layer services, mediators, validators, classifiers, syllable providers,
+/// rhyme providers, and engines into the dependency injection container.
+/// </summary>
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Registers all Haiku application services and infrastructure with the service collection.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Registers MicroMediator handlers, FluentValidation validators, <see cref="IPoemClassifier"/> implementations,
+    /// <see cref="ISyllableProvider"/> chain, <see cref="IRhymeProvider"/> implementations, and singleton engines
+    /// (<see cref="PoemClassifierChain"/>, <see cref="SyllableEngine"/>, <see cref="RhymingEngine"/>, <see cref="PoemEngine"/>).
+    /// </para>
+    /// <para>
+    /// Concrete service classes ending in "Service" are registered as scoped. Classifiers, syllable providers,
+    /// and rhyme providers are resolved from the assembly via reflection.
+    /// </para>
+    /// </remarks>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add registrations to.</param>
+    /// <returns>The same service collection for chaining.</returns>
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         var assembly = typeof(ApplicationAssemblyReference).Assembly;

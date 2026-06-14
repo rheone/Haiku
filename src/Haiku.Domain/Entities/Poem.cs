@@ -53,11 +53,13 @@ public class Poem
     /// </summary>
     /// <value>A <see cref="PoemType"/> value such as Haiku, Tanka, Freeform, etc.</value>
     /// <remarks>
+    /// <para>
     /// The column width accommodates all current enum names (max 17 chars for
     /// <c>ButterflyCinquain</c>). If new enum values exceed 30 characters, bump this.
     /// When the <see cref="PoemType"/> enum gains new members, ensure the corresponding
     /// classifier's <c>TypeId</c> follows the kebab-case convention (enum → hyphenated
     /// lowercase) so that <c>ClassifierBuilder.MapToPoemType</c> resolves it automatically.
+    /// </para>
     /// </remarks>
     [Column(TypeName = "varchar(30)")]
     public PoemType PoemType { get; set; }

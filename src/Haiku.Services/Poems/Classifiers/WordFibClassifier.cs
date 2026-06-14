@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Word Fib form: each line's word count follows the Fibonacci
+/// sequence (1, 1, 2, 3, 5, 8, ...). Minimum 3 lines.
+/// </summary>
 public sealed class WordFibClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 1900;
 
+    /// <summary>
+    /// Gets the type metadata for the Word Fib form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the Fibonacci-sequence word pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.WordFib,
@@ -21,6 +30,7 @@ public sealed class WordFibClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

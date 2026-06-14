@@ -2,8 +2,18 @@ using System.Text.RegularExpressions;
 
 namespace Haiku.Services.Syllables;
 
+/// <summary>
+///     Default implementation of <see cref="IWordTokenizer"/> that splits lines on whitespace,
+///     removes non-spoken characters via regex, and retains only valid word tokens
+///     (alphabetic sequences, numerals, Roman numerals, and ordinals).
+/// </summary>
 public sealed partial class WordTokenizer : IWordTokenizer
 {
+    /// <summary>
+    ///     Tokenizes a line by splitting on whitespace and filtering to valid word tokens.
+    /// </summary>
+    /// <param name="line">The line of text to tokenize.</param>
+    /// <returns>A <see cref="TokenizedLine"/> with the extracted words and counts.</returns>
     public TokenizedLine Tokenize(string line)
     {
         if (string.IsNullOrWhiteSpace(line))

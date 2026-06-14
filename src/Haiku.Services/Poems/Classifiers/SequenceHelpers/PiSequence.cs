@@ -120,6 +120,8 @@ internal static class PiSequence
     /// <summary>
     /// Returns the first <paramref name="count"/> non-zero decimal digits of pi.
     /// </summary>
+    /// <param name="count">The number of non-zero digits to return.</param>
+    /// <returns>An array of the first <paramref name="count"/> non-zero decimal digits of pi.</returns>
     public static int[] GetDigits(int count)
     {
         var result = new List<int>(count);
@@ -145,6 +147,8 @@ internal static class PiSequence
     /// the pi decimal sequence (first digit after decimal, skipping zeros).
     /// Min 3 elements.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to compare.</param>
+    /// <returns><c>true</c> if the counts match a prefix of the pi sequence; otherwise <c>false</c>.</returns>
     public static bool IsPiMatch(int[] counts)
     {
         if (counts.Length < 3)

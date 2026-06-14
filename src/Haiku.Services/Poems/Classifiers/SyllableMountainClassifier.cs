@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Syllable Mountain form: per-line syllable counts start at 1 and
+/// increase by exactly 1 each line. Minimum 3 lines.
+/// </summary>
 public sealed class SyllableMountainClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 3800;
 
+    /// <summary>
+    /// Gets the type metadata for the Syllable Mountain form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the sequential-counting syllable pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.SyllableMountain,
@@ -21,6 +30,7 @@ public sealed class SyllableMountainClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

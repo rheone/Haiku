@@ -6,10 +6,18 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the compressed haiku-inspired form: exactly three lines with a 2-3-2 syllable pattern.
+/// </summary>
 public sealed class CompressedClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 600;
 
+    /// <summary>
+    /// Gets the type metadata for the compressed haiku-inspired form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 2-3-2 syllable-based ultra-short form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.Compressed,
@@ -21,6 +29,7 @@ public sealed class CompressedClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

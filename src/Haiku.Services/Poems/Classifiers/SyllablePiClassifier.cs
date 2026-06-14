@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Syllable Pi form: each line's syllable count follows the decimal
+/// digits of pi (3, 1, 4, 1, 5, 9, ...), skipping zero digits. Minimum 3 lines.
+/// </summary>
 public sealed class SyllablePiClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 1600;
 
+    /// <summary>
+    /// Gets the type metadata for the Syllable Pi form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the pi-digit-matching syllable pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.SyllablePi,
@@ -21,6 +30,7 @@ public sealed class SyllablePiClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

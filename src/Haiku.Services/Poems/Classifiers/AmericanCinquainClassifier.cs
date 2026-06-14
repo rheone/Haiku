@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the American cinquain form: exactly five lines with a 2-4-6-8-2 syllable pattern.
+/// Invented by Adelaide Crapsey, this form grows from 2 to 8 syllables then returns to 2.
+/// </summary>
 public sealed class AmericanCinquainClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 900;
 
+    /// <summary>
+    /// Gets the type metadata for the American cinquain form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 2-4-6-8-2 syllable-based form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.AmericanCinquain,
@@ -21,6 +30,7 @@ public sealed class AmericanCinquainClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

@@ -213,7 +213,7 @@ static string GetCommitHash()
     }
 }
 
-static string? FindGitDir(string dir)
+static string? FindGitDir(string? dir)
 {
     while (dir is not null)
     {

@@ -40,7 +40,7 @@ public sealed class CmuDictionaryProvider : ISyllableProvider
     );
 
     /// <summary>
-    ///     Initializes a new instance from a pre-processed CMU dictionary JSON file.
+    ///     Initializes a new instance of the <see cref="CmuDictionaryProvider"/> class.
     /// </summary>
     /// <param name="filePath">Path to the JSON dictionary file.</param>
     /// <exception cref="FileNotFoundException">The file does not exist.</exception>
@@ -151,7 +151,7 @@ public sealed class CmuDictionaryProvider : ISyllableProvider
     /// <param name="words">When successful, the randomly selected words (order is random).</param>
     /// <param name="rng">Optional random number generator for deterministic results.</param>
     /// <returns><c>true</c> if at least one word was found; <c>false</c> otherwise.</returns>
-    public bool TryGetWords(int count, out List<string> words, Random? rng = null)
+    public bool TryGetWords(int count, [NotNullWhen(true)] out List<string> words, Random? rng = null)
     {
         rng ??= Random.Shared;
         var all = _entries.Keys.ToList();

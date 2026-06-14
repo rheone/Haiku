@@ -5,10 +5,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the traditional haiku form: exactly three lines with a 5-7-5 syllable pattern.
+/// The highest-priority form in the traditional Japanese category.
+/// </summary>
 public sealed class HaikuClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 200;
 
+    /// <summary>
+    /// Gets the type metadata for the haiku form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 5-7-5 syllable-based traditional form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.Haiku,
@@ -20,11 +29,12 @@ public sealed class HaikuClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,
         TokenizedLine[] tokenizedLines,
-        out PoemDefinition? definition
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out PoemDefinition? definition
     )
     {
         if (lines.Length != 3 || syllableCounts.Length != 3)

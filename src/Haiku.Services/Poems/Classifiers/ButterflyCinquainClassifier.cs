@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the butterfly cinquain form: exactly nine lines with a 2-4-6-8-2-8-6-4-2 syllable pattern.
+/// Formed by merging an American cinquain with its reverse, omitting the duplicated center line.
+/// </summary>
 public sealed class ButterflyCinquainClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 1200;
 
+    /// <summary>
+    /// Gets the type metadata for the butterfly cinquain form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 2-4-6-8-2-8-6-4-2 syllable-based form.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.ButterflyCinquain,
@@ -21,6 +30,7 @@ public sealed class ButterflyCinquainClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,

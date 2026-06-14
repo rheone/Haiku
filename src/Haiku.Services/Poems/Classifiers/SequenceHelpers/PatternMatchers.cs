@@ -16,6 +16,8 @@ internal static class PatternMatchers
     /// Returns <c>true</c> if every element in <paramref name="counts"/> is a prime number.
     /// Min 3 elements. Uses <see cref="PrimeHelper.IsPrime"/>.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to check.</param>
+    /// <returns><c>true</c> if all elements are prime; otherwise <c>false</c>.</returns>
     public static bool IsAllPrime(int[] counts)
     {
         if (counts.Length < 3)
@@ -39,6 +41,8 @@ internal static class PatternMatchers
     /// distinct values (a, b, a, b, ...). Requires an even number of elements
     /// with at least 4. Both a and b must be >= 1, and a != b.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to check.</param>
+    /// <returns><c>true</c> if the counts form a valid pulse pattern; otherwise <c>false</c>.</returns>
     public static bool IsPulse(int[] counts)
     {
         var len = counts.Length;
@@ -72,6 +76,8 @@ internal static class PatternMatchers
     /// from <c>counts[0]</c> down to 1. Min 3 elements, last must be 1.
     /// Uses <see cref="CollatzSequence.Generate"/>.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to compare against the Collatz sequence.</param>
+    /// <returns><c>true</c> if the counts match a Collatz sequence ending in 1; otherwise <c>false</c>.</returns>
     public static bool IsCollatzMatch(int[] counts)
     {
         if (counts.Length < 3)
@@ -106,6 +112,8 @@ internal static class PatternMatchers
     /// Returns <c>true</c> if <paramref name="counts"/> increases by exactly 1
     /// each line: n, n+1, n+2, ..., n+k. Min 3 elements, n >= 1.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to check.</param>
+    /// <returns><c>true</c> if the counts form a stair pattern; otherwise <c>false</c>.</returns>
     public static bool IsStair(int[] counts)
     {
         if (counts.Length < 3)
@@ -134,6 +142,8 @@ internal static class PatternMatchers
     /// Returns <c>true</c> if <paramref name="counts"/> decreases by exactly 1
     /// each line: n, n-1, n-2, ..., 1. Min 3 elements, n >= 3, last must be 1.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to check.</param>
+    /// <returns><c>true</c> if the counts form an erosion pattern; otherwise <c>false</c>.</returns>
     public static bool IsErosion(int[] counts)
     {
         if (counts.Length < 3)
@@ -162,6 +172,8 @@ internal static class PatternMatchers
     /// Returns <c>true</c> if <paramref name="counts"/> increases by exactly 1
     /// starting from 1: 1, 2, 3, ..., n. Min 3 elements, first must be 1.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to check.</param>
+    /// <returns><c>true</c> if the counts form a mountain pattern; otherwise <c>false</c>.</returns>
     public static bool IsMountain(int[] counts)
     {
         if (counts.Length < 3)
@@ -191,6 +203,8 @@ internal static class PatternMatchers
     /// d = b - a must be >= 1. For i >= 2: counts[i] == counts[i-1] + d + (i - 1).
     /// Example: 2, 3, 5, 8, 12, 17, ... Min 3 elements, first >= 1.
     /// </summary>
+    /// <param name="counts">The per-line syllable or word counts to check.</param>
+    /// <returns><c>true</c> if the counts follow quadratic growth; otherwise <c>false</c>.</returns>
     public static bool IsNautilus(int[] counts)
     {
         if (counts.Length < 3)

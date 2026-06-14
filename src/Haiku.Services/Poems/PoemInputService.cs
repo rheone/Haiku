@@ -6,12 +6,22 @@ using NewSyllableEngine = Haiku.Services.Syllables.SyllableEngine;
 
 namespace Haiku.Services.Poems;
 
+/// <summary>
+///     Processes raw poem text input by normalizing content, tokenizing lines,
+///     counting syllables, and detecting poem types through the classifier chain.
+/// </summary>
 internal sealed class PoemInputService : IPoemInputService
 {
     private readonly NewSyllableEngine _syllableEngine;
     private readonly PoemClassifierChain _classifierChain;
     private readonly IWordTokenizer _tokenizer;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="PoemInputService"/> class.
+    /// </summary>
+    /// <param name="syllableEngine">Engine for counting syllables in words.</param>
+    /// <param name="classifierChain">Chain of classifiers for detecting poem types.</param>
+    /// <param name="tokenizer">Tokenizes text into individual words.</param>
     public PoemInputService(NewSyllableEngine syllableEngine, PoemClassifierChain classifierChain, IWordTokenizer tokenizer)
     {
         _syllableEngine = syllableEngine;
@@ -19,6 +29,15 @@ internal sealed class PoemInputService : IPoemInputService
         _tokenizer = tokenizer;
     }
 
+    /// <summary>
+    ///     Processes raw poem input: normalizes text, tokenizes lines, counts syllables,
+    ///     and detects the poem type via the classifier chain.
+    /// </summary>
+    /// <param name="rawContent">Raw poem text from user input.</param>
+    /// <returns>
+    ///     A <see cref="PoemInputResult"/> containing the processed data, detected type,
+    ///     and any validation errors.
+    /// </returns>
     public PoemInputResult Process(string rawContent)
     {
         var errors = new List<string>();

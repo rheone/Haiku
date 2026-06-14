@@ -6,10 +6,19 @@ using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
 
+/// <summary>
+/// Detects the Syllable Crest Wave form: two or more syllable wave patterns chained
+/// end-to-end, each successive wave having a smaller peak. Minimum 10 lines.
+/// </summary>
 public sealed class SyllableCrestWaveClassifier : IPoemClassifier
 {
+    /// <inheritdoc/>
     public int Priority => 2400;
 
+    /// <summary>
+    /// Gets the type metadata for the Syllable Crest Wave form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the diminishing-peak wave chain pattern.</value>
     public static PoemTypeInfo Info { get; } =
         new(
             PoemType: PoemType.SyllableCrestWave,
@@ -21,6 +30,7 @@ public sealed class SyllableCrestWaveClassifier : IPoemClassifier
             WordPattern: null
         );
 
+    /// <inheritdoc/>
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,
