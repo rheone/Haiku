@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <Using Include="Haiku.Domain.Enums" />
-    <Using Include="Haiku.Services.Poems.Matchers" />
+    <Using Include="Haiku.Services.Poems.Classifiers" />
     <Using Include="Haiku.Services.Poems" />
     <Using Include="Haiku.Services.Haiku" />
     <Using Include="Haiku.Domain.Interfaces" />

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-bs-theme="light" data-color-scheme="light">
 
 <head>
     <meta charset="utf-8" />
@@ -8,7 +8,11 @@
     <ResourcePreloader />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["css/app.css"]" />
+    <link rel="stylesheet" href="@Assets["css/components/poem-card.css"]" />
+    <link rel="stylesheet" href="@Assets["css/components/compose-box.css"]" />
+    <link rel="stylesheet" href="@Assets["css/components/theme-picker.css"]" />
+    <link rel="stylesheet" href="@Assets["css/components/sidebar.css"]" />
     <link rel="stylesheet" href="@Assets["Haiku.Web.styles.css"]" />
     <ImportMap />
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -22,7 +26,9 @@
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-    <script src="@Assets["haiku-theme.js"]"></script>
+    <script src="@Assets["js/haiku-theme.js"]"></script>
+    <script src="@Assets["js/haiku-scroll-driver.js"]"></script>
+    <script src="@Assets["js/haiku-animations.js"]"></script>
 </body>
 
 </html>

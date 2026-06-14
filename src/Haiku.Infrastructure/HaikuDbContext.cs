@@ -1,4 +1,5 @@
 using Haiku.Domain.Entities;
+using Haiku.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Haiku.Infrastructure;
@@ -105,6 +106,22 @@ public class HaikuDbContext : DbContext
     /// </summary>
     /// <value>The <see cref="DbSet{TagDailyCount}"/> for querying and saving daily tag usage counts.</value>
     public DbSet<TagDailyCount> TagDailyCounts => Set<TagDailyCount>();
+
+    /// <summary>
+    /// Gets the set of theme definitions.
+    /// </summary>
+    /// <value>
+    /// <placeholder>The set of theme definitions.</placeholder>
+    /// </value>
+    public DbSet<Theme> Themes => Set<Theme>();
+
+    /// <summary>
+    /// Gets the set of theme keyword associations.
+    /// </summary>
+    /// <value>
+    /// <placeholder>The set of theme keyword associations.</placeholder>
+    /// </value>
+    public DbSet<ThemeKeyword> ThemeKeywords => Set<ThemeKeyword>();
 
     /// <summary>
     /// Configures entity table mappings, relationships, unique indexes, and delete behaviors
@@ -231,6 +248,23 @@ public class HaikuDbContext : DbContext
             entity.ToTable("TagDailyCounts");
             entity.HasKey(e => new { e.TagId, e.Date });
             entity.HasOne(e => e.Tag).WithMany().HasForeignKey(e => e.TagId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Theme>(entity =>
+        {
+            entity.ToTable("Themes");
+            entity.HasIndex(e => e.Key).IsUnique();
+            entity
+                .HasMany(e => e.Keywords)
+                .WithOne(e => e.Theme)
+                .HasForeignKey(e => e.ThemeId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ThemeKeyword>(entity =>
+        {
+            entity.ToTable("ThemeKeywords");
+            entity.HasIndex(e => new { e.ThemeId, e.Keyword }).IsUnique();
         });
     }
 }

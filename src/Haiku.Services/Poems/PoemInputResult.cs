@@ -1,4 +1,5 @@
 using Haiku.Domain.Enums;
+using Haiku.Domain.ValueObjects;
 
 namespace Haiku.Services.Poems;
 
@@ -32,4 +33,10 @@ public record PoemInputResult
     /// <summary>Gets the detected poem type, or <c>null</c> if detection was not performed.</summary>
     /// <value>The detected <see cref="PoemType"/>, or <c>null</c>.</value>
     public PoemType? DetectedType { get; init; }
+
+    /// <summary>Gets the full poem classification result, or <c>null</c> if detection was not performed.</summary>
+    /// <value>
+    /// <placeholder>The full poem classification result, or <c>null</c> if detection was not performed.</placeholder>
+    /// </value>
+    public PoemDefinition? PoemDefinition { get; init; }
 }

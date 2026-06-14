@@ -1,10 +1,15 @@
 ﻿@inherits LayoutComponentBase
+@inject IJSRuntime JS
 
-<div class="page">
+<div id="haiku-app" class="page" data-theme="default">
     <NavMenu />
     <main>
         <div class="container py-3">
-            @Body
+            <div class="row">
+                <div class="col-12">
+                    @Body
+                </div>
+            </div>
         </div>
     </main>
 </div>
@@ -17,5 +22,13 @@
         An unhandled exception has occurred. See browser dev tools for details.
     </environment>
     <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+    <a class="dismiss">&#x2717;</a>
 </div>
+
+<script>
+    // Re-initialize theme on each Blazor circuit start
+    if (window.haikuTheme) {
+        var t = window.haikuTheme.getTheme();
+        window.haikuTheme.setTheme(t);
+    }
+</script>

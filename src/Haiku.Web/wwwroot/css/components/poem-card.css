@@ -1,0 +1,134 @@
+.haiku-card {
+  position: relative;
+  background-color: var(--color-surface);
+  border-top: 4px solid var(--color-hairline);
+  border-radius: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  margin-bottom: 1.5rem;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+[data-color-scheme="dark"] .haiku-card {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.haiku-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.haiku-card .card-tint {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--color-card-tint);
+  pointer-events: none;
+}
+.haiku-card .card-body {
+  position: relative;
+  z-index: 1;
+  padding: 1.5rem;
+}
+.haiku-card .card-header-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.haiku-card .card-header-row .avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.haiku-card .card-header-row .display-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+.haiku-card .card-header-row .display-name:hover {
+  color: var(--color-accent);
+}
+.haiku-card .card-header-row .username {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+.haiku-card .card-header-row .timestamp {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+.haiku-card .card-header-row .header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.haiku-card .poem-type-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.75rem;
+}
+.haiku-card .action-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-hairline);
+}
+.haiku-card .action-row .action-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.haiku-card .action-row .action-btn:hover {
+  color: var(--color-accent);
+}
+.haiku-card .action-row .action-btn.active {
+  color: var(--color-accent);
+}
+.haiku-card .action-row .action-btn.active-upvote {
+  color: var(--color-score-positive);
+}
+.haiku-card .action-row .action-btn.active-downvote {
+  color: var(--color-score-negative);
+}
+.haiku-card .action-row .action-btn.active-heart {
+  color: #c46a6a;
+  color: var(--color-score-negative);
+}
+.haiku-card .action-row .action-btn.active-bookmark {
+  color: var(--color-accent);
+}
+.haiku-card .action-row .net-score {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  min-width: 2rem;
+  text-align: center;
+}
+.haiku-card .action-row .action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.haiku-card .action-row .action-btn:disabled:hover {
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 575.98px) {
+  .haiku-card .card-body {
+    padding: 1rem;
+  }
+  .haiku-card .action-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}

@@ -9,8 +9,12 @@ using Haiku.Services.Dictionary;
 using Haiku.Services.Haiku;
 using Haiku.Services.Moderation;
 using Haiku.Services.Poems;
-using Haiku.Services.Poems.Matchers;
+using Haiku.Services.Poems.Classifiers;
+using Haiku.Services.Rhyming;
+using Haiku.Services.Rhyming.Providers;
 using Haiku.Services.Slices.Auth;
+using Haiku.Services.Syllables;
+using Haiku.Services.Syllables.Providers;
 using Haiku.Web.Components;
 using Haiku.Web.Middleware;
 using MicroMediator;
@@ -57,28 +61,48 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<ModerationService>();
 builder.Services.AddScoped<DictionaryService>();
 
-// SyllableEngine and PoemEngine hold the CMU dictionary in memory; shared across all requests.
-builder.Services.AddSingleton<SyllableEngine>();
-builder.Services.AddSingleton<PoemEngine>();
+// Syllable tooling: providers, tokenizer, and orchestrating engine
+builder.Services.AddSingleton<IWordTokenizer, WordTokenizer>();
+builder.Services.AddSingleton<ISyllableProvider, CmuDictionaryProvider>(_ => new CmuDictionaryProvider(
+    Path.Combine(builder.Environment.ContentRootPath, "dictionary.dic")
+));
+builder.Services.AddSingleton<ISyllableProvider, CustomDictionaryProvider>();
+builder.Services.AddSingleton<ISyllableProvider, HeuristicSyllableProvider>();
+builder.Services.AddSingleton<Haiku.Services.Syllables.SyllableEngine>();
 
-// Poem input processing and type detection
+// Rhyming
+builder.Services.AddSingleton<IRhymeProvider, CmuRhymeProvider>();
+builder.Services.AddSingleton<RhymingEngine>();
+
+// Poem engine (generation + analysis)
+builder.Services.AddSingleton<Haiku.Services.Haiku.PoemEngine>();
+
+// Classifiers (order matters for detection priority)
+builder.Services.AddSingleton<IPoemClassifier, MonokuClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, HaikuClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, KatautaClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, AmericanLuneClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, KellyLuneClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, CompressedClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, NearTraditionalClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, TankaClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, AmericanCinquainClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, ReverseCinquainClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, SedokaClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, ButterflyCinquainClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, MirrorCinquainClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, ChokaClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, IsosyllabicClassifier>();
+builder.Services.AddSingleton<IPoemClassifier, FreeformClassifier>();
+builder.Services.AddSingleton<PoemClassifierChain>();
+
+// Theme system
+builder.Services.AddScoped<IThemeRepository, ThemeRepository>();
+builder.Services.AddScoped<ThemeService>();
+builder.Services.AddScoped<ThemeRecommendationService>();
+
+// Poem input processing
 builder.Services.AddScoped<IPoemInputService, PoemInputService>();
-builder.Services.AddScoped<IPoemMatcherChain, PoemMatcherChain>();
-builder.Services.AddScoped<IPoemMatcher, MonokuMatcher>();
-builder.Services.AddScoped<IPoemMatcher, HaikuMatcher>();
-builder.Services.AddScoped<IPoemMatcher, KatautaMatcher>();
-builder.Services.AddScoped<IPoemMatcher, AmericanLuneMatcher>();
-builder.Services.AddScoped<IPoemMatcher, KellyLuneMatcher>();
-builder.Services.AddScoped<IPoemMatcher, CompressedMatcher>();
-builder.Services.AddScoped<IPoemMatcher, NearTraditionalMatcher>();
-builder.Services.AddScoped<IPoemMatcher, TankaMatcher>();
-builder.Services.AddScoped<IPoemMatcher, AmericanCinquainMatcher>();
-builder.Services.AddScoped<IPoemMatcher, ReverseCinquainMatcher>();
-builder.Services.AddScoped<IPoemMatcher, SedokaMatcher>();
-builder.Services.AddScoped<IPoemMatcher, ButterflyCinquainMatcher>();
-builder.Services.AddScoped<IPoemMatcher, MirrorCinquainMatcher>();
-builder.Services.AddScoped<IPoemMatcher, ChokaMatcher>();
-builder.Services.AddScoped<IPoemMatcher, IsosyllabicMatcher>();
 
 builder.Services.AddApplication();
 builder.Services.AddHttpContextAccessor();

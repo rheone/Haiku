@@ -2,7 +2,6 @@ using Haiku.Domain.Entities;
 using Haiku.Domain.Enums;
 using Haiku.Domain.Interfaces;
 using Haiku.Services.Poems;
-using Haiku.Services.Poems.Matchers;
 using MicroMediator;
 
 namespace Haiku.Services.Slices.Poems;
@@ -15,26 +14,16 @@ public class CreatePoemCommandHandler : ICommandHandler<CreatePoemCommand, Poem>
     private readonly IPoemRepository _poemRepository;
     private readonly ITagRepository _tagRepository;
     private readonly IPoemInputService _poemInputService;
-    private readonly IPoemMatcherChain _matcherChain;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CreatePoemCommandHandler"/> class.
-    /// </summary>
-    /// <param name="poemRepository">Repository for persisting <see cref="Poem"/> entities.</param>
-    /// <param name="tagRepository">Repository for get-or-create <see cref="Tag"/> entities.</param>
-    /// <param name="poemInputService">Service for processing and validating poem input.</param>
-    /// <param name="matcherChain">Chain of matchers for poem type detection.</param>
     public CreatePoemCommandHandler(
         IPoemRepository poemRepository,
         ITagRepository tagRepository,
-        IPoemInputService poemInputService,
-        IPoemMatcherChain matcherChain
+        IPoemInputService poemInputService
     )
     {
         _poemRepository = poemRepository;
         _tagRepository = tagRepository;
         _poemInputService = poemInputService;
-        _matcherChain = matcherChain;
     }
 
     /// <summary>

@@ -1,19 +1,14 @@
 ﻿<header>
-    <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg" data-bs-theme="light">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <i class="fas fa-feather me-2"></i>Haiku
+                <i class="fas fa-feather-alt me-2"></i>Haiku
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <i class="fas fa-home me-1"></i>Home
-                        </a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/feed">
                             <i class="fas fa-fire me-1"></i>Feed
@@ -25,14 +20,19 @@
                         </a>
                     </li>
                 </ul>
+
+                <form class="d-flex mx-auto search-form" role="search" action="/search" method="get">
+                    <div class="input-group input-group-sm" style="max-width: 240px;">
+                        <input class="form-control" type="search" name="q" placeholder="Search poems..." aria-label="Search" />
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="fas fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </form>
+
                 <ul class="navbar-nav align-items-center">
                     <AuthorizeView>
                         <Authorized>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/loves">
-                                    <i class="fas fa-heart me-1"></i>Loved
-                                </a>
-                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/bookmarks">
                                     <i class="fas fa-bookmark me-1"></i>Bookmarks
@@ -40,23 +40,31 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/settings">
-                                    <i class="fas fa-cog me-1"></i>Settings
+                                    <i class="fas fa-gear me-1"></i>Settings
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/moderation">
-                                    <i class="fas fa-gavel me-1"></i>Moderate
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin">
-                                    <i class="fas fa-shield-alt me-1"></i>Admin
-                                </a>
-                            </li>
+                            <AuthorizeView Roles="moderate_poems" Context="innerAuthView1">
+                                <Authorized>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/moderation">
+                                            <i class="fas fa-gavel me-1"></i>Moderate
+                                        </a>
+                                    </li>
+                                </Authorized>
+                            </AuthorizeView>
+                            <AuthorizeView Roles="manage_dictionary" Context="innerAuthView2">
+                                <Authorized>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/admin">
+                                            <i class="fas fa-shield-halved me-1"></i>Admin
+                                        </a>
+                                    </li>
+                                </Authorized>
+                            </AuthorizeView>
                             <li class="nav-item">
                                 <form method="post" action="/api/auth/logout" class="d-inline" @antiforgery="true">
                                     <button type="submit" class="nav-link btn btn-link border-0">
-                                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                                        <i class="fas fa-right-from-bracket me-1"></i>Logout
                                     </button>
                                 </form>
                             </li>
@@ -64,7 +72,7 @@
                         <NotAuthorized>
                             <li class="nav-item">
                                 <a class="nav-link" href="/login">
-                                    <i class="fas fa-sign-in-alt me-1"></i>Login
+                                    <i class="fas fa-right-to-bracket me-1"></i>Login
                                 </a>
                             </li>
                             <li class="nav-item">

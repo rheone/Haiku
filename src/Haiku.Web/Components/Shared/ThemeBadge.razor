@@ -1,0 +1,9 @@
+<span class="theme-badge-icon" title="@ThemeDisplayName">
+    <i class="fas @ThemeIcon"></i>
+</span>
+
+@code {
+    [Parameter] public string ThemeKey { get; set; } = string.Empty;
+    [Parameter] public string ThemeIcon { get; set; } = "fa-pen-nib";
+    [Parameter] public string ThemeDisplayName { get; set; } = string.Empty;
+}

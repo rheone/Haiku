@@ -1,0 +1,259 @@
+@using Haiku.Domain.Entities
+@using Haiku.Domain.Enums
+@using Haiku.Domain.ValueObjects
+@inject IJSRuntime JS
+@inject PoemEngine PoemEngine
+@inject ThemeRecommendationService ThemeRecService
+@rendermode InteractiveServer
+
+<div class="compose-box">
+    <div class="card-body">
+        <div class="mb-3">
+            <textarea @bind="PoemText"
+                      @bind:event="oninput"
+                      class="form-control"
+                      rows="4"
+                      placeholder="Write your poem here&#10;Line breaks separate each line"
+                      maxlength="500"
+                      aria-label="Poem text"></textarea>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(PoemText))
+        {
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="type-badge">
+                    @if (DetectedType.HasValue)
+                    {
+                        @GetTypeDisplayName(DetectedType.Value)
+                    }
+                </span>
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" @bind="IsFreeform" id="freeformToggle" />
+                    <label class="form-check-label" for="freeformToggle" style="font-family: var(--font-ui); font-size: var(--type-ui-sm); color: var(--color-text-secondary);">Freeform</label>
+                </div>
+            </div>
+
+            <div class="count-line">
+                @CharCount chars · @TotalSyllables syl · @WordCount words · @LineCount lines
+            </div>
+
+            <div class="preview-panel" aria-live="polite">
+                @foreach (var lineData in LineData)
+                {
+                    <div class="d-flex justify-content-between align-items-start">
+                        <p class="mb-0" style="flex: 1;">
+                            @foreach (var word in lineData.Words)
+                            {
+                                <a class="word-link" href="/word/@word">@word</a>
+                                <text> </text>
+                            }
+                        </p>
+                        @if (!IsFreeform && lineData.Target > 0)
+                        {
+                            <span class="syllable-badge @GetBadgeClass(lineData.Syllables, lineData.Target)">
+                                @lineData.Syllables / @lineData.Target
+                            </span>
+                        }
+                        else if (IsFreeform)
+                        {
+                            <span class="syllable-badge progress">@lineData.Syllables</span>
+                        }
+                    </div>
+                }
+            </div>
+
+            if (ShowRecommendation)
+            {
+                <div class="theme-picker-row">
+                    <div class="recommendation-hint">
+                        <i class="fas fa-magic me-1"></i>
+                        This poem feels like <strong>@RecommendedThemeDisplayName</strong> — does that feel right?
+                        <button class="btn btn-sm btn-link p-0 ms-1" @onclick="AcceptRecommendation" style="vertical-align: baseline;">Keep</button>
+                        <button class="btn btn-sm btn-link p-0 ms-1 text-muted" @onclick="DismissRecommendation" style="vertical-align: baseline;">Change</button>
+                    </div>
+                </div>
+            }
+        }
+
+        <div class="action-bar">
+            <button class="btn btn-sm btn-outline-secondary" title="Generate random poem">
+                <i class="fas fa-dice me-1"></i>Generate
+            </button>
+            <button class="btn btn-sm btn-outline-primary" title="Save as draft">
+                <i class="fas fa-pencil me-1"></i>Save Draft
+            </button>
+            <button class="btn btn-sm btn-primary" title="Publish poem" disabled="@CanPublish">
+                <i class="fas fa-paper-plane me-1"></i>Publish
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string PoemText = string.Empty;
+    private bool IsFreeform;
+    private PoemType? DetectedType;
+    private int TotalSyllables;
+    private int WordCount;
+    private int LineCount;
+    private int CharCount;
+
+    private Guid? RecommendedThemeId;
+    private string? RecommendedThemeDisplayName;
+    private bool ShowRecommendation;
+
+    private List<LineSyllableInfo> LineData = new();
+    private bool CanPublish => string.IsNullOrWhiteSpace(PoemText);
+
+    private class LineSyllableInfo
+    {
+        public string[] Words { get; set; } = [];
+        public int Syllables { get; set; }
+        public int Target { get; set; }
+    }
+
+    protected override void OnParametersSet()
+    {
+        UpdateAnalysis();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(1200);
+                if (!string.IsNullOrWhiteSpace(PoemText))
+                {
+                    await InvokeAsync(async () =>
+                    {
+                        await UpdateRecommendation();
+                        StateHasChanged();
+                    });
+                }
+            });
+        }
+    }
+
+    private void UpdateAnalysis()
+    {
+        var text = PoemText ?? string.Empty;
+        CharCount = text.Length;
+        var rawLines = text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        LineCount = rawLines.Length;
+
+        var allWords = text.Split(new[] { ' ', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        WordCount = allWords.Length;
+
+        PoemDefinition? definition = null;
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            try
+            {
+                definition = PoemEngine.Analyze(rawLines);
+                DetectedType = definition?.Type;
+                TotalSyllables = definition?.TotalSyllableCount ?? 0;
+            }
+            catch
+            {
+                DetectedType = IsFreeform ? PoemType.Freeform : null;
+            }
+        }
+        else
+        {
+            DetectedType = null;
+            TotalSyllables = 0;
+        }
+
+        var pattern = DetectedType.HasValue && !IsFreeform
+            ? GetSyllablePattern(DetectedType.Value)
+            : [];
+        var defSyllables = definition?.SyllablesPerLine ?? [];
+
+        LineData = rawLines.Select((line, i) =>
+        {
+            var words = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var syl = i < defSyllables.Length ? defSyllables[i] : 0;
+            if (syl == 0 && words.Length > 0)
+            {
+                try
+                {
+                    var lineDef = PoemEngine.Analyze(line);
+                    syl = lineDef?.TotalSyllableCount ?? 0;
+                }
+                catch { }
+            }
+            return new LineSyllableInfo
+            {
+                Words = words,
+                Syllables = syl,
+                Target = i < pattern.Length ? pattern[i] : 0
+            };
+        }).ToList();
+    }
+
+    private async Task UpdateRecommendation()
+    {
+        if (string.IsNullOrWhiteSpace(PoemText)) return;
+        try
+        {
+            var result = await ThemeRecService.RecommendAsync(PoemText);
+            if (result.ThemeId != null && result.Confidence >= 0.55)
+            {
+                RecommendedThemeId = result.ThemeId;
+                RecommendedThemeDisplayName = result.ThemeDisplayName;
+                ShowRecommendation = true;
+            }
+        }
+        catch { }
+    }
+
+    private void AcceptRecommendation()
+    {
+        ShowRecommendation = false;
+    }
+
+    private void DismissRecommendation()
+    {
+        ShowRecommendation = false;
+        RecommendedThemeId = null;
+    }
+
+    private static string GetBadgeClass(int actual, int target)
+    {
+        if (target == 0) return "progress";
+        if (actual > target) return "over";
+        if (actual == target) return "ok";
+        return "progress";
+    }
+
+    private static int[] GetSyllablePattern(PoemType type)
+    {
+        return type switch
+        {
+            PoemType.Haiku => [5, 7, 5],
+            PoemType.Tanka => [5, 7, 5, 7, 7],
+            PoemType.Katauta => [5, 7, 7],
+            PoemType.Sedoka => [5, 7, 7, 5, 7, 7],
+            PoemType.AmericanLune => [3, 5, 3],
+            PoemType.KellyLune => [5, 3, 5],
+            PoemType.AmericanCinquain => [2, 4, 6, 8, 2],
+            PoemType.ReverseCinquain => [2, 8, 6, 4, 2],
+            PoemType.MirrorCinquain => [2, 4, 6, 8, 2, 2, 8, 6, 4, 2],
+            PoemType.ButterflyCinquain => [2, 4, 6, 8, 2, 8, 6, 4, 2],
+            PoemType.Compressed => [2, 3, 2],
+            PoemType.NearTraditional => [4, 6, 4],
+            _ => [],
+        };
+    }
+
+    private static string GetTypeDisplayName(PoemType type) => type switch
+    {
+        PoemType.Haiku => "haiku",
+        PoemType.Tanka => "tanka",
+        PoemType.Freeform => "freeform",
+        PoemType.Monoku => "monoku",
+        _ => type.ToString().ToLowerInvariant()
+    };
+}

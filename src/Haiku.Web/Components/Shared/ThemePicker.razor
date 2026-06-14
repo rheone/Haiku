@@ -1,0 +1,64 @@
+@using Haiku.Domain.Entities
+
+<div class="theme-picker-row">
+    @if (ShowRecommendation)
+    {
+        <div class="recommendation-hint">
+            <i class="fas fa-magic me-1"></i>
+            This poem feels like <strong>@RecommendedThemeDisplayName</strong> — does that feel right?
+            <button class="btn btn-sm btn-link p-0 ms-2" @onclick="() => SelectTheme(RecommendedThemeId)" style="vertical-align: baseline;">Keep</button>
+            <button class="btn btn-sm btn-link p-0 ms-1 text-muted" @onclick="DismissRecommendation" style="vertical-align: baseline;">Change</button>
+        </div>
+    }
+
+    <div class="theme-chips">
+        @foreach (var theme in Themes)
+        {
+            <button class="theme-chip @GetChipClass(theme) @(RecommendedThemeId == theme.ThemeId && ShowRecommendation ? "recommended" : "")"
+                    @onclick="() => SelectTheme(theme.ThemeId)"
+                    title="@theme.DisplayName">
+                @if (!string.IsNullOrEmpty(theme.IconFA))
+                {
+                    <i class="fas @theme.IconFA"></i>
+                }
+                <span class="swatch" style="background-color: @GetAccentColor(theme);"></span>
+                <span>@theme.DisplayName</span>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<Theme> Themes { get; set; } = new();
+    [Parameter] public Guid? SelectedThemeId { get; set; }
+    [Parameter] public Guid? RecommendedThemeId { get; set; }
+    [Parameter] public string RecommendedThemeDisplayName { get; set; } = string.Empty;
+    [Parameter] public bool ShowRecommendation { get; set; }
+    [Parameter] public EventCallback<Guid?> OnThemeSelected { get; set; }
+
+    private string GetChipClass(Theme theme)
+    {
+        return theme.ThemeId == SelectedThemeId ? "selected" : "";
+    }
+
+    private string GetAccentColor(Theme theme)
+    {
+        if (theme.Key == "default") return "var(--color-accent)";
+        return "var(--color-accent)";
+    }
+
+    private async Task SelectTheme(Guid? themeId)
+    {
+        await OnThemeSelected.InvokeAsync(themeId);
+    }
+
+    private async Task SelectTheme(Guid themeId)
+    {
+        await OnThemeSelected.InvokeAsync(themeId);
+    }
+
+    private void DismissRecommendation()
+    {
+        ShowRecommendation = false;
+    }
+}

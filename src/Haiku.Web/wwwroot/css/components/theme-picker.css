@@ -1,0 +1,60 @@
+.theme-picker-row {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-hairline);
+}
+.theme-picker-row .recommendation-hint {
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background-color: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+  border-radius: 4px;
+}
+.theme-picker-row .theme-chips {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.theme-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--color-hairline);
+  border-radius: 20px;
+  background: var(--color-surface);
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.theme-chip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.theme-chip.selected {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+}
+.theme-chip.recommended {
+  animation: pulse-ring 2s infinite;
+}
+.theme-chip .swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.theme-badge-icon {
+  color: var(--color-accent);
+  font-size: 0.75em;
+}

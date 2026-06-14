@@ -1,0 +1,338 @@
+@using Haiku.Domain.Entities
+@using Haiku.Domain.ValueObjects
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<div class="haiku-card" data-theme-card="@ThemeKey" data-poem-id="@PoemId">
+    <div class="card-tint"></div>
+    <div class="card-body">
+        <div class="card-header-row">
+            <img class="avatar" src="@AvatarUrl" alt="@AuthorDisplayName" />
+            <a class="display-name" href="/poet/@AuthorId">@AuthorDisplayName</a>
+            <span class="username">@@@AuthorUsername</span>
+            <span class="timestamp">@TimeAgo</span>
+            <span class="header-actions">
+                @if (ShowThemeBadge)
+                {
+                    <span class="me-2" title="@ThemeDisplayName">
+                        <i class="fas @ThemeIcon theme-badge-icon"></i>
+                    </span>
+                }
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-link nav-link border-0" type="button" data-bs-toggle="dropdown" aria-label="More actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><button class="dropdown-item" @onclick="SharePoem"><i class="fas fa-share-nodes me-2"></i>Share</button></li>
+                        <li><button class="dropdown-item" @onclick="CopyText"><i class="fas fa-copy me-2"></i>Copy Text</button></li>
+                        @if (IsAuthenticated)
+                        {
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><button class="dropdown-item" @onclick="ReportPoem"><i class="fas fa-flag me-2"></i>Report</button></li>
+                        }
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="/poem/@PoemId"><i class="fas fa-info-circle me-2"></i>Info</a></li>
+                    </ul>
+                </div>
+            </span>
+        </div>
+
+        <div class="poem-content">
+            @foreach (var line in Lines)
+            {
+                <p>
+                    @{
+                        var wordList = line.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
+                        var lastIdx = wordList.Count - 1;
+                    }
+                    @for (int i = 0; i < wordList.Count; i++)
+                    {
+                        var word = wordList[i];
+                        if (IsStopWord(word))
+                        {
+                            <span>@word</span>
+                        }
+                        else if (word.StartsWith("#"))
+                        {
+                            <a class="word-link hashtag" href="/tag/@word.TrimStart('#')">@word</a>
+                        }
+                        else
+                        {
+                            <a class="word-link" href="/word/@word">@word</a>
+                        }
+                        if (i < lastIdx)
+                        {
+                            <text> </text>
+                        }
+                    }
+                </p>
+            }
+        </div>
+
+        <div class="poem-type-badge">
+            @PoemTypeDisplay · @TotalSyllables syllables
+        </div>
+
+        @if (Tags != null && Tags.Count > 0)
+        {
+            <div class="mt-2 d-flex flex-wrap gap-1">
+                @foreach (var tag in Tags)
+                {
+                    <a class="trending-tag" href="/tag/@tag">#@tag</a>
+                }
+            </div>
+        }
+
+        <div class="action-row">
+            <button class="action-btn @(UserVote == 1 ? "active-upvote" : "")"
+                    disabled="@(!IsAuthenticated)"
+                    title="@GetVoteTitle(1)"
+                    @onclick="() => ToggleVote(1)">
+                <i class="fa@(UserVote == 1 ? "s" : "r") fa-thumbs-up"></i>
+                @if (UpvoteCount > 0)
+                {
+                    <span>@UpvoteCount</span>
+                }
+            </button>
+
+            <button class="action-btn @(UserVote == -1 ? "active-downvote" : "")"
+                    disabled="@(!IsAuthenticated)"
+                    title="@GetVoteTitle(-1)"
+                    @onclick="() => ToggleVote(-1)">
+                <i class="fa@(UserVote == -1 ? "s" : "r") fa-thumbs-down"></i>
+                @if (DownvoteCount > 0)
+                {
+                    <span>@DownvoteCount</span>
+                }
+            </button>
+
+            <span class="net-score @ScoreClass" id="score-@PoemId">@NetScoreDisplay</span>
+
+            <button class="action-btn @(HasLoved ? "active-heart" : "")"
+                    disabled="@(!IsAuthenticated)"
+                    title="@(HasLoved ? "Remove love" : "Love this poem")"
+                    @onclick="ToggleLove">
+                <i class="fa@(HasLoved ? "s" : "r") fa-heart" style="color: @(HasLoved ? "var(--color-score-negative)" : "")"></i>
+                @if (LoveCount > 0)
+                {
+                    <span>@LoveCount</span>
+                }
+            </button>
+
+            <button class="action-btn @(HasBookmarked ? "active-bookmark" : "") ms-auto"
+                    disabled="@(!IsAuthenticated)"
+                    title="@(HasBookmarked ? "Remove bookmark" : "Bookmark poem")"
+                    @onclick="ToggleBookmark">
+                <i class="fa@(HasBookmarked ? "s" : "r") fa-bookmark"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (ShowSharePopover)
+{
+    <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1050; background: rgba(0,0,0,0.3);" @onclick="CloseSharePopover">
+        <div class="position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--color-surface); border-top: 4px solid var(--color-hairline); min-width: 280px;" @onclick:stopPropagation>
+            <div class="p-3">
+                <h6 class="mb-3" style="font-family: var(--font-ui);"><i class="fas fa-share-nodes me-2"></i>Share Poem</h6>
+                <div class="d-flex gap-2 mb-3">
+                    <button class="btn btn-sm btn-outline-primary" @onclick="() => CopyFormatPlain()">Plain Text</button>
+                    <button class="btn btn-sm btn-outline-primary" @onclick="() => CopyFormatMarkdown()">Markdown</button>
+                    <button class="btn btn-sm btn-outline-primary" @onclick="() => CopyFormatHtml()">HTML</button>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary w-100" @onclick="NativeShare">Share via…</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (ShowReportDialog)
+{
+    <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1050; background: rgba(0,0,0,0.3);" @onclick="CloseReportDialog">
+        <div class="position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--color-surface); border-top: 4px solid var(--color-hairline); min-width: 300px;" @onclick:stopPropagation>
+            <div class="p-3">
+                <h6 class="mb-3" style="font-family: var(--font-ui);"><i class="fas fa-flag me-2"></i>Report Poem</h6>
+                @foreach (var reason in ReportReasons)
+                {
+                    <button class="btn btn-sm btn-outline-secondary d-block w-100 mb-2 text-start" @onclick="() => SubmitReport(reason)">
+                        @reason
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Guid PoemId { get; set; }
+    [Parameter] public Guid AuthorId { get; set; }
+    [Parameter] public string AuthorDisplayName { get; set; } = string.Empty;
+    [Parameter] public string AuthorUsername { get; set; } = string.Empty;
+    [Parameter] public string AvatarUrl { get; set; } = string.Empty;
+    [Parameter] public string Content { get; set; } = string.Empty;
+    [Parameter] public string PoemTypeDisplay { get; set; } = string.Empty;
+    [Parameter] public int TotalSyllables { get; set; }
+    [Parameter] public DateTime CreatedAt { get; set; }
+    [Parameter] public string? ThemeKey { get; set; }
+    [Parameter] public string ThemeIcon { get; set; } = "fa-pen-nib";
+    [Parameter] public string ThemeDisplayName { get; set; } = string.Empty;
+    [Parameter] public List<string>? Tags { get; set; }
+
+    [Parameter] public int UpvoteCount { get; set; }
+    [Parameter] public int DownvoteCount { get; set; }
+    [Parameter] public int LoveCount { get; set; }
+    [Parameter] public int UserVote { get; set; }
+    [Parameter] public bool HasLoved { get; set; }
+    [Parameter] public bool HasBookmarked { get; set; }
+
+    [Parameter] public bool IsAuthenticated { get; set; }
+    [Parameter] public EventCallback<int> OnVote { get; set; }
+    [Parameter] public EventCallback OnLoveToggle { get; set; }
+    [Parameter] public EventCallback OnBookmarkToggle { get; set; }
+
+    private bool ShowSharePopover;
+    private bool ShowReportDialog;
+    private static readonly string[] ReportReasons = ["Spam", "NSFW", "Copyright", "Other"];
+
+    private List<string> Lines => Content.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
+    private bool ShowThemeBadge => !string.IsNullOrEmpty(ThemeKey) && ThemeKey != "default";
+    private int NetScore => UpvoteCount - DownvoteCount;
+    private string NetScoreDisplay => NetScore > 0 ? $"+{NetScore}" : NetScore < 0 ? NetScore.ToString() : "0";
+    private string ScoreClass => NetScore > 0 ? "score-positive" : NetScore < 0 ? "score-negative" : "score-neutral";
+    private string TimeAgo => GetTimeAgo(CreatedAt);
+
+    private string GetVoteTitle(int value)
+    {
+        var action = value == 1 ? "upvote" : "downvote";
+        if (!IsAuthenticated) return $"Log in to {action}";
+        return UserVote == value ? $"Remove {action}" : $"{char.ToUpper(action[0]) + action[1..]} poem";
+    }
+
+    private bool IsStopWord(string word)
+    {
+        var cleaned = word.TrimStart('#').Trim('.', ',', '!', '?', ';', ':', '"', '\'', '(', ')', '…', '—', '-').ToLowerInvariant();
+        return cleaned.Length <= 1 || StopWords.Contains(cleaned);
+    }
+
+    private static readonly HashSet<string> StopWords = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of", "by", "with",
+        "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "do", "does", "did",
+        "will", "would", "shall", "should", "may", "might", "can", "could", "must", "i", "you", "he",
+        "she", "it", "we", "they", "me", "him", "her", "us", "them", "my", "your", "his", "its", "our",
+        "their", "this", "that", "these", "those", "not", "no", "nor", "so", "as", "if", "than", "then",
+        "when", "where", "what", "which", "who", "whom", "why", "how", "all", "each", "every", "both",
+        "few", "more", "most", "other", "some", "such", "only", "own", "same", "too", "very", "just"
+    };
+
+    private static string GetTimeAgo(DateTime utcTime)
+    {
+        var diff = DateTime.UtcNow - utcTime;
+        if (diff.TotalMinutes < 1) return "just now";
+        if (diff.TotalMinutes < 60) return $"{(int)diff.TotalMinutes}m";
+        if (diff.TotalHours < 24) return $"{(int)diff.TotalHours}h";
+        if (diff.TotalDays < 7) return $"{(int)diff.TotalDays}d";
+        return utcTime.ToString("MMM d");
+    }
+
+    private async Task ToggleVote(int value)
+    {
+        if (!IsAuthenticated) return;
+        await OnVote.InvokeAsync(value);
+    }
+
+    private async Task ToggleLove()
+    {
+        if (!IsAuthenticated) return;
+        HasLoved = !HasLoved;
+        LoveCount += HasLoved ? 1 : -1;
+        await OnLoveToggle.InvokeAsync();
+    }
+
+    private async Task ToggleBookmark()
+    {
+        if (!IsAuthenticated) return;
+        HasBookmarked = !HasBookmarked;
+        await OnBookmarkToggle.InvokeAsync();
+    }
+
+    private void SharePoem()
+    {
+        ShowSharePopover = true;
+    }
+
+    private void CloseSharePopover()
+    {
+        ShowSharePopover = false;
+    }
+
+    private async Task CopyFormatPlain()
+    {
+        var text = GetFormattedText("plain");
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", text);
+        ShowSharePopover = false;
+    }
+
+    private async Task CopyFormatMarkdown()
+    {
+        var text = GetFormattedText("markdown");
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", text);
+        ShowSharePopover = false;
+    }
+
+    private async Task CopyFormatHtml()
+    {
+        var text = GetFormattedText("html");
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", text);
+        ShowSharePopover = false;
+    }
+
+    private string GetFormattedText(string format)
+    {
+        var permalink = $"{Navigation.BaseUri}poem/{PoemId}";
+        var profileUrl = $"{Navigation.BaseUri}poet/{AuthorId}";
+        var lines = Content.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        var line = string.Join("\n", lines.Select(l => l.Trim()));
+
+        return format switch
+        {
+            "markdown" => $"> {string.Join("\n> ", lines.Select(l => l.Trim()))}\n\n— [@{AuthorUsername}]({profileUrl}) ([permalink]({permalink}))",
+            "html" => $"<blockquote>\n  <p>{string.Join("<br>\n  ", lines.Select(l => l.Trim()))}</p>\n</blockquote>\n<p>— <a href=\"{profileUrl}\">@{AuthorUsername}</a> (<a href=\"{permalink}\">permalink</a>)</p>",
+            _ => $"{line}\n\n— @{AuthorUsername} ({permalink})\n  {profileUrl}"
+        };
+    }
+
+    private async Task NativeShare()
+    {
+        if (OperatingSystem.IsBrowser() && await JS.InvokeAsync<bool>("eval", "navigator.share !== undefined"))
+        {
+            var permalink = $"{Navigation.BaseUri}poem/{PoemId}";
+            await JS.InvokeVoidAsync("navigator.share", new { title = "Haiku Poem", url = permalink });
+        }
+        ShowSharePopover = false;
+    }
+
+    private void CopyText()
+    {
+        var permalink = $"{Navigation.BaseUri}poem/{PoemId}";
+        var profileUrl = $"{Navigation.BaseUri}poet/{AuthorId}";
+        var line = Content.Replace("\n", "\n");
+        var text = $"{line}\n\n— @{AuthorUsername} ({permalink})\n  {profileUrl}";
+        _ = JS.InvokeVoidAsync("navigator.clipboard.writeText", text);
+    }
+
+    private void ReportPoem()
+    {
+        ShowReportDialog = true;
+    }
+
+    private void CloseReportDialog()
+    {
+        ShowReportDialog = false;
+    }
+
+    private async Task SubmitReport(string reason)
+    {
+        ShowReportDialog = false;
+    }
+}

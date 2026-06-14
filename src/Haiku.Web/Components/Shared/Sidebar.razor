@@ -1,0 +1,40 @@
+<div class="sidebar-widget card-body">
+    <h5 class="widget-title"><i class="fas fa-cloud me-2"></i>Word Cloud</h5>
+    <div>
+        @foreach (var word in WordCloudWords)
+        {
+            <a href="/word/@word.Word" class="word-cloud-badge" style="font-size: @(0.7 + word.Weight * 0.3)rem;">
+                @word.Word
+            </a>
+        }
+    </div>
+</div>
+
+<div class="sidebar-widget card-body">
+    <h5 class="widget-title"><i class="fas fa-hashtag me-2"></i>Trending Tags</h5>
+    <div class="d-flex flex-wrap gap-2">
+        @foreach (var tag in TrendingTags)
+        {
+            <a href="/tag/@tag.Name" class="trending-tag">
+                #@tag.Name <span class="count">@tag.Count</span>
+            </a>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<WordCloudEntry> WordCloudWords { get; set; } = new();
+    [Parameter] public List<TrendingTagEntry> TrendingTags { get; set; } = new();
+
+    public class WordCloudEntry
+    {
+        public string Word { get; set; } = string.Empty;
+        public double Weight { get; set; }
+    }
+
+    public class TrendingTagEntry
+    {
+        public string Name { get; set; } = string.Empty;
+        public int Count { get; set; }
+    }
+}

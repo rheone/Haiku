@@ -1,25 +1,24 @@
 using Haiku.Domain.Enums;
-using Haiku.Services.Haiku;
-using Haiku.Services.Poems.Matchers;
+using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers;
+using Haiku.Services.Syllables;
+using NewSyllableEngine = Haiku.Services.Syllables.SyllableEngine;
 
 namespace Haiku.Services.Poems;
 
-/// <summary>Normalizes raw poem input, counts syllables, detects poem type, and validates content.</summary>
 internal sealed class PoemInputService : IPoemInputService
 {
-    private readonly SyllableEngine _syllableEngine;
-    private readonly IPoemMatcherChain _matcherChain;
+    private readonly NewSyllableEngine _syllableEngine;
+    private readonly PoemClassifierChain _classifierChain;
+    private readonly IWordTokenizer _tokenizer;
 
-    /// <summary>Initializes a new instance of the <see cref="PoemInputService"/> class.</summary>
-    /// <param name="syllableEngine">The engine used for counting syllables per line.</param>
-    /// <param name="matcherChain">The chain of matchers used for poem type detection.</param>
-    public PoemInputService(SyllableEngine syllableEngine, IPoemMatcherChain matcherChain)
+    public PoemInputService(NewSyllableEngine syllableEngine, PoemClassifierChain classifierChain, IWordTokenizer tokenizer)
     {
         _syllableEngine = syllableEngine;
-        _matcherChain = matcherChain;
+        _classifierChain = classifierChain;
+        _tokenizer = tokenizer;
     }
 
-    /// <inheritdoc/>
     public PoemInputResult Process(string rawContent)
     {
         var errors = new List<string>();
@@ -37,9 +36,15 @@ internal sealed class PoemInputService : IPoemInputService
         );
 
         var lines = normalized.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        var lineSyllableCounts = lines.Select(l => _syllableEngine.CountLineSyllables(l).Sum()).ToArray();
+        var tokenizedLines = lines.Select(l => _tokenizer.Tokenize(l)).ToArray();
+        var lineSyllableCounts = tokenizedLines
+            .Select(t => t.Words.Sum(w => _syllableEngine.CountWordSyllables(w).Count))
+            .ToArray();
         var totalSyllables = lineSyllableCounts.Sum();
-        PoemType? detectedType = lines.Length > 0 ? _matcherChain.Match(lines, lineSyllableCounts) : null;
+
+        var poemDefinition = lines.Length > 0 ? _classifierChain.Match(lines, lineSyllableCounts, tokenizedLines) : null;
+
+        var detectedType = poemDefinition?.Type;
 
         return new PoemInputResult
         {
@@ -48,6 +53,7 @@ internal sealed class PoemInputService : IPoemInputService
             LineSyllableCounts = lineSyllableCounts,
             TotalSyllables = totalSyllables,
             DetectedType = detectedType,
+            PoemDefinition = poemDefinition,
             Errors = errors.AsReadOnly(),
         };
     }
