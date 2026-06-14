@@ -1,6 +1,7 @@
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
 using Haiku.Services.Poems.Classifiers;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Tests.Poems.Classifiers;

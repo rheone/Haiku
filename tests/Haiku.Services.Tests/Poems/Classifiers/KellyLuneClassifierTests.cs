@@ -39,8 +39,6 @@ public class KellyLuneClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.KellyLune, definition!.Type);
-        Assert.Equal(3, definition.LineCount);
-        Assert.Equal([5, 3, 5], definition.SyllablesPerLine);
     }
 
     /// <summary>

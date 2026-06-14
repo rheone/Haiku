@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
@@ -8,6 +9,17 @@ namespace Haiku.Services.Poems.Classifiers;
 public sealed class CompressedClassifier : IPoemClassifier
 {
     public int Priority => 600;
+
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.Compressed,
+            DisplayName: "Compressed",
+            Description: "A three-line nonstandard haiku-inspired ultra-short form with 2-3-2 syllable pattern.",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: [2, 3, 2],
+            WordPattern: null
+        );
 
     public bool TryClassify(
         string[] lines,
@@ -24,15 +36,7 @@ public sealed class CompressedClassifier : IPoemClassifier
 
         if (syllableCounts[0] == 2 && syllableCounts[1] == 3 && syllableCounts[2] == 2)
         {
-            definition = new PoemDefinition
-            {
-                Type = PoemType.Compressed,
-                LineCount = 3,
-                SyllablesPerLine = [2, 3, 2],
-                TotalSyllableCount = 7,
-                WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-                TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-            };
+            definition = ClassifierBuilder.Build(this);
             return true;
         }
 

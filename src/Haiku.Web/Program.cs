@@ -1,26 +1,19 @@
+using System.Reflection;
 using System.Security.Claims;
 using Haiku.Domain.Interfaces;
 using Haiku.Infrastructure;
 using Haiku.Infrastructure.Email;
-using Haiku.Infrastructure.Repositories;
 using Haiku.Services;
-using Haiku.Services.Auth;
-using Haiku.Services.Dictionary;
-using Haiku.Services.Haiku;
-using Haiku.Services.Moderation;
-using Haiku.Services.Poems;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Rhyming;
-using Haiku.Services.Rhyming.Providers;
+using Haiku.Services.Configuration;
 using Haiku.Services.Slices.Auth;
 using Haiku.Services.Syllables;
 using Haiku.Services.Syllables.Providers;
 using Haiku.Web.Components;
+using Haiku.Web.Configuration;
 using Haiku.Web.Middleware;
 using MicroMediator;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 using StackExchange.Exceptional;
 
@@ -31,83 +24,40 @@ Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configurat
 
 builder.Host.UseSerilog();
 
+// Options pattern registration for Haiku configuration sections.
+builder.Services.Configure<HaikuEmailOptions>(builder.Configuration.GetSection("Email"));
+builder.Services.Configure<HaikuImpersonationOptions>(builder.Configuration.GetSection("Impersonation"));
+builder.Services.Configure<HaikuThemeOptions>(builder.Configuration.GetSection("Themes"));
+
+// Build info populated from assembly metadata at build time (Version, GitHash, etc.).
+var buildInfo = HaikuBuildInfo.FromAssembly(Assembly.GetEntryAssembly(), builder.Environment.EnvironmentName);
+builder.Services.AddSingleton(buildInfo);
+
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 builder.Services.AddExceptional();
 
-// Connection string falls back to a local SQL Server for development.
 var connectionString =
     builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "Server=localhost;Database=Haiku;Trusted_Connection=True;TrustServerCertificate=True;";
 
-// EF Core: scoped DbContext per request.
-builder.Services.AddDbContext<HaikuDbContext>(options =>
-    options.UseSqlServer(connectionString, sql => sql.EnableRetryOnFailure(3))
-);
+// Infrastructure: EF Core DbContext + all I*Repository implementations (scoped)
+builder.Services.AddInfrastructure(connectionString);
 
-// Repositories — scoped per request.
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPoemRepository, PoemRepository>();
-builder.Services.AddScoped<IVoteRepository, VoteRepository>();
-builder.Services.AddScoped<ILoveRepository, LoveRepository>();
-builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
-builder.Services.AddScoped<IDictionaryRepository, DictionaryRepository>();
-builder.Services.AddScoped<IModerationRepository, ModerationRepository>();
-builder.Services.AddScoped<ITagRepository, TagRepository>();
-
-// Application services — scoped per request (AuthService, PoemService, etc.).
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<PoemService>();
-builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<ModerationService>();
-builder.Services.AddScoped<DictionaryService>();
-
-// Syllable tooling: providers, tokenizer, and orchestrating engine
-builder.Services.AddSingleton<IWordTokenizer, WordTokenizer>();
-builder.Services.AddSingleton<ISyllableProvider, CmuDictionaryProvider>(_ => new CmuDictionaryProvider(
-    Path.Combine(builder.Environment.ContentRootPath, "dictionary.dic")
-));
-builder.Services.AddSingleton<ISyllableProvider, CustomDictionaryProvider>();
-builder.Services.AddSingleton<ISyllableProvider, HeuristicSyllableProvider>();
-builder.Services.AddSingleton<Haiku.Services.Syllables.SyllableEngine>();
-
-// Rhyming
-builder.Services.AddSingleton<IRhymeProvider, CmuRhymeProvider>();
-builder.Services.AddSingleton<RhymingEngine>();
-
-// Poem engine (generation + analysis)
-builder.Services.AddSingleton<Haiku.Services.Haiku.PoemEngine>();
-
-// Classifiers (order matters for detection priority)
-builder.Services.AddSingleton<IPoemClassifier, MonokuClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, HaikuClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, KatautaClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, AmericanLuneClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, KellyLuneClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, CompressedClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, NearTraditionalClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, TankaClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, AmericanCinquainClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, ReverseCinquainClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, SedokaClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, ButterflyCinquainClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, MirrorCinquainClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, ChokaClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, IsosyllabicClassifier>();
-builder.Services.AddSingleton<IPoemClassifier, FreeformClassifier>();
-builder.Services.AddSingleton<PoemClassifierChain>();
-
-// Theme system
-builder.Services.AddScoped<IThemeRepository, ThemeRepository>();
-builder.Services.AddScoped<ThemeService>();
-builder.Services.AddScoped<ThemeRecommendationService>();
-
-// Poem input processing
-builder.Services.AddScoped<IPoemInputService, PoemInputService>();
-
-// Registers all Slice/CQRS command and query handlers (MicroMediator) and
-// FluentValidation validators from the Haiku.Services assembly.
+// Application layer: CQRS handlers, FluentValidation, IPoemClassifier chain,
+// ISyllableProvider/IRhymeProvider chain, IWordTokenizer, IPoemInputService,
+// concrete *Service classes (scoped), and engines (singleton).
 builder.Services.AddApplication();
+
+// CmuDictionaryProvider needs a file path, so its singleton factory stays here.
+// Registered as both concrete type (for CmuRhymeProvider) and ISyllableProvider.
+// The pre-processed CMU dictionary JSON is copied to the output directory at build time
+// via the Haiku.Services.csproj content item.
+builder.Services.AddSingleton<CmuDictionaryProvider>(_ => new CmuDictionaryProvider(
+    Path.Combine(AppContext.BaseDirectory, "Resources", "cmudict.json")
+));
+builder.Services.AddSingleton<ISyllableProvider>(sp => sp.GetRequiredService<CmuDictionaryProvider>());
+
 builder.Services.AddHttpContextAccessor();
 
 // Email provider selection driven by configuration. "Smtp" sends real mail; all other values
@@ -123,26 +73,30 @@ else
 }
 
 // Cookie-based authentication: 7-day sliding window, HttpOnly.
-// In development, Secure and SameSite are relaxed to support HTTP-only local testing.
+// Cookie security is relaxed in non-production environments to support HTTP-only local testing.
 builder
     .Services.AddAuthentication()
     .AddCookie(options =>
     {
         options.Cookie.Name = "haiku-auth";
         options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() ? CookieSecurePolicy.None : CookieSecurePolicy.Always;
-        options.Cookie.SameSite = builder.Environment.IsDevelopment() ? SameSiteMode.Lax : SameSiteMode.Strict;
+        options.Cookie.SecurePolicy = builder.Environment.IsProduction() ? CookieSecurePolicy.Always : CookieSecurePolicy.None;
+        options.Cookie.SameSite = builder.Environment.IsProduction() ? SameSiteMode.Strict : SameSiteMode.Lax;
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
         options.SlidingExpiration = true;
     });
 
 var app = builder.Build();
 
+// Bootstrap logging: environment, version, git hash, build configuration.
+app.Services.GetRequiredService<HaikuBuildInfo>().LogToSerilog();
+
 app.UseExceptional();
 
 app.UseSerilogRequestLogging();
 
-// Production-only error handling: custom error page, HSTS, HTTPS redirect.
+// Non-development error handling: custom error page, HSTS, HTTPS redirect.
+// All environments except Debug/Development run production-grade error handling.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);

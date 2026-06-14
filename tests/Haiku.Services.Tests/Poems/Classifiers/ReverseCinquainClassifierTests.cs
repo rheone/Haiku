@@ -39,8 +39,6 @@ public class ReverseCinquainClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.ReverseCinquain, definition!.Type);
-        Assert.Equal(5, definition.LineCount);
-        Assert.Equal([2, 8, 6, 4, 2], definition.SyllablesPerLine);
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
@@ -8,6 +9,17 @@ public sealed class FreeformClassifier : IPoemClassifier
 {
     public int Priority => int.MaxValue;
 
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.Freeform,
+            DisplayName: "Freeform",
+            Description: "A poem with no fixed syllable constraints.",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: null,
+            WordPattern: null
+        );
+
     public bool TryClassify(
         string[] lines,
         int[] syllableCounts,
@@ -15,17 +27,7 @@ public sealed class FreeformClassifier : IPoemClassifier
         out PoemDefinition? definition
     )
     {
-        definition = new PoemDefinition
-        {
-            Type = PoemType.Freeform,
-            LineCount = lines.Length,
-            SyllablesPerLine = syllableCounts,
-            TotalSyllableCount = syllableCounts.Sum(),
-            WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-            TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-            OriginalContent = string.Join("\n", lines),
-            NormalizedContent = string.Join(" ", lines),
-        };
+        definition = ClassifierBuilder.Build(this);
 
         return true;
     }

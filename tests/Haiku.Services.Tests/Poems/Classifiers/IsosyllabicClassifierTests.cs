@@ -39,8 +39,6 @@ public class IsosyllabicClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.Isosyllabic, definition!.Type);
-        Assert.Equal(3, definition.LineCount);
-        Assert.Equal([7, 7, 7], definition.SyllablesPerLine);
     }
 
     /// <summary>

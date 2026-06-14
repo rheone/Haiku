@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
@@ -8,6 +9,17 @@ namespace Haiku.Services.Poems.Classifiers;
 public sealed class ChokaClassifier : IPoemClassifier
 {
     public int Priority => 1400;
+
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.Choka,
+            DisplayName: "Choka",
+            Description: "A long poem with alternating 5-7 syllable lines, ending with 5-7-7. Always an odd number of lines.",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: null,
+            WordPattern: null
+        );
 
     public bool TryClassify(
         string[] lines,
@@ -40,15 +52,7 @@ public sealed class ChokaClassifier : IPoemClassifier
             return false;
         }
 
-        definition = new PoemDefinition
-        {
-            Type = PoemType.Choka,
-            LineCount = n,
-            SyllablesPerLine = syllableCounts,
-            TotalSyllableCount = syllableCounts.Sum(),
-            WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-            TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-        };
+        definition = ClassifierBuilder.Build(this);
         return true;
     }
 }

@@ -2,7 +2,6 @@ using Haiku.Domain.Entities;
 using Haiku.Domain.Enums;
 using Haiku.Domain.Interfaces;
 using Haiku.Services.Haiku;
-using Haiku.Services.Poems.Matchers;
 
 namespace Haiku.Services.Poems;
 
@@ -14,7 +13,6 @@ public class PoemService
     private readonly IPoemRepository _poemRepository;
     private readonly ITagRepository _tagRepository;
     private readonly PoemEngine _poemEngine;
-    private readonly IPoemMatcherChain _matcherChain;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PoemService"/> class.
@@ -22,18 +20,11 @@ public class PoemService
     /// <param name="poemRepository">Repository for poem entities.</param>
     /// <param name="tagRepository">Repository for tag entities.</param>
     /// <param name="poemEngine">Engine for syllable counting and poem type detection.</param>
-    /// <param name="matcherChain">Chain of matchers for poem type detection.</param>
-    public PoemService(
-        IPoemRepository poemRepository,
-        ITagRepository tagRepository,
-        PoemEngine poemEngine,
-        IPoemMatcherChain matcherChain
-    )
+    public PoemService(IPoemRepository poemRepository, ITagRepository tagRepository, PoemEngine poemEngine)
     {
         _poemRepository = poemRepository;
         _tagRepository = tagRepository;
         _poemEngine = poemEngine;
-        _matcherChain = matcherChain;
     }
 
     /// <summary>
@@ -302,14 +293,13 @@ public class PoemService
     }
 
     /// <summary>
-    /// Detects the poem type for a single piece of content using the <see cref="IPoemMatcherChain"/> instance.
+    /// Detects the poem type for a single piece of content using <see cref="PoemEngine"/>.
     /// </summary>
     /// <param name="content">The full poem text.</param>
     /// <returns>The detected <see cref="PoemType"/>, or <see cref="PoemType.Freeform"/> if no specific pattern matches.</returns>
     public PoemType DetectPoemType(string content)
     {
         var lines = content.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        var counts = lines.Select(l => _poemEngine.CountLineSyllables(l)).ToArray();
-        return _matcherChain.Match(lines, counts);
+        return _poemEngine.DetectPoemType(lines) ?? PoemType.Freeform;
     }
 }

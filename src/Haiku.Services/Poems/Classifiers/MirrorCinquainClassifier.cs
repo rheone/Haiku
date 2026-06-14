@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
@@ -8,6 +9,17 @@ namespace Haiku.Services.Poems.Classifiers;
 public sealed class MirrorCinquainClassifier : IPoemClassifier
 {
     public int Priority => 1300;
+
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.MirrorCinquain,
+            DisplayName: "Mirror Cinquain",
+            Description: "A ten-line poem formed by concatenating an American cinquain and a Reverse cinquain (2-4-6-8-2-2-8-6-4-2).",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: [2, 4, 6, 8, 2, 2, 8, 6, 4, 2],
+            WordPattern: null
+        );
 
     public bool TryClassify(
         string[] lines,
@@ -35,15 +47,7 @@ public sealed class MirrorCinquainClassifier : IPoemClassifier
             && syllableCounts[9] == 2
         )
         {
-            definition = new PoemDefinition
-            {
-                Type = PoemType.MirrorCinquain,
-                LineCount = 10,
-                SyllablesPerLine = [2, 4, 6, 8, 2, 2, 8, 6, 4, 2],
-                TotalSyllableCount = 44,
-                WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-                TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-            };
+            definition = ClassifierBuilder.Build(this);
             return true;
         }
 

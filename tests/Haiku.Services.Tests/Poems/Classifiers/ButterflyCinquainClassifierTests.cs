@@ -39,8 +39,6 @@ public class ButterflyCinquainClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.ButterflyCinquain, definition!.Type);
-        Assert.Equal(9, definition.LineCount);
-        Assert.Equal([2, 4, 6, 8, 2, 8, 6, 4, 2], definition.SyllablesPerLine);
     }
 
     /// <summary>

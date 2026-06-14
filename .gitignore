@@ -198,3 +198,6 @@ TestResults/
 
 # NuGet lock files (committed for audit trail)
 # packages.lock.json — tracked via 'git add -f'
+
+# Generated poem markdown files
+generated-poems/

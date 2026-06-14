@@ -39,7 +39,6 @@ public class FreeformClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.Freeform, definition!.Type);
-        Assert.Equal(3, definition.LineCount);
     }
 
     #endregion

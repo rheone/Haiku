@@ -16,4 +16,11 @@
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageReference Include="StackExchange.Exceptional.AspNetCore" Version="3.0.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
+    <PackageReference Update="Roslynator.Analyzers" Version="4.15.0" />
+    <PackageReference Update="Roslynator.CodeAnalysis.Analyzers" Version="4.15.0" />
+    <PackageReference Update="Roslynator.Formatting.Analyzers" Version="4.15.0" />
+  </ItemGroup>
 </Project>

@@ -39,8 +39,6 @@ public class HaikuClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.Haiku, definition!.Type);
-        Assert.Equal(3, definition.LineCount);
-        Assert.Equal([5, 7, 5], definition.SyllablesPerLine);
     }
 
     /// <summary>

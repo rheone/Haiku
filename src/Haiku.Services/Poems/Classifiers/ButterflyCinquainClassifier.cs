@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
@@ -8,6 +9,17 @@ namespace Haiku.Services.Poems.Classifiers;
 public sealed class ButterflyCinquainClassifier : IPoemClassifier
 {
     public int Priority => 1200;
+
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.ButterflyCinquain,
+            DisplayName: "Butterfly Cinquain",
+            Description: "A nine-line poem formed by merging an American cinquain with its reverse, dropping the center line (2-4-6-8-2-8-6-4-2).",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: [2, 4, 6, 8, 2, 8, 6, 4, 2],
+            WordPattern: null
+        );
 
     public bool TryClassify(
         string[] lines,
@@ -34,15 +46,7 @@ public sealed class ButterflyCinquainClassifier : IPoemClassifier
             && syllableCounts[8] == 2
         )
         {
-            definition = new PoemDefinition
-            {
-                Type = PoemType.ButterflyCinquain,
-                LineCount = 9,
-                SyllablesPerLine = [2, 4, 6, 8, 2, 8, 6, 4, 2],
-                TotalSyllableCount = 42,
-                WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-                TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-            };
+            definition = ClassifierBuilder.Build(this);
             return true;
         }
 

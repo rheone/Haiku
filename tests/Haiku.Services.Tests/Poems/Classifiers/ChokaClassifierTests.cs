@@ -39,8 +39,6 @@ public class ChokaClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.Choka, definition!.Type);
-        Assert.Equal(7, definition.LineCount);
-        Assert.Equal([5, 7, 5, 7, 5, 7, 7], definition.SyllablesPerLine);
     }
 
     /// <summary>

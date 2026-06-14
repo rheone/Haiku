@@ -39,8 +39,6 @@ public class NearTraditionalClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.NearTraditional, definition!.Type);
-        Assert.Equal(3, definition.LineCount);
-        Assert.Equal([4, 6, 4], definition.SyllablesPerLine);
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
@@ -8,6 +9,17 @@ namespace Haiku.Services.Poems.Classifiers;
 public sealed class IsosyllabicClassifier : IPoemClassifier
 {
     public int Priority => 1500;
+
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.Isosyllabic,
+            DisplayName: "Isosyllabic",
+            Description: "A poem where every line has the same syllable count. Any number of lines n >= 2.",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: null,
+            WordPattern: null
+        );
 
     public bool TryClassify(
         string[] lines,
@@ -38,15 +50,7 @@ public sealed class IsosyllabicClassifier : IPoemClassifier
             }
         }
 
-        definition = new PoemDefinition
-        {
-            Type = PoemType.Isosyllabic,
-            LineCount = lines.Length,
-            SyllablesPerLine = syllableCounts,
-            TotalSyllableCount = syllableCounts.Sum(),
-            WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-            TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-        };
+        definition = ClassifierBuilder.Build(this);
         return true;
     }
 }

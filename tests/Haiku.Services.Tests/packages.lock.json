@@ -509,6 +509,7 @@
           "FluentValidation.DependencyInjectionExtensions": "[12.1.1, )",
           "Haiku.Domain": "[0.0.0-build, )",
           "Haiku.Infrastructure": "[0.0.0-build, )",
+          "Humanizer.Core": "[3.0.10, )",
           "MicroMediator": "[0.0.0-build, )"
         }
       },

@@ -8,6 +8,25 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
+  <!-- Build configurations: Debug, Dev, Qual, Release -->
+  <PropertyGroup>
+    <Configurations>Debug;Release;Dev;Qual</Configurations>
+  </PropertyGroup>
+
+  <!-- Conditional compilation symbols per configuration -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Dev'">
+    <DefineConstants>$(DefineConstants);DEV</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Qual'">
+    <DefineConstants>$(DefineConstants);QUAL</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(VersionFromCI)'!=''">
     <Version>$(VersionFromCI)</Version>
   </PropertyGroup>
@@ -32,6 +51,15 @@
     <SourceRevisionId>$(BUILD_SOURCEVERSION)</SourceRevisionId>
   </PropertyGroup>
 
+  <!-- Populate git hash from local repo when not in CI -->
+  <Target Name="PopulateGitHash" BeforeTargets="CoreCompile"
+          Condition="'$(SourceRevisionId)'==''">
+    <Exec Command="git rev-parse HEAD" ConsoleToMSBuild="true"
+          WorkingDirectory="$(MSBuildProjectDirectory)" IgnoreExitCode="false">
+      <Output TaskParameter="ConsoleOutput" PropertyName="SourceRevisionId" />
+    </Exec>
+  </Target>
+
   <PropertyGroup>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageLanguage>en-US</PackageLanguage>
@@ -43,6 +71,14 @@
     <RepositoryUrl>https://github.com/rheone/Haiku.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/rheone/Haiku</PackageProjectUrl>
   </PropertyGroup>
+
+  <!-- Embed build metadata as assembly attributes for runtime access -->
+  <ItemGroup>
+    <AssemblyMetadata Include="Version" Value="$(Version)" />
+    <AssemblyMetadata Include="GitHash" Value="$(SourceRevisionId)" Condition="'$(SourceRevisionId)'!=''" />
+    <AssemblyMetadata Include="BuildDate" Value="$([System.DateTime]::UtcNow.ToString('O'))" />
+    <AssemblyMetadata Include="Configuration" Value="$(Configuration)" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">

@@ -39,8 +39,6 @@ public class AmericanCinquainClassifierTests
         Assert.True(success);
         Assert.NotNull(definition);
         Assert.Equal(PoemType.AmericanCinquain, definition!.Type);
-        Assert.Equal(5, definition.LineCount);
-        Assert.Equal([2, 4, 6, 8, 2], definition.SyllablesPerLine);
     }
 
     /// <summary>

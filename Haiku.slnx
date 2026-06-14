@@ -1,4 +1,42 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="global.json" />
+  </Folder>
+  <Folder Name="/Solution Items/git/">
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+  </Folder>
+  <Folder Name="/Solution Items/prd and features/">
+    <File Path="docs/CmuDictionary Pipeline - Deferred Work.md" />
+    <File Path="docs/PotentialPoems.md" />
+    <File Path="docs/prd/prd.md" />
+    <File Path="docs/prd/prd.UiStylingAddendum.implementation-plan-remaining.md" />
+    <File Path="docs/prd/prd.UiStylingAddendum.md" />
+  </Folder>
+  <Folder Name="/Solution Items/readmes/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution Items/code quality/">
+    <File Path=".csharpierrc.json" />
+    <File Path=".editorconfig" />
+    <File Path="stylecop.json" />
+  </Folder>
+  <Folder Name="/Solution Items/dictionary/">
+    <File Path="dictionary.dic" />
+  </Folder>
+  <Folder Name="/Solution Items/CI-CD/">
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".github/workflows/publish.yml" />
+    <File Path=".github/dependabot.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/deployment/">
+    <File Path="Dockerfile" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/database/">
+    <File Path="deploy/db/init-db.sql" />
+    <File Path="deploy/db/seed-data.sql" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Haiku.Domain/Haiku.Domain.csproj" />
     <Project Path="src/Haiku.Infrastructure/Haiku.Infrastructure.csproj" />
@@ -9,34 +47,13 @@
   <Folder Name="/tests/">
     <Project Path="tests/Haiku.Tests/Haiku.Tests.csproj" />
     <Project Path="tests/Haiku.Domain.Tests/Haiku.Domain.Tests.csproj" />
-    <Project Path="tests/Haiku.Services.Tests/Haiku.Services.Tests.csproj" />
     <Project Path="tests/Haiku.Infrastructure.Tests/Haiku.Infrastructure.Tests.csproj" />
+    <Project Path="tests/Haiku.Services.Tests/Haiku.Services.Tests.csproj" />
     <Project Path="tests/Haiku.Web.Tests/Haiku.Web.Tests.csproj" />
     <Project Path="tests/MicroMediator.Tests/MicroMediator.Tests.csproj" />
   </Folder>
-  <Folder Name="/deploy/">
-    <Project Path="deploy/docker-compose.yml" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="docker-compose.prod" />
-    <Project Path="deploy/db/init-db.sql" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="init-db" />
-    <Project Path="deploy/db/seed-data.sql" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="seed-data" />
-  </Folder>
-  <Folder Name="/Solution Items/">
-    <Project Path="dictionary.dic" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="dictionary" />
-    <Project Path="AGENTS.md" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" />
-    <Project Path="global.json" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" />
-    <Project Path="Dockerfile" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" />
-    <Project Path="docker-compose.yml" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="docker-compose.dev" />
-    <Project Path=".env.example" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName=".env.example" />
-  </Folder>
-  <Folder Name="/Build/">
-    <Project Path=".csharpierrc.json" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName=".csharpierrc" />
-    <Project Path="stylecop.json" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" />
-    <Project Path=".editorconfig" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName=".editorconfig" />
-    <Project Path=".gitattributes" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName=".gitattributes" />
-    <Project Path=".gitignore" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName=".gitignore" />
-  </Folder>
-  <Folder Name="/.github/">
-    <Project Path=".github/workflows/build.yml" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="build" />
-    <Project Path=".github/workflows/publish.yml" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="publish" />
-    <Project Path=".github/dependabot.yml" Type="{2150E333-8FDC-42A3-9474-1A3956D46DE8}" DisplayName="dependabot" />
+  <Folder Name="/tools/">
+    <Project Path="tools/build-cmudict/build-cmudict.csproj" />
+    <Project Path="tools/PoemGenerator/PoemGenerator.csproj" />
   </Folder>
 </Solution>

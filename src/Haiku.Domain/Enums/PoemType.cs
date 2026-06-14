@@ -1,21 +1,50 @@
 namespace Haiku.Domain.Enums;
 
-// These 15 types are detected by PoemMatcherChain in Haiku.Services.
-// Detection is primarily based on syllable pattern; Freeform must be user-specified
+// These types are detected by PoemClassifierChain in Haiku.Services.
+// Detection is primarily based on syllable/word pattern; Freeform must be user-specified
 // since it has no fixed constraints.
+//
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║  KEEP THIS ENUM IN SYNC WITH THE CLASSIFIER TYPEIDS                    ║
+// ║                                                                        ║
+// ║  The PoemType enum IS the single source of truth for type identity.     ║
+// ║  Classifiers pass the enum value to PoemTypeInfo, and the TypeId       ║
+// ║  string is DERIVED AUTOMATICALLY via kebab-case conversion:            ║
+// ║    SyllableCrestWave  →  "syllable-crest-wave"                         ║
+// ║  No manual TypeId string exists anywhere in the system.                ║
+// ║                                                                        ║
+// ║  To add a new poem type:                                               ║
+// ║    1. Add a value here (PascalCase)                                    ║
+// ║    2. Create a classifier passing PoemType.YourNewValue                 ║
+// ║                                                                        ║
+// ║  To remove a poem type:                                                ║
+// ║    1. Remove the classifier                                            ║
+// ║    2. Optionally remove the enum value (safe to keep for historic data) ║
+// ║                                                                        ║
+// ║  If an enum value has no matching classifier, detection still works     ║
+// ║  but the type will never be auto-detected.                             ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
 
 /// <summary>
 /// Identifies the structural form or poetic style of a poem.
 /// </summary>
 /// <remarks>
-/// <para>Each value represents a distinct poetic form with specific syllable and line
+/// <para>Each value represents a distinct poetic form with specific structural
 /// constraints. Types are detected automatically during poem creation using a chain
-/// of matchers in <c>PoemMatcherChain</c>. The Freeform type is an exception — it
+/// of classifiers in <c>PoemClassifierChain</c>. The Freeform type is an exception — it
 /// carries no constraints and must be explicitly selected by the author. When a poem
 /// matches multiple forms, the first matching form in priority order is assigned.</para>
+/// <para><b>Adding a new type:</b> Add the enum value here (PascalCase), then create an
+/// <c>IPoemClassifier</c> implementation passing this enum value to <c>PoemTypeInfo</c>.
+/// The <c>TypeId</c> string is derived automatically via kebab-case conversion —
+/// no manual string-to-enum mapping exists anywhere in the system.</para>
 /// </remarks>
 public enum PoemType
 {
+    // =====================================================================
+    // Traditional forms (Heritage: Traditional, Scaffold: SyllableBased)
+    // =====================================================================
+
     /// <summary>
     /// A traditional Japanese form with 5-7-5 syllable pattern across three lines.
     /// </summary>
@@ -91,8 +120,157 @@ public enum PoemType
     /// </summary>
     NearTraditional,
 
+    // =====================================================================
+    // Non-traditional — Sequence-based (Heritage: NonTraditional)
+    // =====================================================================
+
     /// <summary>
-    /// A poem with no fixed syllable constraints. Must be explicitly chosen by the poet.
+    /// Syllable counts follow the decimal digits of pi (starting after the decimal point, skipping zeros).
+    /// Min 3 lines.
+    /// </summary>
+    SyllablePi,
+
+    /// <summary>
+    /// Word counts follow the decimal digits of pi (starting after the decimal point, skipping zeros).
+    /// Min 3 lines.
+    /// </summary>
+    WordPi,
+
+    /// <summary>
+    /// Syllable counts follow the Fibonacci sequence (1, 1, 2, 3, 5, 8, ...). Min 3 lines.
+    /// </summary>
+    SyllableFib,
+
+    /// <summary>
+    /// Word counts follow the Fibonacci sequence (1, 1, 2, 3, 5, 8, ...). Min 3 lines.
+    /// </summary>
+    WordFib,
+
+    /// <summary>
+    /// Syllable counts follow the reversed prefix of the Fibonacci sequence. Min 3 lines.
+    /// </summary>
+    SyllableReverseFib,
+
+    /// <summary>
+    /// Word counts follow the reversed prefix of the Fibonacci sequence. Min 3 lines.
+    /// </summary>
+    WordReverseFib,
+
+    // =====================================================================
+    // Non-traditional — Wave family (Heritage: NonTraditional)
+    // =====================================================================
+
+    /// <summary>
+    /// Syllable counts form a symmetric wave: n, n+1, ..., peak, ..., n+1, n. Min 5 lines.
+    /// </summary>
+    SyllableWave,
+
+    /// <summary>
+    /// Word counts form a symmetric wave: n, n+1, ..., peak, ..., n+1, n. Min 5 lines.
+    /// </summary>
+    WordWave,
+
+    /// <summary>
+    /// Two or more syllable waves chained, each with a smaller peak than the previous. Same shape.
+    /// </summary>
+    SyllableCrestWave,
+
+    /// <summary>
+    /// Two or more word waves chained, each with a smaller peak than the previous. Same shape.
+    /// </summary>
+    WordCrestWave,
+
+    /// <summary>
+    /// Two or more syllable waves chained, each with a larger peak than the previous. Same shape.
+    /// </summary>
+    SyllableCrashWave,
+
+    /// <summary>
+    /// Two or more word waves chained, each with a larger peak than the previous. Same shape.
+    /// </summary>
+    WordCrashWave,
+
+    // =====================================================================
+    // Non-traditional — Constraint-based (Heritage: NonTraditional)
+    // =====================================================================
+
+    /// <summary>
+    /// Each line's syllable count is a prime number. Min 3 lines.
+    /// </summary>
+    SyllablePrime,
+
+    /// <summary>
+    /// Each line's word count is a prime number. Min 3 lines.
+    /// </summary>
+    WordPrime,
+
+    /// <summary>
+    /// Syllable counts alternate between two distinct values (a, b, a, b, ...). Min 4 lines, even count.
+    /// </summary>
+    SyllablePulse,
+
+    /// <summary>
+    /// Word counts alternate between two distinct values (a, b, a, b, ...). Min 4 lines, even count.
+    /// </summary>
+    WordPulse,
+
+    /// <summary>
+    /// Syllable counts follow the Collatz (hailstone) sequence from n down to 1. Min 3 lines.
+    /// </summary>
+    SyllableHailstone,
+
+    /// <summary>
+    /// Word counts follow the Collatz (hailstone) sequence from n down to 1. Min 3 lines.
+    /// </summary>
+    WordHailstone,
+
+    /// <summary>
+    /// Syllable counts increase by exactly 1 each line: n, n+1, n+2, ..., n+k. Min 3 lines.
+    /// </summary>
+    SyllableStair,
+
+    /// <summary>
+    /// Word counts increase by exactly 1 each line: n, n+1, n+2, ..., n+k. Min 3 lines.
+    /// </summary>
+    WordStair,
+
+    /// <summary>
+    /// Syllable counts decrease by exactly 1 each line: n, n-1, ..., 1. Min 3 lines. Last line = 1.
+    /// </summary>
+    SyllableErosion,
+
+    /// <summary>
+    /// Word counts decrease by exactly 1 each line: n, n-1, ..., 1. Min 3 lines. Last line = 1.
+    /// </summary>
+    WordErosion,
+
+    /// <summary>
+    /// Syllable counts increase by exactly 1 each line starting from 1: 1, 2, 3, ..., n. Min 3 lines.
+    /// </summary>
+    SyllableMountain,
+
+    /// <summary>
+    /// Word counts increase by exactly 1 each line starting from 1: 1, 2, 3, ..., n. Min 3 lines.
+    /// </summary>
+    WordMountain,
+
+    /// <summary>
+    /// Syllable counts follow quadratic growth (constant second difference): a, b, c, ... where each
+    /// step increase grows by 1. Example: 2, 3, 5, 8, 12, 17, ... Min 3 lines.
+    /// </summary>
+    SyllableNautilus,
+
+    /// <summary>
+    /// Word counts follow quadratic growth (constant second difference). Min 3 lines.
+    /// </summary>
+    WordNautilus,
+
+    // =====================================================================
+    // Catch-all
+    // =====================================================================
+
+    /// <summary>
+    /// A poem with no fixed structural constraints. Must be explicitly chosen by the poet.
     /// </summary>
     Freeform,
 }

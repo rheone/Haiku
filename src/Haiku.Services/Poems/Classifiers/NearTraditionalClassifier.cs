@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
@@ -8,6 +9,17 @@ namespace Haiku.Services.Poems.Classifiers;
 public sealed class NearTraditionalClassifier : IPoemClassifier
 {
     public int Priority => 700;
+
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.NearTraditional,
+            DisplayName: "Near-Traditional",
+            Description: "A three-line nonstandard approximation of haiku with 4-6-4 syllable pattern.",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: [4, 6, 4],
+            WordPattern: null
+        );
 
     public bool TryClassify(
         string[] lines,
@@ -24,15 +36,7 @@ public sealed class NearTraditionalClassifier : IPoemClassifier
 
         if (syllableCounts[0] == 4 && syllableCounts[1] == 6 && syllableCounts[2] == 4)
         {
-            definition = new PoemDefinition
-            {
-                Type = PoemType.NearTraditional,
-                LineCount = 3,
-                SyllablesPerLine = [4, 6, 4],
-                TotalSyllableCount = 14,
-                WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-                TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-            };
+            definition = ClassifierBuilder.Build(this);
             return true;
         }
 

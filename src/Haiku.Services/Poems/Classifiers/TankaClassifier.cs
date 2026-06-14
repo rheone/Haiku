@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Haiku.Domain.Enums;
 using Haiku.Domain.ValueObjects;
+using Haiku.Services.Poems.Classifiers.SequenceHelpers;
 using Haiku.Services.Syllables;
 
 namespace Haiku.Services.Poems.Classifiers;
@@ -8,6 +9,17 @@ namespace Haiku.Services.Poems.Classifiers;
 public sealed class TankaClassifier : IPoemClassifier
 {
     public int Priority => 800;
+
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.Tanka,
+            DisplayName: "Tanka",
+            Description: "A five-line Japanese form with 5-7-5-7-7 syllable pattern.",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: [5, 7, 5, 7, 7],
+            WordPattern: null
+        );
 
     public bool TryClassify(
         string[] lines,
@@ -30,15 +42,7 @@ public sealed class TankaClassifier : IPoemClassifier
             && syllableCounts[4] == 7
         )
         {
-            definition = new PoemDefinition
-            {
-                Type = PoemType.Tanka,
-                LineCount = 5,
-                SyllablesPerLine = [5, 7, 5, 7, 7],
-                TotalSyllableCount = 31,
-                WordCountPerLine = tokenizedLines.Select(t => t.WordCount).ToArray(),
-                TotalWordCount = tokenizedLines.Sum(t => t.WordCount),
-            };
+            definition = ClassifierBuilder.Build(this);
             return true;
         }
 

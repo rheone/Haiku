@@ -16,31 +16,32 @@
       },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
-        "requested": "[8.0.0, )",
-        "resolved": "8.0.0",
-        "contentHash": "G5q7OqtwIyGTkeIOAc3u2ZuV/kicQaec5EaRnc0pIeSnh9LUjj+PYQrJYBURvDt7twGl2PKA7nSN0kz1Zw5bnQ==",
+        "requested": "[10.0.300, )",
+        "resolved": "10.0.300",
+        "contentHash": "QzCtLkXVb3l4IxcpvJCbzUwMLihAmLN6vVLjQGSzYSF8d2dvXxqJAZk83RV3gYnp2egz8jRMgSR2woY3vOahTA==",
         "dependencies": {
-          "Microsoft.Build.Tasks.Git": "8.0.0",
-          "Microsoft.SourceLink.Common": "8.0.0"
+          "Microsoft.Build.Tasks.Git": "10.0.300",
+          "Microsoft.SourceLink.Common": "10.0.300",
+          "System.IO.Hashing": "10.0.8"
         }
       },
       "Roslynator.Analyzers": {
         "type": "Direct",
-        "requested": "[4.12.11, )",
-        "resolved": "4.12.11",
-        "contentHash": "yvsRYT5EVtcT+V8ZW+5cxd1O9Sgf8PbC7DlQL/T5NA4g5yjaFe+WQ7evpy92Lj29m2E+XayBsO2TnCWKZlPWaA=="
+        "requested": "[4.15.0, )",
+        "resolved": "4.15.0",
+        "contentHash": "E8fu71Y+vzhniJKy1K13Rzwm8Vjcj7CDFBpflqncKUZfc3SzuF0kMBiyMmgXNPkjWTdE3Z+30HlGgYjHONZY/Q=="
       },
       "Roslynator.CodeAnalysis.Analyzers": {
         "type": "Direct",
-        "requested": "[4.12.11, )",
-        "resolved": "4.12.11",
-        "contentHash": "IUh5LVaCrhFpuNMbtEEZkMzzdn1bkPXiIn5dMkT7zY3m4Y64s2Vh2tpGE7IdJcmnEaIHdmLVkE1WaE0H8IXtcQ=="
+        "requested": "[4.15.0, )",
+        "resolved": "4.15.0",
+        "contentHash": "XPY6vqHG8jLJ1S0SGzLDtyuDjmkcIAGuLRrsG3SlAuyAOlwnVfA1glgIy6YqXutoi7hwd1fqZC2W9zoMntuZNg=="
       },
       "Roslynator.Formatting.Analyzers": {
         "type": "Direct",
-        "requested": "[4.12.11, )",
-        "resolved": "4.12.11",
-        "contentHash": "+6Rlz0wY5Rc1eceHytRjM3+Hg9kt8zDPfGOeutv2Yy62rQgyFhvFAAdOT+SP64jEj9MTIjiasO5W965NBWxi7g=="
+        "requested": "[4.15.0, )",
+        "resolved": "4.15.0",
+        "contentHash": "/LvSJGJbrx+OYC2GePmiAA9fRTfz37R/oaHC2j8YK/j9lE8ykZESCGTMVGqXF5woc6RbzfJlpYkzeG6fAV6hFQ=="
       },
       "Serilog.AspNetCore": {
         "type": "Direct",
@@ -139,8 +140,11 @@
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "bZKfSIKJRXLTuSzLudMFte/8CempWjVamNUR5eHJizsy+iuOuO/k2gnh7W0dHJmYY0tBf+gUErfluCv5mySAOQ=="
+        "resolved": "10.0.300",
+        "contentHash": "P0kaQwVZx4xIUe2FtrLyBadYNXuAljttJUPvjBYRuHhPE8L77L42KakLDkaADRiUrGspoLcMwayjrbQhYTr0zA==",
+        "dependencies": {
+          "System.IO.Hashing": "10.0.8"
+        }
       },
       "Microsoft.Data.SqlClient": {
         "type": "Transitive",
@@ -269,8 +273,8 @@
       },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "dk9JPxTCIevS75HyEQ0E4OVAFhB2N+V9ShCXf8Q6FkUQZDkgLI12y679Nym1YqsiSysuQskT7Z+6nUf3yab6Vw=="
+        "resolved": "10.0.300",
+        "contentHash": "0jlkXaUGjYlWTIVPve5MftjKHnT3SlAtq9BCLV4J9IjdPrxV/+4rMlBSjfr1khG8/GC6KGojjola8E1VvWF0qQ=="
       },
       "Microsoft.SqlServer.Server": {
         "type": "Transitive",
@@ -377,6 +381,11 @@
           "Microsoft.IdentityModel.Tokens": "7.7.1"
         }
       },
+      "System.IO.Hashing": {
+        "type": "Transitive",
+        "resolved": "10.0.8",
+        "contentHash": "+dJsbPJ3FyUbTZNplFj0RCKePFizmv6ewDV46JE9q/IVH4c3xTCftHfHelLsAKf0jryIPqgMb5GpS0x7TAY3mg=="
+      },
       "System.Memory.Data": {
         "type": "Transitive",
         "resolved": "8.0.1",
@@ -411,6 +420,7 @@
           "FluentValidation.DependencyInjectionExtensions": "[12.1.1, )",
           "Haiku.Domain": "[0.0.0-build, )",
           "Haiku.Infrastructure": "[0.0.0-build, )",
+          "Humanizer.Core": "[3.0.10, )",
           "MicroMediator": "[0.0.0-build, )"
         }
       },
