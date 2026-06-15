@@ -1,6 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Services.Poems.Classifiers;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class SyllableStairClassifierTests

@@ -5,14 +5,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Haiku.Services\Haiku.Services.csproj" />
+    <ProjectReference Include="..\..\src\Haiku.Modules\Haiku.Modules.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Haiku.Domain.Enums" />
-    <Using Include="Haiku.Services.Poems.Classifiers" />
-    <Using Include="Haiku.Services.Poems" />
-    <Using Include="Haiku.Services.Haiku" />
-    <Using Include="Haiku.Domain.Interfaces" />
+    <Using Include="Haiku.Modules.Shared.Domain.Enums" />
+    <Using Include="Haiku.Modules.Shared.Domain.ValueObjects" />
+    <Using Include="Haiku.Modules.Poems.Classifiers" />
+    <Using Include="Haiku.Modules.Poems.Application" />
+    <Using Include="Haiku.Modules.Poems.Syllables" />
+    <Using Include="Haiku.Modules.Poems.Rhyming" />
+    <Using Include="Haiku.Modules.Auth.Application" />
+    <Using Include="Haiku.Modules.Moderation.Application" />
+    <Using Include="Haiku.Modules.Dictionary.Application" />
+    <Using Include="Haiku.Modules.Auth.Domain" />
+    <Using Include="Haiku.Modules.Poems.Domain" />
+    <Using Include="Haiku.Modules.Community.Domain" />
+    <Using Include="Haiku.Modules.Moderation.Domain" />
+    <Using Include="Haiku.Modules.Dictionary.Domain" />
+    <Using Include="Haiku.Modules.Themes.Domain" />
+    <Using Include="Haiku.Modules.Messaging.Application" />
+    <Using Include="Haiku.Modules.Messaging.Commands" />
   </ItemGroup>
 </Project>

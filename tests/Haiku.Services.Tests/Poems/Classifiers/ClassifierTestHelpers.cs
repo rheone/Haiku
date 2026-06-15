@@ -1,8 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 /// <summary>
@@ -38,11 +33,7 @@ internal static class ClassifierTestHelpers
             .Select(l =>
             {
                 var words = l.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                return new TokenizedLine
-                {
-                    Words = words,
-                    WordCount = words.Length,
-                };
+                return new TokenizedLine { Words = words, WordCount = words.Length };
             })
             .ToArray();
     }
@@ -52,11 +43,7 @@ internal static class ClassifierTestHelpers
     /// the given lines and returns a definition with <see cref="PoemDefinition.TypeId"/>
     /// equal to <paramref name="expectedTypeId"/>.
     /// </summary>
-    public static void AssertMatch(
-        IPoemClassifier classifier,
-        string[] lines,
-        int[] syllableCounts,
-        string expectedTypeId)
+    public static void AssertMatch(IPoemClassifier classifier, string[] lines, int[] syllableCounts, string expectedTypeId)
     {
         var tokenized = Tokenize(lines);
         var success = classifier.TryClassify(lines, syllableCounts, tokenized, out var definition);
@@ -70,10 +57,7 @@ internal static class ClassifierTestHelpers
     /// Asserts that <paramref name="classifier"/> does NOT classify the
     /// given lines with the given <paramref name="syllableCounts"/>.
     /// </summary>
-    public static void AssertNoMatch(
-        IPoemClassifier classifier,
-        string[] lines,
-        int[] syllableCounts)
+    public static void AssertNoMatch(IPoemClassifier classifier, string[] lines, int[] syllableCounts)
     {
         var tokenized = Tokenize(lines);
         var success = classifier.TryClassify(lines, syllableCounts, tokenized, out _);

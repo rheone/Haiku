@@ -1,0 +1,63 @@
+using System.Diagnostics.CodeAnalysis;
+
+namespace Haiku.Modules.Poems.Classifiers;
+
+/// <summary>
+/// Detects the mirror cinquain form: exactly ten lines with a 2-4-6-8-2-2-8-6-4-2 syllable pattern.
+/// Formed by concatenating an American cinquain followed by a reverse cinquain.
+/// </summary>
+public sealed class MirrorCinquainClassifier : IPoemClassifier
+{
+    /// <inheritdoc/>
+    public int Priority => 1300;
+
+    /// <summary>
+    /// Gets the type metadata for the mirror cinquain form.
+    /// </summary>
+    /// <value>A <see cref="PoemTypeInfo"/> describing the 2-4-6-8-2-2-8-6-4-2 syllable-based form.</value>
+    public static PoemTypeInfo Info { get; } =
+        new(
+            PoemType: PoemType.MirrorCinquain,
+            DisplayName: "Mirror Cinquain",
+            Description: "A ten-line poem formed by concatenating an American cinquain and a Reverse cinquain (2-4-6-8-2-2-8-6-4-2).",
+            Category: PoemCategory.Traditional,
+            Scaffold: PoemScaffold.SyllableBased,
+            SyllablePattern: [2, 4, 6, 8, 2, 2, 8, 6, 4, 2],
+            WordPattern: null
+        );
+
+    /// <inheritdoc/>
+    public bool TryClassify(
+        string[] lines,
+        int[] syllableCounts,
+        TokenizedLine[] tokenizedLines,
+        [NotNullWhen(true)] out PoemDefinition? definition
+    )
+    {
+        if (lines.Length != 10 || syllableCounts.Length != 10)
+        {
+            definition = null;
+            return false;
+        }
+
+        if (
+            syllableCounts[0] == 2
+            && syllableCounts[1] == 4
+            && syllableCounts[2] == 6
+            && syllableCounts[3] == 8
+            && syllableCounts[4] == 2
+            && syllableCounts[5] == 2
+            && syllableCounts[6] == 8
+            && syllableCounts[7] == 6
+            && syllableCounts[8] == 4
+            && syllableCounts[9] == 2
+        )
+        {
+            definition = ClassifierBuilder.Build(this);
+            return true;
+        }
+
+        definition = null;
+        return false;
+    }
+}

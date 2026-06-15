@@ -1,6 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Services.Poems.Classifiers;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class WordNautilusClassifierTests
@@ -10,7 +7,15 @@ public class WordNautilusClassifierTests
     [Fact]
     public void Match_WithValidNautilus_ReturnsDefinition()
     {
-        var lines = new[] { "a b", "a b c", "a b c d e", "a b c d e f g h", "a b c d e f g h i j k l", "a b c d e f g h i j k l m n o p q" };
+        var lines = new[]
+        {
+            "a b",
+            "a b c",
+            "a b c d e",
+            "a b c d e f g h",
+            "a b c d e f g h i j k l",
+            "a b c d e f g h i j k l m n o p q",
+        };
         var counts = new[] { 2, 3, 5, 8, 12, 17 };
         ClassifierTestHelpers.AssertMatch(_classifier, lines, counts, "word-nautilus");
     }

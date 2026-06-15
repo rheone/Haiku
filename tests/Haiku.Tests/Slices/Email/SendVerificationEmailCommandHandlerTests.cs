@@ -1,5 +1,3 @@
-using Haiku.Domain.Interfaces;
-using Haiku.Services.Slices.Email;
 using NSubstitute;
 
 namespace Haiku.Tests.Slices.Email;

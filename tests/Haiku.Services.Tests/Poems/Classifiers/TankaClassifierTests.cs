@@ -1,8 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class TankaClassifierTests
@@ -29,7 +24,14 @@ public class TankaClassifierTests
     public void TryClassify_FiveSevenFiveSevenSeven_ReturnsDefinition()
     {
         // Arrange
-        var lines = new[] { "spring breeze carries scent", "cherry blossoms gently fall", "river gently flows", "children laugh along the bank", "memories drift with the stream" };
+        var lines = new[]
+        {
+            "spring breeze carries scent",
+            "cherry blossoms gently fall",
+            "river gently flows",
+            "children laugh along the bank",
+            "memories drift with the stream",
+        };
         var syllableCounts = new[] { 5, 7, 5, 7, 7 };
 
         // Act
@@ -48,7 +50,14 @@ public class TankaClassifierTests
     public void TryClassify_WrongPattern_ReturnsFalse()
     {
         // Arrange
-        var lines = new[] { "spring breeze carries scent", "cherry blossoms gently fall", "river gently flows", "children laugh along the bank", "memories drift with the stream" };
+        var lines = new[]
+        {
+            "spring breeze carries scent",
+            "cherry blossoms gently fall",
+            "river gently flows",
+            "children laugh along the bank",
+            "memories drift with the stream",
+        };
         var syllableCounts = new[] { 5, 7, 5, 7, 5 };
 
         // Act

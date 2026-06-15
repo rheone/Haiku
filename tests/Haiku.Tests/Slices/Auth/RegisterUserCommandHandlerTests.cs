@@ -1,6 +1,3 @@
-using Haiku.Domain.Entities;
-using Haiku.Domain.Interfaces;
-using Haiku.Services.Slices.Auth;
 using NSubstitute;
 
 namespace Haiku.Tests.Slices.Auth;
@@ -106,10 +103,7 @@ public class RegisterUserCommandHandlerTests
 
         // Act & Assert
         await Assert.ThrowsAsync<OperationCanceledException>(() =>
-            handler.Handle(
-                new RegisterUserCommand("test@example.com", "testuser", "password123"),
-                cts.Token
-            )
+            handler.Handle(new RegisterUserCommand("test@example.com", "testuser", "password123"), cts.Token)
         );
     }
 

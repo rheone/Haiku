@@ -1,8 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class ReverseCinquainClassifierTests
@@ -29,7 +24,14 @@ public class ReverseCinquainClassifierTests
     public void TryClassify_TwoEightSixFourTwo_ReturnsDefinition()
     {
         // Arrange
-        var lines = new[] { "night breeze", "moonbeams dance upon the quiet lake", "silver ripples spread", "trees whisper in the dark", "peace descends" };
+        var lines = new[]
+        {
+            "night breeze",
+            "moonbeams dance upon the quiet lake",
+            "silver ripples spread",
+            "trees whisper in the dark",
+            "peace descends",
+        };
         var syllableCounts = new[] { 2, 8, 6, 4, 2 };
 
         // Act
@@ -48,7 +50,14 @@ public class ReverseCinquainClassifierTests
     public void TryClassify_WrongPattern_ReturnsFalse()
     {
         // Arrange
-        var lines = new[] { "night breeze", "moonbeams dance upon the quiet lake", "silver ripples spread", "trees whisper in the dark", "peace descends" };
+        var lines = new[]
+        {
+            "night breeze",
+            "moonbeams dance upon the quiet lake",
+            "silver ripples spread",
+            "trees whisper in the dark",
+            "peace descends",
+        };
         var syllableCounts = new[] { 2, 8, 6, 4, 3 };
 
         // Act

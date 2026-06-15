@@ -1,6 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Services.Poems;
-
 namespace Haiku.Tests;
 
 /// <summary>Unit tests for the static detection and extraction methods in <see cref="PoemService"/>.</summary>

@@ -1,8 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class ChokaClassifierTests
@@ -29,7 +24,16 @@ public class ChokaClassifierTests
     public void TryClassify_SevenLinesAlternating_ReturnsDefinition()
     {
         // Arrange
-        var lines = new[] { "autumn wind blows", "leaves scatter across the yard", "crisp chill in the air", "children play in golden piles", "flaming colors glow", "harvest moon shines full tonight", "geese call out as they fly south" };
+        var lines = new[]
+        {
+            "autumn wind blows",
+            "leaves scatter across the yard",
+            "crisp chill in the air",
+            "children play in golden piles",
+            "flaming colors glow",
+            "harvest moon shines full tonight",
+            "geese call out as they fly south",
+        };
         var syllableCounts = new[] { 5, 7, 5, 7, 5, 7, 7 };
 
         // Act
@@ -48,7 +52,16 @@ public class ChokaClassifierTests
     public void TryClassify_WrongPattern_ReturnsFalse()
     {
         // Arrange
-        var lines = new[] { "autumn wind blows", "leaves scatter across the yard", "crisp chill in the air", "children play in golden piles", "flaming colors glow", "harvest moon shines full tonight", "geese call out as they fly south" };
+        var lines = new[]
+        {
+            "autumn wind blows",
+            "leaves scatter across the yard",
+            "crisp chill in the air",
+            "children play in golden piles",
+            "flaming colors glow",
+            "harvest moon shines full tonight",
+            "geese call out as they fly south",
+        };
         var syllableCounts = new[] { 5, 7, 5, 7, 5, 7, 5 };
 
         // Act
@@ -65,7 +78,15 @@ public class ChokaClassifierTests
     public void TryClassify_WrongLineCount_ReturnsFalse()
     {
         // Arrange
-        var lines = new[] { "autumn wind blows", "leaves scatter across the yard", "crisp chill in the air", "children play in golden piles", "flaming colors glow", "harvest moon shines" };
+        var lines = new[]
+        {
+            "autumn wind blows",
+            "leaves scatter across the yard",
+            "crisp chill in the air",
+            "children play in golden piles",
+            "flaming colors glow",
+            "harvest moon shines",
+        };
         var syllableCounts = new[] { 5, 7, 5, 7, 5, 7 };
 
         // Act

@@ -1,8 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class IsosyllabicClassifierTests
@@ -29,7 +24,12 @@ public class IsosyllabicClassifierTests
     public void TryClassify_AllSeven_ReturnsDefinition()
     {
         // Arrange
-        var lines = new[] { "the moon rises high tonight", "stars twinkle across the dark sky", "night birds sing their gentle songs" };
+        var lines = new[]
+        {
+            "the moon rises high tonight",
+            "stars twinkle across the dark sky",
+            "night birds sing their gentle songs",
+        };
         var syllableCounts = new[] { 7, 7, 7 };
 
         // Act

@@ -1,5 +1,3 @@
-using Haiku.Domain.Interfaces;
-using Haiku.Services.Haiku;
 using NSubstitute;
 
 namespace Haiku.Tests;

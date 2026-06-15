@@ -1,5 +1,3 @@
-using Haiku.Domain.ValueObjects;
-
 namespace Haiku.Domain.Tests.ValueObjects;
 
 public class SyllableResultTests

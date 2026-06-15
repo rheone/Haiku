@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Haiku.Services\Haiku.Services.csproj" />
+    <ProjectReference Include="..\..\src\Haiku.Modules\Haiku.Modules.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\src\Haiku.Services\Resources\cmudict.json" Link="Resources\cmudict.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('..\..\src\Haiku.Services\Resources\cmudict.json')" />
+    <Content
+      Include="..\..\src\Haiku.Modules\Resources\cmudict.json"
+      Link="Resources\cmudict.json"
+      CopyToOutputDirectory="PreserveNewest"
+      Condition="Exists('..\..\src\Haiku.Modules\Resources\cmudict.json')"
+    />
   </ItemGroup>
 </Project>

@@ -1,1 +1,12 @@
-global using Haiku.Services.Poems;
+global using Haiku.Modules.Auth.Application;
+global using Haiku.Modules.Dictionary.Application;
+global using Haiku.Modules.Moderation.Application;
+global using Haiku.Modules.Poems.Application;
+global using Haiku.Modules.Poems.Classifiers;
+global using Haiku.Modules.Poems.Classifiers.SequenceHelpers;
+global using Haiku.Modules.Poems.Rhyming;
+global using Haiku.Modules.Poems.Rhyming.Providers;
+global using Haiku.Modules.Poems.Syllables;
+global using Haiku.Modules.Poems.Syllables.Providers;
+global using Haiku.Modules.Shared.Domain.Enums;
+global using Haiku.Modules.Shared.Domain.ValueObjects;

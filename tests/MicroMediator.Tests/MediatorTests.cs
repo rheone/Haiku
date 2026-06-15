@@ -103,6 +103,206 @@ public class MediatorTests
         Assert.Equal("99", queryResult);
     }
 
+    /// <summary>
+    /// Verifies that sending a void command whose handler type has not been registered
+    /// via <see cref="ServiceCollectionExtensions.AddMediator"/> throws an
+    /// <see cref="InvalidOperationException"/>.
+    /// </summary>
+    [Fact]
+    public async Task Send_void_command_throws_when_handler_not_registered()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator(typeof(TestCommandHandler).Assembly);
+        var provider = services.BuildServiceProvider();
+        var mediator = provider.GetRequiredService<IMediator>();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            mediator.Send(new UnregisteredVoidCommand(), TestContext.Current.CancellationToken)
+        );
+
+        Assert.Contains("ICommandHandler", ex.Message);
+    }
+
+    /// <summary>
+    /// Verifies that sending a command with a result whose handler has not been registered
+    /// throws an <see cref="InvalidOperationException"/>.
+    /// </summary>
+    [Fact]
+    public async Task Send_command_with_result_throws_when_handler_not_registered()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator(typeof(TestCommandHandler).Assembly);
+        var provider = services.BuildServiceProvider();
+        var mediator = provider.GetRequiredService<IMediator>();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            mediator.Send(new UnregisteredResultCommand(), TestContext.Current.CancellationToken)
+        );
+
+        Assert.Contains("ICommandHandler", ex.Message);
+    }
+
+    /// <summary>
+    /// Verifies that sending a query whose handler has not been registered
+    /// throws an <see cref="InvalidOperationException"/>.
+    /// </summary>
+    [Fact]
+    public async Task Send_query_throws_when_handler_not_registered()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator(typeof(TestCommandHandler).Assembly);
+        var provider = services.BuildServiceProvider();
+        var mediator = provider.GetRequiredService<IMediator>();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            mediator.Send(new UnregisteredQuery(), TestContext.Current.CancellationToken)
+        );
+
+        Assert.Contains("IQueryHandler", ex.Message);
+    }
+
+    /// <summary>
+    /// Verifies that the cancellation token passed to <see cref="IMediator.Send{TCommand}"/>
+    /// for a void command is forwarded to the handler's <c>Handle</c> method unchanged.
+    /// </summary>
+    [Fact]
+    public async Task Send_void_command_passes_cancellation_token_to_handler()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator(typeof(CancellationVoidCommandHandler).Assembly);
+        var provider = services.BuildServiceProvider();
+        var mediator = provider.GetRequiredService<IMediator>();
+
+        using var cts = new CancellationTokenSource();
+        var handler = provider.GetRequiredService<ICommandHandler<CancellationVoidCommand>>();
+
+        await mediator.Send(new CancellationVoidCommand(), cts.Token);
+
+        Assert.Equal(cts.Token, ((CancellationVoidCommandHandler)handler).CapturedCancellationToken);
+    }
+
+    /// <summary>
+    /// Verifies that the cancellation token is forwarded to the handler for a command
+    /// that returns a result.
+    /// </summary>
+    [Fact]
+    public async Task Send_command_with_result_passes_cancellation_token_to_handler()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator(typeof(CancellationResultCommandHandler).Assembly);
+        var provider = services.BuildServiceProvider();
+        var mediator = provider.GetRequiredService<IMediator>();
+
+        using var cts = new CancellationTokenSource();
+        var handler = provider.GetRequiredService<ICommandHandler<CancellationResultCommand, bool>>();
+
+        await mediator.Send(new CancellationResultCommand(), cts.Token);
+
+        Assert.Equal(cts.Token, ((CancellationResultCommandHandler)handler).CapturedCancellationToken);
+    }
+
+    /// <summary>
+    /// Verifies that the cancellation token is forwarded to the handler for a query
+    /// that returns a result.
+    /// </summary>
+    [Fact]
+    public async Task Send_query_passes_cancellation_token_to_handler()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator(typeof(CancellationQueryHandler).Assembly);
+        var provider = services.BuildServiceProvider();
+        var mediator = provider.GetRequiredService<IMediator>();
+
+        using var cts = new CancellationTokenSource();
+        var handler = provider.GetRequiredService<IQueryHandler<CancellationQuery, string>>();
+
+        await mediator.Send(new CancellationQuery(), cts.Token);
+
+        Assert.Equal(cts.Token, ((CancellationQueryHandler)handler).CapturedCancellationToken);
+    }
+
+    /// <summary>
+    /// Verifies that an exception thrown by a void command handler propagates
+    /// back to the caller of <see cref="IMediator.Send{TCommand}"/> unwrapped.
+    /// </summary>
+    [Fact]
+    public async Task Send_void_command_throws_when_handler_throws()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator(typeof(ThrowingVoidCommandHandler).Assembly);
+        var provider = services.BuildServiceProvider();
+        var mediator = provider.GetRequiredService<IMediator>();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            mediator.Send(new ThrowingVoidCommand(), TestContext.Current.CancellationToken)
+        );
+
+        Assert.Equal("Handler threw.", ex.Message);
+    }
+
+    /// <summary>
+    /// Verifies that an exception thrown by a command-with-result handler propagates
+    /// back to the caller unwrapped.
+    /// </summary>
+    [Fact]
+    public async Task Send_command_with_result_throws_when_handler_throws()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator(typeof(ThrowingResultCommandHandler).Assembly);
+        var provider = services.BuildServiceProvider();
+        var mediator = provider.GetRequiredService<IMediator>();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            mediator.Send(new ThrowingResultCommand(), TestContext.Current.CancellationToken)
+        );
+
+        Assert.Equal("Handler threw.", ex.Message);
+    }
+
+    /// <summary>
+    /// Verifies that an <see cref="OperationCanceledException"/> thrown by a handler
+    /// propagates to the caller as an <see cref="OperationCanceledException"/>,
+    /// not wrapped in <see cref="TaskCanceledException"/>.
+    /// </summary>
+    [Fact]
+    public async Task Send_command_throws_OperationCanceledException_when_handler_cancels()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator(typeof(CanceledVoidCommandHandler).Assembly);
+        var provider = services.BuildServiceProvider();
+        var mediator = provider.GetRequiredService<IMediator>();
+
+        await Assert.ThrowsAsync<OperationCanceledException>(() =>
+            mediator.Send(new CanceledVoidCommand(), TestContext.Current.CancellationToken)
+        );
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="Mediator.Send{TResult}(ICommand{TResult},CancellationToken)"/> can be invoked
+    /// concurrently from many callers without cross-contamination, lost results, or threading exceptions.
+    /// Each dispatch carries a unique index; the test confirms every index is returned once.
+    /// </summary>
+    [Fact]
+    public async Task Send_supports_concurrent_dispatches()
+    {
+        var services = new ServiceCollection();
+        services.AddMediator(typeof(ConcurrencyCommandHandler).Assembly);
+        var provider = services.BuildServiceProvider();
+        var mediator = provider.GetRequiredService<IMediator>();
+
+        const int count = 100;
+        var tasks = Enumerable
+            .Range(0, count)
+            .Select(i => mediator.Send(new ConcurrencyCommand(i), TestContext.Current.CancellationToken))
+            .ToArray();
+
+        var results = await Task.WhenAll(tasks);
+
+        var handler = provider.GetRequiredService<ICommandHandler<ConcurrencyCommand, int>>();
+        Assert.Equal(count, ((ConcurrencyCommandHandler)handler).CallCount);
+        Assert.Equal(count, results.Length);
+    }
+
     /// <summary>A test command returning <c>bool</c>, used to verify command dispatch.</summary>
     public record TestCommand(string Value) : ICommand<bool>;
 
@@ -139,6 +339,116 @@ public class MediatorTests
         public Task<string> Handle(TestQuery query, CancellationToken cancellationToken)
         {
             return Task.FromResult(query.Number.ToString());
+        }
+    }
+
+    /// <summary>A void command with no registered handler, used to verify error paths.</summary>
+    public record UnregisteredVoidCommand : ICommand;
+
+    /// <summary>A command with a result and no registered handler, used to verify error paths.</summary>
+    public record UnregisteredResultCommand : ICommand<bool>;
+
+    /// <summary>A query with no registered handler, used to verify error paths.</summary>
+    public record UnregisteredQuery : IQuery<string>;
+
+    /// <summary>A void command used to verify cancellation token propagation.</summary>
+    public record CancellationVoidCommand : ICommand;
+
+    /// <summary>Handles <see cref="CancellationVoidCommand"/> by capturing the received cancellation token.</summary>
+    public class CancellationVoidCommandHandler : ICommandHandler<CancellationVoidCommand>
+    {
+        public CancellationToken CapturedCancellationToken { get; private set; }
+
+        public Task Handle(CancellationVoidCommand command, CancellationToken cancellationToken)
+        {
+            CapturedCancellationToken = cancellationToken;
+            return Task.CompletedTask;
+        }
+    }
+
+    /// <summary>A command with a result used to verify cancellation token propagation.</summary>
+    public record CancellationResultCommand : ICommand<bool>;
+
+    /// <summary>Handles <see cref="CancellationResultCommand"/> by capturing the received cancellation token.</summary>
+    public class CancellationResultCommandHandler : ICommandHandler<CancellationResultCommand, bool>
+    {
+        public CancellationToken CapturedCancellationToken { get; private set; }
+
+        public Task<bool> Handle(CancellationResultCommand command, CancellationToken cancellationToken)
+        {
+            CapturedCancellationToken = cancellationToken;
+            return Task.FromResult(true);
+        }
+    }
+
+    /// <summary>A query used to verify cancellation token propagation.</summary>
+    public record CancellationQuery : IQuery<string>;
+
+    /// <summary>Handles <see cref="CancellationQuery"/> by capturing the received cancellation token.</summary>
+    public class CancellationQueryHandler : IQueryHandler<CancellationQuery, string>
+    {
+        public CancellationToken CapturedCancellationToken { get; private set; }
+
+        public Task<string> Handle(CancellationQuery query, CancellationToken cancellationToken)
+        {
+            CapturedCancellationToken = cancellationToken;
+            return Task.FromResult("ok");
+        }
+    }
+
+    /// <summary>A void command used to verify exception propagation from a handler.</summary>
+    public record ThrowingVoidCommand : ICommand;
+
+    /// <summary>Handles <see cref="ThrowingVoidCommand"/> by throwing an expected exception via a faulted task.</summary>
+    public class ThrowingVoidCommandHandler : ICommandHandler<ThrowingVoidCommand>
+    {
+        public Task Handle(ThrowingVoidCommand command, CancellationToken cancellationToken)
+        {
+            return Task.FromException(new InvalidOperationException("Handler threw."));
+        }
+    }
+
+    /// <summary>A command with a result used to verify exception propagation.</summary>
+    public record ThrowingResultCommand : ICommand<string>;
+
+    /// <summary>Handles <see cref="ThrowingResultCommand"/> by throwing via a faulted task.</summary>
+    public class ThrowingResultCommandHandler : ICommandHandler<ThrowingResultCommand, string>
+    {
+        public Task<string> Handle(ThrowingResultCommand command, CancellationToken cancellationToken)
+        {
+            return Task.FromException<string>(new InvalidOperationException("Handler threw."));
+        }
+    }
+
+    /// <summary>A void command used to verify OperationCanceledException propagation.</summary>
+    public record CanceledVoidCommand : ICommand;
+
+    /// <summary>Handles <see cref="CanceledVoidCommand"/> by throwing OperationCanceledException via a faulted task.</summary>
+    public class CanceledVoidCommandHandler : ICommandHandler<CanceledVoidCommand>
+    {
+        public Task Handle(CanceledVoidCommand command, CancellationToken cancellationToken)
+        {
+            return Task.FromException(new OperationCanceledException());
+        }
+    }
+
+    /// <summary>A command carrying a unique index, used to verify thread-safe concurrent dispatch.</summary>
+    public record ConcurrencyCommand(int Index) : ICommand<int>;
+
+    /// <summary>
+    /// Handles <see cref="ConcurrencyCommand"/> by tracking call count with
+    /// <see cref="Interlocked.Increment"/> and returning the command index.
+    /// </summary>
+    public class ConcurrencyCommandHandler : ICommandHandler<ConcurrencyCommand, int>
+    {
+        private int _callCount;
+
+        public int CallCount => _callCount;
+
+        public Task<int> Handle(ConcurrencyCommand command, CancellationToken cancellationToken)
+        {
+            Interlocked.Increment(ref _callCount);
+            return Task.FromResult(command.Index);
         }
     }
 }

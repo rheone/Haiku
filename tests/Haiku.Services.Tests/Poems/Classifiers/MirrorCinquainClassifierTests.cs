@@ -1,8 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class MirrorCinquainClassifierTests
@@ -29,7 +24,19 @@ public class MirrorCinquainClassifierTests
     public void TryClassify_CorrectPattern_ReturnsDefinition()
     {
         // Arrange
-        var lines = new[] { "dawn breaks", "golden light spreads across hills", "morning mist rising", "birds begin their cheerful songs", "new day", "fresh start", "sun warms the cooling evening air", "shadows creeping long", "stars appear in darkening sky", "night falls" };
+        var lines = new[]
+        {
+            "dawn breaks",
+            "golden light spreads across hills",
+            "morning mist rising",
+            "birds begin their cheerful songs",
+            "new day",
+            "fresh start",
+            "sun warms the cooling evening air",
+            "shadows creeping long",
+            "stars appear in darkening sky",
+            "night falls",
+        };
         var syllableCounts = new[] { 2, 4, 6, 8, 2, 2, 8, 6, 4, 2 };
 
         // Act
@@ -48,7 +55,19 @@ public class MirrorCinquainClassifierTests
     public void TryClassify_WrongPattern_ReturnsFalse()
     {
         // Arrange
-        var lines = new[] { "dawn breaks", "golden light spreads across hills", "morning mist rising", "birds begin their cheerful songs", "new day", "fresh start", "sun warms the cooling evening air", "shadows creeping long", "stars appear in darkening sky", "wrong word" };
+        var lines = new[]
+        {
+            "dawn breaks",
+            "golden light spreads across hills",
+            "morning mist rising",
+            "birds begin their cheerful songs",
+            "new day",
+            "fresh start",
+            "sun warms the cooling evening air",
+            "shadows creeping long",
+            "stars appear in darkening sky",
+            "wrong word",
+        };
         var syllableCounts = new[] { 2, 4, 6, 8, 2, 2, 8, 6, 4, 3 };
 
         // Act
@@ -65,7 +84,14 @@ public class MirrorCinquainClassifierTests
     public void TryClassify_WrongLineCount_ReturnsFalse()
     {
         // Arrange
-        var lines = new[] { "dawn breaks", "golden light spreads across hills", "morning mist rising", "birds begin their cheerful songs", "new day" };
+        var lines = new[]
+        {
+            "dawn breaks",
+            "golden light spreads across hills",
+            "morning mist rising",
+            "birds begin their cheerful songs",
+            "new day",
+        };
         var syllableCounts = new[] { 2, 4, 6, 8, 2 };
 
         // Act

@@ -1,8 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class SedokaClassifierTests
@@ -29,7 +24,15 @@ public class SedokaClassifierTests
     public void TryClassify_CorrectPattern_ReturnsDefinition()
     {
         // Arrange
-        var lines = new[] { "morning sun rises", "birds begin their joyful song", "dew drops glisten on green leaves", "evening shadows fall", "crickets start their nightly choir", "stars appear one by one above" };
+        var lines = new[]
+        {
+            "morning sun rises",
+            "birds begin their joyful song",
+            "dew drops glisten on green leaves",
+            "evening shadows fall",
+            "crickets start their nightly choir",
+            "stars appear one by one above",
+        };
         var syllableCounts = new[] { 5, 7, 7, 5, 7, 7 };
 
         // Act
@@ -48,7 +51,15 @@ public class SedokaClassifierTests
     public void TryClassify_WrongPattern_ReturnsFalse()
     {
         // Arrange
-        var lines = new[] { "morning sun rises", "birds begin their joyful song", "dew drops glisten on green leaves", "evening shadows fall", "crickets start their nightly choir", "stars appear one by one" };
+        var lines = new[]
+        {
+            "morning sun rises",
+            "birds begin their joyful song",
+            "dew drops glisten on green leaves",
+            "evening shadows fall",
+            "crickets start their nightly choir",
+            "stars appear one by one",
+        };
         var syllableCounts = new[] { 5, 7, 7, 5, 7, 5 };
 
         // Act

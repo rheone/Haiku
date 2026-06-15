@@ -647,35 +647,23 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
-      "haiku.domain": {
-        "type": "Project"
-      },
-      "haiku.infrastructure": {
+      "haiku.modules": {
         "type": "Project",
         "dependencies": {
           "BCrypt.Net-Next": "[4.2.0, )",
-          "Haiku.Domain": "[0.0.0-build, )",
-          "Humanizer.Core": "[3.0.10, )",
-          "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.9, )",
-          "Microsoft.Extensions.Logging.Abstractions": "[10.0.9, )"
-        }
-      },
-      "haiku.services": {
-        "type": "Project",
-        "dependencies": {
           "FluentValidation": "[12.1.1, )",
           "FluentValidation.DependencyInjectionExtensions": "[12.1.1, )",
-          "Haiku.Domain": "[0.0.0-build, )",
-          "Haiku.Infrastructure": "[0.0.0-build, )",
           "Humanizer.Core": "[3.0.10, )",
-          "MicroMediator": "[0.0.0-build, )"
+          "MicroMediator": "[0.0.0-build, )",
+          "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.9, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[10.0.9, )"
         }
       },
       "haiku.web": {
         "type": "Project",
         "dependencies": {
           "BCrypt.Net-Next": "[4.2.0, )",
-          "Haiku.Services": "[0.0.0-build, )",
+          "Haiku.Modules": "[0.0.0-build, )",
           "Serilog.AspNetCore": "[10.0.0, )",
           "Serilog.Sinks.File": "[7.0.0, )",
           "StackExchange.Exceptional.AspNetCore": "[3.0.1, )"

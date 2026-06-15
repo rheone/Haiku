@@ -1,6 +1,4 @@
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Syllables;
-using SyllableEngine = Haiku.Services.Syllables.SyllableEngine;
+using SyllableEngine = Haiku.Modules.Poems.Syllables.SyllableEngine;
 
 namespace Haiku.Services.Tests.Syllables;
 

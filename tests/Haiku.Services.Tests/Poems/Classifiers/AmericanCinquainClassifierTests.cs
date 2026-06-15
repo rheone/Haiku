@@ -1,8 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class AmericanCinquainClassifierTests
@@ -29,7 +24,14 @@ public class AmericanCinquainClassifierTests
     public void TryClassify_TwoFourSixEightTwo_ReturnsDefinition()
     {
         // Arrange
-        var lines = new[] { "shy moon", "soft light upon still pond", "rippling silver gleams", "frogs leap into the cool night air", "splash heard" };
+        var lines = new[]
+        {
+            "shy moon",
+            "soft light upon still pond",
+            "rippling silver gleams",
+            "frogs leap into the cool night air",
+            "splash heard",
+        };
         var syllableCounts = new[] { 2, 4, 6, 8, 2 };
 
         // Act
@@ -48,7 +50,14 @@ public class AmericanCinquainClassifierTests
     public void TryClassify_WrongPattern_ReturnsFalse()
     {
         // Arrange
-        var lines = new[] { "shy moon", "soft light upon still pond", "rippling silver gleams", "frogs leap into the cool night air", "wrong here" };
+        var lines = new[]
+        {
+            "shy moon",
+            "soft light upon still pond",
+            "rippling silver gleams",
+            "frogs leap into the cool night air",
+            "wrong here",
+        };
         var syllableCounts = new[] { 2, 4, 6, 8, 3 };
 
         // Act

@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Haiku.Services.Syllables.Providers;
 
 namespace Haiku.Services.Tests.Syllables;
 

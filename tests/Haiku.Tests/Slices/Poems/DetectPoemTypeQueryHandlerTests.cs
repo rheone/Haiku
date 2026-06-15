@@ -1,7 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Services.Haiku;
-using Haiku.Services.Slices.Poems;
-
 namespace Haiku.Tests.Slices.Poems;
 
 /// <summary>Unit tests for <see cref="DetectPoemTypeQueryHandler"/> covering all 15 poem type detections.</summary>

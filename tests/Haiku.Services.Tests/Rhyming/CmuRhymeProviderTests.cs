@@ -1,6 +1,3 @@
-using Haiku.Services.Rhyming.Providers;
-using Haiku.Services.Syllables.Providers;
-
 namespace Haiku.Services.Tests.Rhyming;
 
 public sealed class CmuRhymeProviderTests : IDisposable

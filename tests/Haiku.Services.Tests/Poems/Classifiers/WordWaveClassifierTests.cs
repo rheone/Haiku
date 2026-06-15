@@ -1,6 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Services.Poems.Classifiers;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class WordWaveClassifierTests
@@ -18,7 +15,16 @@ public class WordWaveClassifierTests
     [Fact]
     public void Match_WithValid7LineWave_ReturnsDefinition()
     {
-        var lines = new[] { "one two", "three four five", "six seven eight nine", "ten eleven twelve thirteen fourteen", "fifteen sixteen seventeen eighteen", "nineteen twenty twenty-one", "twenty-two twenty-three" };
+        var lines = new[]
+        {
+            "one two",
+            "three four five",
+            "six seven eight nine",
+            "ten eleven twelve thirteen fourteen",
+            "fifteen sixteen seventeen eighteen",
+            "nineteen twenty twenty-one",
+            "twenty-two twenty-three",
+        };
         var counts = new[] { 2, 3, 4, 5, 4, 3, 2 };
         ClassifierTestHelpers.AssertMatch(_classifier, lines, counts, "word-wave");
     }
@@ -34,7 +40,14 @@ public class WordWaveClassifierTests
     [Fact]
     public void NoMatch_WithAsymmetricWave_ReturnsFalse()
     {
-        var lines = new[] { "one", "two three", "four five six", "seven eight nine ten", "eleven twelve thirteen fourteen fifteen" };
+        var lines = new[]
+        {
+            "one",
+            "two three",
+            "four five six",
+            "seven eight nine ten",
+            "eleven twelve thirteen fourteen fifteen",
+        };
         var counts = new[] { 1, 2, 3, 4, 5 };
         ClassifierTestHelpers.AssertNoMatch(_classifier, lines, counts);
     }

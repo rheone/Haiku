@@ -1,5 +1,3 @@
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Syllables;
 
 /// <summary>

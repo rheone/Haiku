@@ -1,8 +1,3 @@
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-using Haiku.Services.Syllables.Providers;
-
 namespace Haiku.Services.Tests.Poems;
 
 /// <summary>
@@ -40,12 +35,7 @@ public class PoemInputServiceTests
         var mockClassifier = Substitute.For<IPoemClassifier>();
         mockClassifier.Priority.Returns(100);
         mockClassifier
-            .TryClassify(
-                Arg.Any<string[]>(),
-                Arg.Any<int[]>(),
-                Arg.Any<TokenizedLine[]>(),
-                out Arg.Any<PoemDefinition?>()
-            )
+            .TryClassify(Arg.Any<string[]>(), Arg.Any<int[]>(), Arg.Any<TokenizedLine[]>(), out Arg.Any<PoemDefinition?>())
             .Returns(x =>
             {
                 x[3] = new PoemDefinition { Type = PoemType.Haiku };

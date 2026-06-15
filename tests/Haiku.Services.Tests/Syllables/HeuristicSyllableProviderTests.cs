@@ -1,6 +1,3 @@
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Syllables.Providers;
-
 namespace Haiku.Services.Tests.Syllables;
 
 /// <summary>

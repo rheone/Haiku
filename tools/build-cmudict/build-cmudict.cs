@@ -46,11 +46,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
-const string DefaultUrl =
-    "https://raw.githubusercontent.com/cmusphinx/cmudict/master/cmudict.dict";
+const string DefaultUrl = "https://raw.githubusercontent.com/cmusphinx/cmudict/master/cmudict.dict";
 
-const string DefaultOutputPath =
-    "../src/Haiku.Services/Resources/cmudict.json";
+const string DefaultOutputPath = "../src/Haiku.Services/Resources/cmudict.json";
 
 // Parse command-line arguments
 var url = DefaultUrl;
@@ -82,9 +80,7 @@ Console.WriteLine($"  Downloaded {lines.Length} lines.");
 
 // Parse
 Console.WriteLine("Parsing...");
-var entries = new Dictionary<string, List<PronunciationEntry>>(
-    StringComparer.OrdinalIgnoreCase
-);
+var entries = new Dictionary<string, List<PronunciationEntry>>(StringComparer.OrdinalIgnoreCase);
 
 var homographCount = 0;
 
@@ -145,11 +141,7 @@ var output = new CmuDictFile
         EntryCount = entries.Count,
         HomographCount = homographCount,
     },
-    Entries = entries.ToDictionary(
-        kvp => kvp.Key,
-        kvp => kvp.Value.ToArray(),
-        StringComparer.OrdinalIgnoreCase
-    ),
+    Entries = entries.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToArray(), StringComparer.OrdinalIgnoreCase),
 };
 
 // Ensure output directory exists
@@ -158,11 +150,10 @@ if (!string.IsNullOrEmpty(outputDir))
     Directory.CreateDirectory(outputDir);
 
 // Write
-var json = JsonSerializer.Serialize(output, new JsonSerializerOptions
-{
-    WriteIndented = true,
-    TypeInfoResolver = new DefaultJsonTypeInfoResolver(),
-});
+var json = JsonSerializer.Serialize(
+    output,
+    new JsonSerializerOptions { WriteIndented = true, TypeInfoResolver = new DefaultJsonTypeInfoResolver() }
+);
 
 await File.WriteAllTextAsync(outputPath, json);
 Console.WriteLine($"  Written: {outputPath} ({json.Length:N0} bytes)");
@@ -204,7 +195,5 @@ public sealed record CmuDictFile
     public Metadata Metadata { get; init; } = new();
 
     [JsonPropertyName("entries")]
-    public Dictionary<string, PronunciationEntry[]> Entries { get; init; } = new(
-        StringComparer.OrdinalIgnoreCase
-    );
+    public Dictionary<string, PronunciationEntry[]> Entries { get; init; } = new(StringComparer.OrdinalIgnoreCase);
 }

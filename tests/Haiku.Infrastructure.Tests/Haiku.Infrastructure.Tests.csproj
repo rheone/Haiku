@@ -5,6 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Haiku.Infrastructure\Haiku.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Haiku.Modules\Haiku.Modules.csproj" />
   </ItemGroup>
 </Project>

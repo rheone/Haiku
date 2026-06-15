@@ -1,6 +1,3 @@
-using Haiku.Domain.Entities;
-using Haiku.Domain.Interfaces;
-using Haiku.Services.Auth;
 using NSubstitute;
 
 namespace Haiku.Tests;
@@ -99,7 +96,8 @@ public class AuthServiceTests
 
         // Act & Assert
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            authService.RegisterAsync("test@example.com", "testuser", "password123", cts.Token));
+            authService.RegisterAsync("test@example.com", "testuser", "password123", cts.Token)
+        );
     }
 
     #endregion
@@ -236,7 +234,8 @@ public class AuthServiceTests
 
         // Act & Assert
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            authService.LoginAsync("test@example.com", "password", cts.Token));
+            authService.LoginAsync("test@example.com", "password", cts.Token)
+        );
     }
 
     #endregion

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Haiku.Services\Haiku.Services.csproj" />
+    <ProjectReference Include="..\Haiku.Modules\Haiku.Modules.csproj" />
   </ItemGroup>
 
   <ItemGroup>

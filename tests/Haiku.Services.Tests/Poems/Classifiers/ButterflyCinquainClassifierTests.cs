@@ -1,8 +1,3 @@
-using Haiku.Domain.Enums;
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Syllables;
-
 namespace Haiku.Services.Tests.Poems.Classifiers;
 
 public class ButterflyCinquainClassifierTests
@@ -29,7 +24,18 @@ public class ButterflyCinquainClassifierTests
     public void TryClassify_CorrectPattern_ReturnsDefinition()
     {
         // Arrange
-        var lines = new[] { "soft breeze", "whispers through the tall pine trees", "gentle rustling sounds", "crickets chirping in the evening", "peace falls", "sunlight fades across the hills", "shadows stretch and grow", "stars appear one by one", "night descends" };
+        var lines = new[]
+        {
+            "soft breeze",
+            "whispers through the tall pine trees",
+            "gentle rustling sounds",
+            "crickets chirping in the evening",
+            "peace falls",
+            "sunlight fades across the hills",
+            "shadows stretch and grow",
+            "stars appear one by one",
+            "night descends",
+        };
         var syllableCounts = new[] { 2, 4, 6, 8, 2, 8, 6, 4, 2 };
 
         // Act
@@ -48,7 +54,18 @@ public class ButterflyCinquainClassifierTests
     public void TryClassify_WrongPattern_ReturnsFalse()
     {
         // Arrange
-        var lines = new[] { "soft breeze", "whispers through the tall pine trees", "gentle rustling sounds", "crickets chirping in the evening", "peace falls", "sunlight fades across the hills", "shadows stretch and grow", "stars appear one by one", "wrong here" };
+        var lines = new[]
+        {
+            "soft breeze",
+            "whispers through the tall pine trees",
+            "gentle rustling sounds",
+            "crickets chirping in the evening",
+            "peace falls",
+            "sunlight fades across the hills",
+            "shadows stretch and grow",
+            "stars appear one by one",
+            "wrong here",
+        };
         var syllableCounts = new[] { 2, 4, 6, 8, 2, 8, 6, 4, 3 };
 
         // Act
@@ -65,7 +82,13 @@ public class ButterflyCinquainClassifierTests
     public void TryClassify_WrongLineCount_ReturnsFalse()
     {
         // Arrange
-        var lines = new[] { "soft breeze", "whispers through the tall pine trees", "gentle rustling sounds", "crickets chirping in the evening" };
+        var lines = new[]
+        {
+            "soft breeze",
+            "whispers through the tall pine trees",
+            "gentle rustling sounds",
+            "crickets chirping in the evening",
+        };
         var syllableCounts = new[] { 2, 4, 6, 8 };
 
         // Act

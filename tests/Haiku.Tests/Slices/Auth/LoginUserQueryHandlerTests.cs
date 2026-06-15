@@ -1,6 +1,3 @@
-using Haiku.Domain.Entities;
-using Haiku.Domain.Interfaces;
-using Haiku.Services.Slices.Auth;
 using NSubstitute;
 
 namespace Haiku.Tests.Slices.Auth;
@@ -156,10 +153,7 @@ public class LoginUserQueryHandlerTests
 
         // Act & Assert
         await Assert.ThrowsAsync<OperationCanceledException>(() =>
-            handler.Handle(
-                new LoginUserQuery("test@example.com", "password"),
-                cts.Token
-            )
+            handler.Handle(new LoginUserQuery("test@example.com", "password"), cts.Token)
         );
     }
 

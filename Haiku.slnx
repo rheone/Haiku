@@ -38,9 +38,7 @@
     <File Path="deploy/db/seed-data.sql" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/Haiku.Domain/Haiku.Domain.csproj" />
-    <Project Path="src/Haiku.Infrastructure/Haiku.Infrastructure.csproj" />
-    <Project Path="src/Haiku.Services/Haiku.Services.csproj" />
+    <Project Path="src/Haiku.Modules/Haiku.Modules.csproj" />
     <Project Path="src/Haiku.Web/Haiku.Web.csproj" />
     <Project Path="src/MicroMediator/MicroMediator.csproj" />
   </Folder>

@@ -1,12 +1,6 @@
 using System.Text.Json;
-using Haiku.Domain.Enums;
-using Haiku.Domain.ValueObjects;
-using Haiku.Services.Poems.Classifiers;
-using Haiku.Services.Poems.Classifiers.SequenceHelpers;
-using Haiku.Services.Syllables;
-using Haiku.Services.Syllables.Providers;
-using NewSyllableEngine = Haiku.Services.Syllables.SyllableEngine;
-using ServicesPoemEngine = Haiku.Services.Haiku.PoemEngine;
+using NewSyllableEngine = Haiku.Modules.Poems.Syllables.SyllableEngine;
+using ServicesPoemEngine = Haiku.Modules.Poems.Application.PoemEngine;
 
 namespace Haiku.Services.Tests.Poems;
 
@@ -291,21 +285,14 @@ public sealed class PoemEngineGenerationTests : IDisposable
 
         var cmuDictionary = new CmuDictionaryProvider(_testJsonPath);
         var tokenizer = new WordTokenizer();
-        var providers = new ISyllableProvider[]
-        {
-            cmuDictionary,
-            new HeuristicSyllableProvider(),
-        };
+        var providers = new ISyllableProvider[] { cmuDictionary, new HeuristicSyllableProvider() };
         var syllableEngine = new SyllableEngine(providers, tokenizer);
 
         var assembly = typeof(ServicesPoemEngine).Assembly;
         var classifierTypes = assembly
             .GetExportedTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false }
-                     && typeof(IPoemClassifier).IsAssignableFrom(t));
-        var classifiers = classifierTypes
-            .Select(t => (IPoemClassifier)Activator.CreateInstance(t)!)
-            .ToList();
+            .Where(t => t is { IsClass: true, IsAbstract: false } && typeof(IPoemClassifier).IsAssignableFrom(t));
+        var classifiers = classifierTypes.Select(t => (IPoemClassifier)Activator.CreateInstance(t)!).ToList();
         var chain = new PoemClassifierChain(classifiers);
 
         _engine = new ServicesPoemEngine(chain, syllableEngine, cmuDictionary, null);
@@ -415,12 +402,10 @@ public sealed class PoemEngineGenerationTests : IDisposable
         {
             var poem = _engine.GeneratePoem(type, seed: 42);
 
-            Assert.True(poem.Length >= 2,
-                $"{type} should generate at least 2 lines, got {poem.Length}");
+            Assert.True(poem.Length >= 2, $"{type} should generate at least 2 lines, got {poem.Length}");
             foreach (var line in poem)
             {
-                Assert.False(string.IsNullOrWhiteSpace(line),
-                    $"{type} should not contain empty lines");
+                Assert.False(string.IsNullOrWhiteSpace(line), $"{type} should not contain empty lines");
             }
         }
     }

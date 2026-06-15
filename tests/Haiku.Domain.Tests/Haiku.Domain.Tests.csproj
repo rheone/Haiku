@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Haiku.Domain\Haiku.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Haiku.Modules\Haiku.Modules.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Haiku.Modules.Shared.Domain.Enums" />
+    <Using Include="Haiku.Modules.Shared.Domain.ValueObjects" />
+    <Using Include="Haiku.Modules.Auth.Domain" />
+    <Using Include="Haiku.Modules.Poems.Domain" />
+    <Using Include="Haiku.Modules.Community.Domain" />
+    <Using Include="Haiku.Modules.Moderation.Domain" />
+    <Using Include="Haiku.Modules.Dictionary.Domain" />
+    <Using Include="Haiku.Modules.Themes.Domain" />
   </ItemGroup>
 </Project>

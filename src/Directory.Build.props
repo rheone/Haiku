@@ -52,10 +52,13 @@
   </PropertyGroup>
 
   <!-- Populate git hash from local repo when not in CI -->
-  <Target Name="PopulateGitHash" BeforeTargets="CoreCompile"
-          Condition="'$(SourceRevisionId)'==''">
-    <Exec Command="git rev-parse HEAD" ConsoleToMSBuild="true"
-          WorkingDirectory="$(MSBuildProjectDirectory)" IgnoreExitCode="false">
+  <Target Name="PopulateGitHash" BeforeTargets="CoreCompile" Condition="'$(SourceRevisionId)'==''">
+    <Exec
+      Command="git rev-parse HEAD"
+      ConsoleToMSBuild="true"
+      WorkingDirectory="$(MSBuildProjectDirectory)"
+      IgnoreExitCode="false"
+    >
       <Output TaskParameter="ConsoleOutput" PropertyName="SourceRevisionId" />
     </Exec>
   </Target>
