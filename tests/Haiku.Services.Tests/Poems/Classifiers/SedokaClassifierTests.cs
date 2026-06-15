@@ -21,7 +21,7 @@ public class SedokaClassifierTests
     /// Verifies that a 5-7-7-5-7-7 syllable pattern is correctly classified as Sedoka.
     /// </summary>
     [Fact]
-    public void TryClassify_CorrectPattern_ReturnsDefinition()
+    public void TryClassify_CorrectPattern_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[]
@@ -48,7 +48,7 @@ public class SedokaClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[]
@@ -73,7 +73,7 @@ public class SedokaClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "morning sun rises", "birds begin their joyful song", "dew drops glisten on green leaves" };
@@ -94,7 +94,7 @@ public class SedokaClassifierTests
     /// Verifies that SedokaClassifier has priority 1100.
     /// </summary>
     [Fact]
-    public void Priority_Is1100()
+    public void Priority_Is1100_Test()
     {
         // Arrange
 

@@ -40,12 +40,15 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that a known word in the dictionary returns its syllable count and tier.
     /// </summary>
     [Fact]
-    public void TryCountSyllables_KnownWord_ReturnsCount()
+    public void TryCountSyllables_KnownWord_ReturnsCount_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success = provider.TryCountSyllables("hello", out var result);
 
+        // Assert
         Assert.True(success);
         Assert.NotNull(result);
         Assert.Equal("hello", result!.Word);
@@ -57,12 +60,15 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that an unknown word returns false and a null result.
     /// </summary>
     [Fact]
-    public void TryCountSyllables_UnknownWord_ReturnsFalse()
+    public void TryCountSyllables_UnknownWord_ReturnsFalse_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success = provider.TryCountSyllables("xyzzy", out var result);
 
+        // Assert
         Assert.False(success);
         Assert.Null(result);
     }
@@ -71,12 +77,15 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that case-insensitive lookups work (CMU dict is case-insensitive).
     /// </summary>
     [Fact]
-    public void TryCountSyllables_CaseInsensitive_Matches()
+    public void TryCountSyllables_CaseInsensitive_Matches_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success = provider.TryCountSyllables("HELLO", out var result);
 
+        // Assert
         Assert.True(success);
         Assert.Equal(2, result!.Count);
     }
@@ -85,12 +94,15 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that a word with multiple pronunciations returns the first entry's syllable count.
     /// </summary>
     [Fact]
-    public void TryCountSyllables_Homograph_ReturnsFirstEntry()
+    public void TryCountSyllables_Homograph_ReturnsFirstEntry_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success = provider.TryCountSyllables("record", out var result);
 
+        // Assert
         Assert.True(success);
         Assert.Equal(2, result!.Count);
     }
@@ -99,12 +111,15 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that the <c>_metadata</c> section is ignored and does not interfere with lookups.
     /// </summary>
     [Fact]
-    public void TryCountSyllables_MetadataIgnored_DoesNotCreateEntry()
+    public void TryCountSyllables_MetadataIgnored_DoesNotCreateEntry_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success = provider.TryCountSyllables("_metadata", out _);
 
+        // Assert
         Assert.False(success);
     }
 
@@ -116,8 +131,11 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that a missing JSON file path throws <c>FileNotFoundException</c>.
     /// </summary>
     [Fact]
-    public void Constructor_MissingFile_ThrowsFileNotFound()
+    public void Constructor_MissingFile_ThrowsFileNotFound_Test()
     {
+        // Arrange
+        // Act
+        // Assert
         Assert.Throws<FileNotFoundException>(() => new CmuDictionaryProvider("/nonexistent/path.json"));
     }
 
@@ -125,9 +143,13 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that invalid JSON throws <c>JsonException</c>.
     /// </summary>
     [Fact]
-    public void Constructor_InvalidJson_ThrowsJsonException()
+    public void Constructor_InvalidJson_ThrowsJsonException_Test()
     {
+        // Arrange
         File.WriteAllText(_testJsonPath, "not valid json");
+
+        // Act
+        // Assert
         Assert.Throws<JsonException>(() => new CmuDictionaryProvider(_testJsonPath));
     }
 
@@ -135,9 +157,13 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that an empty file throws <c>JsonException</c>.
     /// </summary>
     [Fact]
-    public void Constructor_EmptyFile_ThrowsJsonException()
+    public void Constructor_EmptyFile_ThrowsJsonException_Test()
     {
+        // Arrange
         File.WriteAllText(_testJsonPath, "");
+
+        // Act
+        // Assert
         Assert.Throws<JsonException>(() => new CmuDictionaryProvider(_testJsonPath));
     }
 
@@ -145,9 +171,12 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that a JSON file without an <c>entries</c> property throws <c>InvalidOperationException</c>.
     /// </summary>
     [Fact]
-    public void Constructor_MissingEntriesProperty_ThrowsInvalidOperation()
+    public void Constructor_MissingEntriesProperty_ThrowsInvalidOperation_Test()
     {
+        // Arrange
         File.WriteAllText(_testJsonPath, """{ "metadata": { "version": 1 } }""");
+
+        // Act & Assert
         var ex = Assert.Throws<InvalidOperationException>(() => new CmuDictionaryProvider(_testJsonPath));
         Assert.Contains("empty", ex.Message, StringComparison.OrdinalIgnoreCase);
     }
@@ -156,9 +185,12 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that a JSON file with an empty <c>entries</c> object throws <c>InvalidOperationException</c>.
     /// </summary>
     [Fact]
-    public void Constructor_EmptyEntriesObject_ThrowsInvalidOperation()
+    public void Constructor_EmptyEntriesObject_ThrowsInvalidOperation_Test()
     {
+        // Arrange
         File.WriteAllText(_testJsonPath, """{ "entries": {} }""");
+
+        // Act & Assert
         var ex = Assert.Throws<InvalidOperationException>(() => new CmuDictionaryProvider(_testJsonPath));
         Assert.Contains("empty", ex.Message, StringComparison.OrdinalIgnoreCase);
     }
@@ -171,12 +203,15 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that words with a specific syllable count can be retrieved.
     /// </summary>
     [Fact]
-    public void TryGetWordsBySyllableCount_KnownCount_ReturnsWords()
+    public void TryGetWordsBySyllableCount_KnownCount_ReturnsWords_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success = provider.TryGetWordsBySyllableCount(1, out var words);
 
+        // Assert
         Assert.True(success);
         Assert.Contains("world", words);
         Assert.DoesNotContain("hello", words);
@@ -186,12 +221,15 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that requesting a syllable count with no matches returns false.
     /// </summary>
     [Fact]
-    public void TryGetWordsBySyllableCount_NoMatch_ReturnsFalse()
+    public void TryGetWordsBySyllableCount_NoMatch_ReturnsFalse_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success = provider.TryGetWordsBySyllableCount(99, out var words);
 
+        // Assert
         Assert.False(success);
         Assert.Empty(words);
     }
@@ -204,13 +242,16 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that random words can be retrieved.
     /// </summary>
     [Fact]
-    public void TryGetWords_ReturnsRequestedCount()
+    public void TryGetWords_ReturnsRequestedCount_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
         var deterministic = new Random(42);
 
+        // Act
         var success = provider.TryGetWords(2, out var words, deterministic);
 
+        // Assert
         Assert.True(success);
         Assert.Equal(2, words.Count);
     }
@@ -219,13 +260,16 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that deterministic seeding produces the same result.
     /// </summary>
     [Fact]
-    public void TryGetWords_DeterministicSeed_ReturnsSameOrder()
+    public void TryGetWords_DeterministicSeed_ReturnsSameOrder_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success1 = provider.TryGetWords(3, out var words1, new Random(42));
         var success2 = provider.TryGetWords(3, out var words2, new Random(42));
 
+        // Assert
         Assert.True(success1);
         Assert.True(success2);
         Assert.Equal(words1, words2);
@@ -239,13 +283,16 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that one word per requested syllable count is returned, in order.
     /// </summary>
     [Fact]
-    public void TryGetSpecificWords_ReturnsWordPerCount()
+    public void TryGetSpecificWords_ReturnsWordPerCount_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
         var deterministic = new Random(42);
 
+        // Act
         var success = provider.TryGetSpecificWords([1, 2], out var words, deterministic);
 
+        // Assert
         Assert.True(success);
         Assert.Equal(2, words.Count);
     }
@@ -254,12 +301,15 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that requesting counts where no match exists returns false.
     /// </summary>
     [Fact]
-    public void TryGetSpecificWords_NoMatchForCount_ReturnsFalse()
+    public void TryGetSpecificWords_NoMatchForCount_ReturnsFalse_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success = provider.TryGetSpecificWords([1, 99], out var words);
 
+        // Assert
         Assert.False(success);
         Assert.Empty(words);
     }
@@ -272,12 +322,15 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that a known word returns its phoneme array.
     /// </summary>
     [Fact]
-    public void TryGetPhonemes_KnownWord_ReturnsPhonemes()
+    public void TryGetPhonemes_KnownWord_ReturnsPhonemes_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success = provider.TryGetPhonemes("hello", out var phonemes);
 
+        // Assert
         Assert.True(success);
         Assert.Equal(["HH", "AH0", "L", "OW1"], phonemes!);
     }
@@ -286,12 +339,15 @@ public sealed class CmuDictionaryProviderTests : IDisposable
     ///     Verifies that an unknown word returns false.
     /// </summary>
     [Fact]
-    public void TryGetPhonemes_UnknownWord_ReturnsFalse()
+    public void TryGetPhonemes_UnknownWord_ReturnsFalse_Test()
     {
+        // Arrange
         var provider = new CmuDictionaryProvider(_testJsonPath);
 
+        // Act
         var success = provider.TryGetPhonemes("xyzzy", out _);
 
+        // Assert
         Assert.False(success);
     }
 

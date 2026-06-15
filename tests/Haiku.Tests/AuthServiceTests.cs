@@ -13,11 +13,11 @@ namespace Haiku.Tests;
 /// </remarks>
 public class AuthServiceTests
 {
-    #region Register
+    #region RegisterAsync
 
     /// <summary>Verifies that RegisterAsync creates a user and returns it when the email and username are both unique.</summary>
     [Fact]
-    public async Task RegisterAsync_CreatesUser_WhenEmailAndUsernameAreUnique()
+    public async Task RegisterAsync_CreatesUser_WhenEmailAndUsernameAreUnique_Test()
     {
         // Arrange
         var userRepo = Substitute.For<IUserRepository>();
@@ -42,7 +42,7 @@ public class AuthServiceTests
 
     /// <summary>Verifies that RegisterAsync returns null when the email is already taken.</summary>
     [Fact]
-    public async Task RegisterAsync_ReturnsNull_WhenEmailExists()
+    public async Task RegisterAsync_ReturnsNull_WhenEmailExists_Test()
     {
         // Arrange
         var userRepo = Substitute.For<IUserRepository>();
@@ -63,7 +63,7 @@ public class AuthServiceTests
 
     /// <summary>Verifies that RegisterAsync returns null when the username is already taken.</summary>
     [Fact]
-    public async Task RegisterAsync_ReturnsNull_WhenUsernameExists()
+    public async Task RegisterAsync_ReturnsNull_WhenUsernameExists_Test()
     {
         // Arrange
         var userRepo = Substitute.For<IUserRepository>();
@@ -102,11 +102,11 @@ public class AuthServiceTests
 
     #endregion
 
-    #region Login
+    #region LoginAsync
 
     /// <summary>Verifies that LoginAsync returns the user when the email and password match and the account is active.</summary>
     [Fact]
-    public async Task LoginAsync_ReturnsUser_WhenCredentialsAreValid()
+    public async Task LoginAsync_ReturnsUser_WhenCredentialsAreValid_Test()
     {
         // Arrange
         var userRepo = Substitute.For<IUserRepository>();
@@ -136,7 +136,7 @@ public class AuthServiceTests
 
     /// <summary>Verifies that LoginAsync returns null when the password does not match.</summary>
     [Fact]
-    public async Task LoginAsync_ReturnsNull_WhenPasswordIsWrong()
+    public async Task LoginAsync_ReturnsNull_WhenPasswordIsWrong_Test()
     {
         // Arrange
         var userRepo = Substitute.For<IUserRepository>();
@@ -159,7 +159,7 @@ public class AuthServiceTests
 
     /// <summary>Verifies that LoginAsync returns null when the email address is not registered.</summary>
     [Fact]
-    public async Task LoginAsync_ReturnsNull_WhenEmailDoesNotExist()
+    public async Task LoginAsync_ReturnsNull_WhenEmailDoesNotExist_Test()
     {
         // Arrange
         var userRepo = Substitute.For<IUserRepository>();
@@ -175,7 +175,7 @@ public class AuthServiceTests
 
     /// <summary>Verifies that LoginAsync returns null when the user account has been disabled.</summary>
     [Fact]
-    public async Task LoginAsync_ReturnsNull_WhenUserIsDisabled()
+    public async Task LoginAsync_ReturnsNull_WhenUserIsDisabled_Test()
     {
         // Arrange
         var userRepo = Substitute.For<IUserRepository>();

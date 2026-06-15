@@ -21,7 +21,7 @@ public class NearTraditionalClassifierTests
     /// Verifies that a 4-6-4 syllable pattern is correctly classified as NearTraditional.
     /// </summary>
     [Fact]
-    public void TryClassify_FourSixFour_ReturnsDefinition()
+    public void TryClassify_FourSixFour_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[] { "falling leaves", "dance upon the autumn breeze", "golden glow" };
@@ -40,7 +40,7 @@ public class NearTraditionalClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "falling leaves", "dance upon the autumn breeze", "golden glow" };
@@ -57,7 +57,7 @@ public class NearTraditionalClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "falling leaves", "dance upon the autumn breeze" };
@@ -78,7 +78,7 @@ public class NearTraditionalClassifierTests
     /// Verifies that NearTraditionalClassifier has priority 700.
     /// </summary>
     [Fact]
-    public void Priority_Is700()
+    public void Priority_Is700_Test()
     {
         // Arrange
 

@@ -21,7 +21,7 @@ public class FreeformClassifierTests
     /// Verifies that any input is correctly classified as Freeform.
     /// </summary>
     [Fact]
-    public void TryClassify_AnyInput_ReturnsDefinition()
+    public void TryClassify_AnyInput_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[] { "any words", "here they come", "more lines of text" };
@@ -44,7 +44,7 @@ public class FreeformClassifierTests
     /// Verifies that FreeformClassifier has the lowest priority (int.MaxValue).
     /// </summary>
     [Fact]
-    public void Priority_IsMaxValue()
+    public void Priority_IsMaxValue_Test()
     {
         // Arrange
 

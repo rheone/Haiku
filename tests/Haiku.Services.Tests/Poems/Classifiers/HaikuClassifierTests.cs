@@ -21,7 +21,7 @@ public class HaikuClassifierTests
     /// Verifies that a 5-7-5 syllable pattern is correctly classified as Haiku.
     /// </summary>
     [Fact]
-    public void TryClassify_FiveSevenFive_ReturnsDefinition()
+    public void TryClassify_FiveSevenFive_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[] { "an old silent pond", "a frog jumps into the pond", "splash silence again" };
@@ -40,7 +40,7 @@ public class HaikuClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "hello world", "foo bar baz", "hi" };
@@ -57,7 +57,7 @@ public class HaikuClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "line one", "line two" };
@@ -78,7 +78,7 @@ public class HaikuClassifierTests
     /// Verifies that HaikuClassifier has priority 200.
     /// </summary>
     [Fact]
-    public void Priority_Is200()
+    public void Priority_Is200_Test()
     {
         // Arrange
 

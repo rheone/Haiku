@@ -8,7 +8,7 @@ public class RhymingEngineTests
     ///     Verifies that WordsRhyme returns true when comparing a word to itself.
     /// </summary>
     [Fact]
-    public void WordsRhyme_SameWord_ReturnsTrue()
+    public void WordsRhyme_SameWord_ReturnsTrue_Test()
     {
         // Arrange
         var provider = Substitute.For<IRhymeProvider>();
@@ -25,7 +25,7 @@ public class RhymingEngineTests
     ///     Verifies that WordsRhyme returns true when the provider matches two words.
     /// </summary>
     [Fact]
-    public void WordsRhyme_ProviderMatches_ReturnsTrue()
+    public void WordsRhyme_ProviderMatches_ReturnsTrue_Test()
     {
         // Arrange
         var provider = Substitute.For<IRhymeProvider>();
@@ -57,7 +57,7 @@ public class RhymingEngineTests
     ///     Verifies that WordsRhyme returns false when the provider returns different keys.
     /// </summary>
     [Fact]
-    public void WordsRhyme_DifferentKeys_ReturnsFalse()
+    public void WordsRhyme_DifferentKeys_ReturnsFalse_Test()
     {
         // Arrange
         var provider = Substitute.For<IRhymeProvider>();
@@ -89,7 +89,7 @@ public class RhymingEngineTests
     ///     Verifies that WordsRhyme falls back to suffix matching when the provider returns null.
     /// </summary>
     [Fact]
-    public void WordsRhyme_FallbackToSuffix_WhenProviderReturnsNull()
+    public void WordsRhyme_FallbackToSuffix_WhenProviderReturnsNull_Test()
     {
         // Arrange
         var provider = Substitute.For<IRhymeProvider>();
@@ -112,7 +112,7 @@ public class RhymingEngineTests
     ///     Verifies that LinesRhyme returns true when the last words of each line rhyme.
     /// </summary>
     [Fact]
-    public void LinesRhyme_LastWordsRhyme_ReturnsTrue()
+    public void LinesRhyme_LastWordsRhyme_ReturnsTrue_Test()
     {
         // Arrange
         var provider = Substitute.For<IRhymeProvider>();

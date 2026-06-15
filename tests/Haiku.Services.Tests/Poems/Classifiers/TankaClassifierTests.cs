@@ -21,7 +21,7 @@ public class TankaClassifierTests
     /// Verifies that a 5-7-5-7-7 syllable pattern is correctly classified as Tanka.
     /// </summary>
     [Fact]
-    public void TryClassify_FiveSevenFiveSevenSeven_ReturnsDefinition()
+    public void TryClassify_FiveSevenFiveSevenSeven_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[]
@@ -47,7 +47,7 @@ public class TankaClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[]
@@ -71,7 +71,7 @@ public class TankaClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "spring breeze carries scent", "cherry blossoms gently fall", "river gently flows" };
@@ -92,7 +92,7 @@ public class TankaClassifierTests
     /// Verifies that TankaClassifier has priority 800.
     /// </summary>
     [Fact]
-    public void Priority_Is800()
+    public void Priority_Is800_Test()
     {
         // Arrange
 

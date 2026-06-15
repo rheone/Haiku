@@ -21,7 +21,7 @@ public class KellyLuneClassifierTests
     /// Verifies that a 5-3-5 syllable pattern is correctly classified as KellyLune.
     /// </summary>
     [Fact]
-    public void TryClassify_FiveThreeFive_ReturnsDefinition()
+    public void TryClassify_FiveThreeFive_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[] { "rain upon the roof", "soft tapping", "lulling me to peaceful sleep" };
@@ -40,7 +40,7 @@ public class KellyLuneClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "rain upon the roof", "soft tapping", "lulling me to peaceful sleep" };
@@ -57,7 +57,7 @@ public class KellyLuneClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "rain upon the roof", "soft tapping" };
@@ -78,7 +78,7 @@ public class KellyLuneClassifierTests
     /// Verifies that KellyLuneClassifier has priority 500.
     /// </summary>
     [Fact]
-    public void Priority_Is500()
+    public void Priority_Is500_Test()
     {
         // Arrange
 

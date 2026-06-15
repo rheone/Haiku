@@ -4,25 +4,40 @@ public class WordReverseFibClassifierTests
 {
     private readonly WordReverseFibClassifier _classifier = new();
 
+    #region Match
+
     [Fact]
-    public void Match_WithValidReverseFib_ReturnsDefinition()
+    /// <summary>Verifies the classifier matches a valid reverse-Fibonacci word-count pattern.</summary>
+    public void Match_WithValidReverseFib_ReturnsDefinition_Test()
     {
         var lines = new[] { "a b c d e", "a b c", "a b", "a", "a" };
         var counts = new[] { 5, 3, 2, 1, 1 };
         ClassifierTestHelpers.AssertMatch(_classifier, lines, counts, "word-reverse-fib");
     }
 
+    #endregion
+
+    #region NoMatch
+
     [Fact]
-    public void NoMatch_WithWrongDigits_ReturnsFalse()
+    /// <summary>Verifies the classifier rejects non-reverse-Fibonacci sequences.</summary>
+    public void NoMatch_WithWrongDigits_ReturnsFalse_Test()
     {
         var lines = new[] { "a", "a b", "a b c" };
         var counts = new[] { 1, 2, 3 };
         ClassifierTestHelpers.AssertNoMatch(_classifier, lines, counts);
     }
 
+    #endregion
+
+    #region Priority
+
     [Fact]
-    public void Priority_Is2100()
+    /// <summary>Verifies the classifier priority is 2100.</summary>
+    public void Priority_Is2100_Test()
     {
         ClassifierTestHelpers.AssertPriority(_classifier, 2100);
     }
+
+    #endregion
 }

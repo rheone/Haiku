@@ -21,7 +21,7 @@ public class ButterflyCinquainClassifierTests
     /// Verifies that a 2-4-6-8-2-8-6-4-2 syllable pattern is correctly classified as ButterflyCinquain.
     /// </summary>
     [Fact]
-    public void TryClassify_CorrectPattern_ReturnsDefinition()
+    public void TryClassify_CorrectPattern_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[]
@@ -51,7 +51,7 @@ public class ButterflyCinquainClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[]
@@ -79,7 +79,7 @@ public class ButterflyCinquainClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[]
@@ -106,7 +106,7 @@ public class ButterflyCinquainClassifierTests
     /// Verifies that ButterflyCinquainClassifier has priority 1200.
     /// </summary>
     [Fact]
-    public void Priority_Is1200()
+    public void Priority_Is1200_Test()
     {
         // Arrange
 

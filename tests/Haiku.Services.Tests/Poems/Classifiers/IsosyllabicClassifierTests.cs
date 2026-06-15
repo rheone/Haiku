@@ -21,7 +21,7 @@ public class IsosyllabicClassifierTests
     /// Verifies that a uniform 7-7-7 syllable pattern is correctly classified as Isosyllabic.
     /// </summary>
     [Fact]
-    public void TryClassify_AllSeven_ReturnsDefinition()
+    public void TryClassify_AllSeven_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[]
@@ -45,7 +45,7 @@ public class IsosyllabicClassifierTests
     /// Verifies that a non-uniform syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "the moon rises high tonight", "stars in the sky", "night birds sing their gentle songs" };
@@ -62,7 +62,7 @@ public class IsosyllabicClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "the moon rises high tonight" };
@@ -83,7 +83,7 @@ public class IsosyllabicClassifierTests
     /// Verifies that IsosyllabicClassifier has priority 1500.
     /// </summary>
     [Fact]
-    public void Priority_Is1500()
+    public void Priority_Is1500_Test()
     {
         // Arrange
 

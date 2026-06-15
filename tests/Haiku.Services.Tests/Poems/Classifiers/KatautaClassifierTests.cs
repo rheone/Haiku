@@ -21,7 +21,7 @@ public class KatautaClassifierTests
     /// Verifies that a 5-7-7 syllable pattern is correctly classified as Katauta.
     /// </summary>
     [Fact]
-    public void TryClassify_FiveSevenSeven_ReturnsDefinition()
+    public void TryClassify_FiveSevenSeven_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[] { "cherry blossoms fall", "petals dance upon the soft breeze", "spring whispers goodbye once more" };
@@ -40,7 +40,7 @@ public class KatautaClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "cherry blossoms fall", "petals dance upon the soft breeze", "spring whispers goodbye" };
@@ -57,7 +57,7 @@ public class KatautaClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "cherry blossoms fall", "petals dance upon the soft breeze" };
@@ -78,7 +78,7 @@ public class KatautaClassifierTests
     /// Verifies that KatautaClassifier has priority 300.
     /// </summary>
     [Fact]
-    public void Priority_Is300()
+    public void Priority_Is300_Test()
     {
         // Arrange
 

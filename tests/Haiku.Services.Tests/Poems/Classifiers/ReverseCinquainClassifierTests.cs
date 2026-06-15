@@ -21,7 +21,7 @@ public class ReverseCinquainClassifierTests
     /// Verifies that a 2-8-6-4-2 syllable pattern is correctly classified as ReverseCinquain.
     /// </summary>
     [Fact]
-    public void TryClassify_TwoEightSixFourTwo_ReturnsDefinition()
+    public void TryClassify_TwoEightSixFourTwo_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[]
@@ -47,7 +47,7 @@ public class ReverseCinquainClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[]
@@ -71,7 +71,7 @@ public class ReverseCinquainClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "night breeze", "moonbeams dance upon the quiet lake", "silver ripples spread" };
@@ -92,7 +92,7 @@ public class ReverseCinquainClassifierTests
     /// Verifies that ReverseCinquainClassifier has priority 1000.
     /// </summary>
     [Fact]
-    public void Priority_Is1000()
+    public void Priority_Is1000_Test()
     {
         // Arrange
 

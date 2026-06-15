@@ -21,7 +21,7 @@ public class CompressedClassifierTests
     /// Verifies that a 2-3-2 syllable pattern is correctly classified as Compressed.
     /// </summary>
     [Fact]
-    public void TryClassify_TwoThreeTwo_ReturnsDefinition()
+    public void TryClassify_TwoThreeTwo_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[] { "deep snow", "cold wind blows through the night", "warm fire" };
@@ -40,7 +40,7 @@ public class CompressedClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "deep snow", "cold wind blows through the night", "warm fire" };
@@ -57,7 +57,7 @@ public class CompressedClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "deep snow", "cold wind blows through the night" };
@@ -78,7 +78,7 @@ public class CompressedClassifierTests
     /// Verifies that CompressedClassifier has priority 600.
     /// </summary>
     [Fact]
-    public void Priority_Is600()
+    public void Priority_Is600_Test()
     {
         // Arrange
 

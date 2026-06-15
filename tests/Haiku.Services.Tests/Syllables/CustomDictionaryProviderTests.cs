@@ -11,7 +11,7 @@ public class CustomDictionaryProviderTests
     ///     Verifies that a known word returns its custom syllable count and metadata.
     /// </summary>
     [Fact]
-    public void TryCountSyllables_KnownWord_ReturnsCustomCount()
+    public void TryCountSyllables_KnownWord_ReturnsCustomCount_Test()
     {
         // Arrange
         var dict = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { { "haiku", 2 } };
@@ -32,7 +32,7 @@ public class CustomDictionaryProviderTests
     ///     Verifies that an unknown word returns false and a null result with an empty dictionary.
     /// </summary>
     [Fact]
-    public void TryCountSyllables_UnknownWord_ReturnsFalse()
+    public void TryCountSyllables_UnknownWord_ReturnsFalse_Test()
     {
         // Arrange
         var provider = new CustomDictionaryProvider();
@@ -49,7 +49,7 @@ public class CustomDictionaryProviderTests
     ///     Verifies that lookups are case-insensitive when the backing dictionary uses <c>OrdinalIgnoreCase</c>.
     /// </summary>
     [Fact]
-    public void TryCountSyllables_CaseInsensitive()
+    public void TryCountSyllables_CaseInsensitive_Test()
     {
         // Arrange
         var dict = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { { "Haiku", 2 } };

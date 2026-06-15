@@ -6,21 +6,26 @@ namespace MicroMediator.Tests;
 /// <summary>Unit tests for <see cref="IMediator"/> covering command dispatch, query dispatch, and handler independence.</summary>
 public class MediatorTests
 {
+    #region Send
+
     /// <summary>
     /// Verifies that sending a command with a return value resolves the correct handler
     /// via the DI container and returns the expected result.
     /// </summary>
     [Fact]
-    public async Task Send_command_with_result_resolves_and_invokes_handler()
+    public async Task Send_CommandWithResult_ResolvesAndInvokesHandler_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(TestCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
 
+        // Act
         var ct = TestContext.Current.CancellationToken;
         var result = await mediator.Send(new TestCommand("hello"), ct);
 
+        // Assert
         Assert.True(result);
     }
 
@@ -29,15 +34,18 @@ public class MediatorTests
     /// the handler, observable through a side effect on the handler's static state.
     /// </summary>
     [Fact]
-    public async Task Send_void_command_resolves_and_invokes_handler()
+    public async Task Send_VoidCommand_ResolvesAndInvokesHandler_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(TestVoidCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
 
+        // Act
         await mediator.Send(new TestVoidCommand(), TestContext.Current.CancellationToken);
 
+        // Assert
         Assert.True(TestVoidCommandHandler.Invoked);
     }
 
@@ -46,15 +54,18 @@ public class MediatorTests
     /// the matching query handler.
     /// </summary>
     [Fact]
-    public async Task Send_query_resolves_and_invokes_handler()
+    public async Task Send_Query_ResolvesAndInvokesHandler_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(TestQueryHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
 
+        // Act
         var result = await mediator.Send(new TestQuery(42), TestContext.Current.CancellationToken);
 
+        // Assert
         Assert.Equal("42", result);
     }
 
@@ -64,8 +75,9 @@ public class MediatorTests
     /// This confirms scoped service resolution.
     /// </summary>
     [Fact]
-    public async Task Multiple_handlers_are_independent()
+    public async Task Send_MultipleHandlers_AreIndependent_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(TestCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
@@ -74,9 +86,11 @@ public class MediatorTests
         var mediator2 = provider.GetRequiredService<IMediator>();
         var ct = TestContext.Current.CancellationToken;
 
+        // Act
         var r1 = await mediator1.Send(new TestCommand("hello"), ct);
         var r2 = await mediator2.Send(new TestCommand("hello"), ct);
 
+        // Assert
         Assert.True(r1);
         Assert.True(r2);
     }
@@ -88,17 +102,20 @@ public class MediatorTests
     /// to their respective handler implementations.
     /// </summary>
     [Fact]
-    public async Task Different_handler_types_are_independent()
+    public async Task Send_DifferentHandlerTypes_AreIndependent_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(TestCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
         var ct = TestContext.Current.CancellationToken;
 
+        // Act
         var cmdResult = await mediator.Send(new TestCommand("hello"), ct);
         var queryResult = await mediator.Send(new TestQuery(99), ct);
 
+        // Assert
         Assert.True(cmdResult);
         Assert.Equal("99", queryResult);
     }
@@ -109,17 +126,20 @@ public class MediatorTests
     /// <see cref="InvalidOperationException"/>.
     /// </summary>
     [Fact]
-    public async Task Send_void_command_throws_when_handler_not_registered()
+    public async Task Send_VoidCommandNotRegistered_ThrowsInvalidOperationException_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(TestCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
 
+        // Act
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             mediator.Send(new UnregisteredVoidCommand(), TestContext.Current.CancellationToken)
         );
 
+        // Assert
         Assert.Contains("ICommandHandler", ex.Message);
     }
 
@@ -128,17 +148,20 @@ public class MediatorTests
     /// throws an <see cref="InvalidOperationException"/>.
     /// </summary>
     [Fact]
-    public async Task Send_command_with_result_throws_when_handler_not_registered()
+    public async Task Send_CommandWithResultNotRegistered_ThrowsInvalidOperationException_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(TestCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
 
+        // Act
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             mediator.Send(new UnregisteredResultCommand(), TestContext.Current.CancellationToken)
         );
 
+        // Assert
         Assert.Contains("ICommandHandler", ex.Message);
     }
 
@@ -147,17 +170,20 @@ public class MediatorTests
     /// throws an <see cref="InvalidOperationException"/>.
     /// </summary>
     [Fact]
-    public async Task Send_query_throws_when_handler_not_registered()
+    public async Task Send_QueryNotRegistered_ThrowsInvalidOperationException_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(TestCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
 
+        // Act
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             mediator.Send(new UnregisteredQuery(), TestContext.Current.CancellationToken)
         );
 
+        // Assert
         Assert.Contains("IQueryHandler", ex.Message);
     }
 
@@ -166,8 +192,9 @@ public class MediatorTests
     /// for a void command is forwarded to the handler's <c>Handle</c> method unchanged.
     /// </summary>
     [Fact]
-    public async Task Send_void_command_passes_cancellation_token_to_handler()
+    public async Task Send_VoidCommand_PassesCancellationTokenToHandler_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(CancellationVoidCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
@@ -176,8 +203,10 @@ public class MediatorTests
         using var cts = new CancellationTokenSource();
         var handler = provider.GetRequiredService<ICommandHandler<CancellationVoidCommand>>();
 
+        // Act
         await mediator.Send(new CancellationVoidCommand(), cts.Token);
 
+        // Assert
         Assert.Equal(cts.Token, ((CancellationVoidCommandHandler)handler).CapturedCancellationToken);
     }
 
@@ -186,8 +215,9 @@ public class MediatorTests
     /// that returns a result.
     /// </summary>
     [Fact]
-    public async Task Send_command_with_result_passes_cancellation_token_to_handler()
+    public async Task Send_CommandWithResult_PassesCancellationTokenToHandler_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(CancellationResultCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
@@ -196,8 +226,10 @@ public class MediatorTests
         using var cts = new CancellationTokenSource();
         var handler = provider.GetRequiredService<ICommandHandler<CancellationResultCommand, bool>>();
 
+        // Act
         await mediator.Send(new CancellationResultCommand(), cts.Token);
 
+        // Assert
         Assert.Equal(cts.Token, ((CancellationResultCommandHandler)handler).CapturedCancellationToken);
     }
 
@@ -206,8 +238,9 @@ public class MediatorTests
     /// that returns a result.
     /// </summary>
     [Fact]
-    public async Task Send_query_passes_cancellation_token_to_handler()
+    public async Task Send_Query_PassesCancellationTokenToHandler_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(CancellationQueryHandler).Assembly);
         var provider = services.BuildServiceProvider();
@@ -216,8 +249,10 @@ public class MediatorTests
         using var cts = new CancellationTokenSource();
         var handler = provider.GetRequiredService<IQueryHandler<CancellationQuery, string>>();
 
+        // Act
         await mediator.Send(new CancellationQuery(), cts.Token);
 
+        // Assert
         Assert.Equal(cts.Token, ((CancellationQueryHandler)handler).CapturedCancellationToken);
     }
 
@@ -226,17 +261,20 @@ public class MediatorTests
     /// back to the caller of <see cref="IMediator.Send{TCommand}"/> unwrapped.
     /// </summary>
     [Fact]
-    public async Task Send_void_command_throws_when_handler_throws()
+    public async Task Send_VoidCommandHandlerThrows_ThrowsInvalidOperationException_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(ThrowingVoidCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
 
+        // Act
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             mediator.Send(new ThrowingVoidCommand(), TestContext.Current.CancellationToken)
         );
 
+        // Assert
         Assert.Equal("Handler threw.", ex.Message);
     }
 
@@ -245,17 +283,20 @@ public class MediatorTests
     /// back to the caller unwrapped.
     /// </summary>
     [Fact]
-    public async Task Send_command_with_result_throws_when_handler_throws()
+    public async Task Send_CommandWithResultHandlerThrows_ThrowsInvalidOperationException_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(ThrowingResultCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
 
+        // Act
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             mediator.Send(new ThrowingResultCommand(), TestContext.Current.CancellationToken)
         );
 
+        // Assert
         Assert.Equal("Handler threw.", ex.Message);
     }
 
@@ -265,13 +306,15 @@ public class MediatorTests
     /// not wrapped in <see cref="TaskCanceledException"/>.
     /// </summary>
     [Fact]
-    public async Task Send_command_throws_OperationCanceledException_when_handler_cancels()
+    public async Task Send_HandlerCancels_ThrowsOperationCanceledException_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(CanceledVoidCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
 
+        // Act / Assert
         await Assert.ThrowsAsync<OperationCanceledException>(() =>
             mediator.Send(new CanceledVoidCommand(), TestContext.Current.CancellationToken)
         );
@@ -283,13 +326,15 @@ public class MediatorTests
     /// Each dispatch carries a unique index; the test confirms every index is returned once.
     /// </summary>
     [Fact]
-    public async Task Send_supports_concurrent_dispatches()
+    public async Task Send_ConcurrentDispatches_CompletesWithoutErrors_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(ConcurrencyCommandHandler).Assembly);
         var provider = services.BuildServiceProvider();
         var mediator = provider.GetRequiredService<IMediator>();
 
+        // Act
         const int count = 100;
         var tasks = Enumerable
             .Range(0, count)
@@ -298,10 +343,13 @@ public class MediatorTests
 
         var results = await Task.WhenAll(tasks);
 
+        // Assert
         var handler = provider.GetRequiredService<ICommandHandler<ConcurrencyCommand, int>>();
         Assert.Equal(count, ((ConcurrencyCommandHandler)handler).CallCount);
         Assert.Equal(count, results.Length);
     }
+
+    #endregion
 
     /// <summary>A test command returning <c>bool</c>, used to verify command dispatch.</summary>
     public record TestCommand(string Value) : ICommand<bool>;

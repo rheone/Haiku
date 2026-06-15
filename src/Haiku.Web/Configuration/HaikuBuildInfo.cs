@@ -70,9 +70,9 @@ public class HaikuBuildInfo
         return new HaikuBuildInfo
         {
             Version = assembly?.GetName().Version?.ToString() ?? "0.0.0",
-            GitHash = metadata.GetValueOrDefault("GitHash", "unknown"),
-            BuildDate = metadata.GetValueOrDefault("BuildDate", "unknown"),
-            Configuration = metadata.GetValueOrDefault("Configuration", "Release"),
+            GitHash = metadata.GetValueOrDefault("GitHash", "unknown")!,
+            BuildDate = metadata.GetValueOrDefault("BuildDate", "unknown")!,
+            Configuration = metadata.GetValueOrDefault("Configuration", "Release")!,
             Environment = environmentName,
         };
     }

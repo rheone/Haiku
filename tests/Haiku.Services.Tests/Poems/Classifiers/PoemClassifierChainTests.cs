@@ -8,7 +8,7 @@ public class PoemClassifierChainTests
     /// Verifies that when no classifier matches, Match returns Freeform as the fallback type.
     /// </summary>
     [Fact]
-    public void Match_NoClassifierMatches_ReturnsFreeform()
+    public void Match_NoClassifierMatches_ReturnsFreeform_Test()
     {
         // Arrange
         var classifier = Substitute.For<IPoemClassifier>();
@@ -34,7 +34,7 @@ public class PoemClassifierChainTests
     /// Verifies that when a classifier matches, Match returns the correct poem type.
     /// </summary>
     [Fact]
-    public void Match_ClassifierMatches_ReturnsCorrectType()
+    public void Match_ClassifierMatches_ReturnsCorrectType_Test()
     {
         // Arrange
         var classifier = Substitute.For<IPoemClassifier>();
@@ -60,7 +60,7 @@ public class PoemClassifierChainTests
     /// Verifies that Match returns the result from the higher-priority classifier when two classifiers both match.
     /// </summary>
     [Fact]
-    public void Match_HigherPriorityWins()
+    public void Match_HigherPriorityWins_Test()
     {
         // Arrange
         var lowPriority = Substitute.For<IPoemClassifier>();
@@ -100,7 +100,7 @@ public class PoemClassifierChainTests
     /// Verifies that constructing a chain with classifiers having duplicate priorities throws.
     /// </summary>
     [Fact]
-    public void Constructor_DuplicatePriority_Throws()
+    public void Constructor_DuplicatePriority_Throws_Test()
     {
         // Arrange
         var c1 = Substitute.For<IPoemClassifier>();

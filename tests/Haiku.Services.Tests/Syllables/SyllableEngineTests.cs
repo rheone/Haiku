@@ -20,7 +20,7 @@ public class SyllableEngineTests
     ///     Verifies that the first provider to return a result wins and later providers are not consulted.
     /// </summary>
     [Fact]
-    public void CountWordSyllables_FirstProviderWins()
+    public void CountWordSyllables_FirstProviderWins_Test()
     {
         // Arrange
         var provider1 = Substitute.For<ISyllableProvider>();
@@ -47,7 +47,7 @@ public class SyllableEngineTests
     ///     Verifies that when the first provider fails, the second provider is consulted.
     /// </summary>
     [Fact]
-    public void CountWordSyllables_FallsbackToSecondProvider()
+    public void CountWordSyllables_FallsbackToSecondProvider_Test()
     {
         // Arrange
         var provider1 = Substitute.For<ISyllableProvider>();
@@ -76,7 +76,7 @@ public class SyllableEngineTests
     ///     Verifies that when no provider matches, a fallback result (tier "none") is returned.
     /// </summary>
     [Fact]
-    public void CountWordSyllables_NoProviderMatches_ReturnsFallback()
+    public void CountWordSyllables_NoProviderMatches_ReturnsFallback_Test()
     {
         // Arrange
         var provider = Substitute.For<ISyllableProvider>();
@@ -101,14 +101,17 @@ public class SyllableEngineTests
     ///     (SC-06a: "Numerals and numbers should be syllable-counted as their spoken word equivalent").
     /// </summary>
     [Fact]
-    public void CountWordSyllables_Numeral_ExpandsToSpokenForm()
+    public void CountWordSyllables_Numeral_ExpandsToSpokenForm_Test()
     {
+        // Arrange
         var provider = Substitute.For<ISyllableProvider>();
         provider.TryCountSyllables(Arg.Any<string>(), out Arg.Any<SyllableResult?>()).Returns(false);
         var engine = CreateEngine([provider]);
 
+        // Act
         var result = engine.CountWordSyllables("42");
 
+        // Assert
         // Humanizer: "42" → "forty-two" (spoken form). forty=2, two=1 → total 3.
         Assert.Equal(3, result.Count);
         Assert.Equal("Numeral", result.Tier);
@@ -119,14 +122,17 @@ public class SyllableEngineTests
     ///     (SC-05: "Individual letters should be syllable-counted as the number of syllables of the spoken letter").
     /// </summary>
     [Fact]
-    public void CountWordSyllables_SingleLetter_UsesLetterName()
+    public void CountWordSyllables_SingleLetter_UsesLetterName_Test()
     {
+        // Arrange
         var provider = Substitute.For<ISyllableProvider>();
         provider.TryCountSyllables(Arg.Any<string>(), out Arg.Any<SyllableResult?>()).Returns(false);
         var engine = CreateEngine([provider]);
 
+        // Act
         var result = engine.CountWordSyllables("A");
 
+        // Assert
         // "A" = "AY" → 1 syllable.
         Assert.Equal(1, result.Count);
         Assert.Equal("LetterName", result.Tier);
@@ -137,14 +143,17 @@ public class SyllableEngineTests
     ///     (SC-06b: Roman numerals should be treated as numerals).
     /// </summary>
     [Fact]
-    public void CountWordSyllables_RomanNumeral_ExpandsToSpokenForm()
+    public void CountWordSyllables_RomanNumeral_ExpandsToSpokenForm_Test()
     {
+        // Arrange
         var provider = Substitute.For<ISyllableProvider>();
         provider.TryCountSyllables(Arg.Any<string>(), out Arg.Any<SyllableResult?>()).Returns(false);
         var engine = CreateEngine([provider]);
 
+        // Act
         var result = engine.CountWordSyllables("VII");
 
+        // Assert
         // "VII" = 7 → "seven" → 2 syllables
         Assert.Equal(2, result.Count);
         Assert.Equal("RomanNumeral", result.Tier);
@@ -155,14 +164,17 @@ public class SyllableEngineTests
     ///     ToOrdinalWords ("first") and counted accordingly.
     /// </summary>
     [Fact]
-    public void CountWordSyllables_Ordinal_ExpandsToOrdinalWords()
+    public void CountWordSyllables_Ordinal_ExpandsToOrdinalWords_Test()
     {
+        // Arrange
         var provider = Substitute.For<ISyllableProvider>();
         provider.TryCountSyllables(Arg.Any<string>(), out Arg.Any<SyllableResult?>()).Returns(false);
         var engine = CreateEngine([provider]);
 
+        // Act
         var result = engine.CountWordSyllables("1st");
 
+        // Assert
         // "1st" → "first" → 1 syllable (fir=1, st is part of "first" as one vowel group)
         Assert.Equal(1, result.Count);
         Assert.Equal("Ordinal", result.Tier);
@@ -172,14 +184,17 @@ public class SyllableEngineTests
     ///     Verifies that "2nd" → "second" (2 syllables).
     /// </summary>
     [Fact]
-    public void CountWordSyllables_OrdinalSecond_CountsTwo()
+    public void CountWordSyllables_OrdinalSecond_CountsTwo_Test()
     {
+        // Arrange
         var provider = Substitute.For<ISyllableProvider>();
         provider.TryCountSyllables(Arg.Any<string>(), out Arg.Any<SyllableResult?>()).Returns(false);
         var engine = CreateEngine([provider]);
 
+        // Act
         var result = engine.CountWordSyllables("2nd");
 
+        // Assert
         // "2nd" → "second" → 2 syllables (se-cond)
         Assert.Equal(2, result.Count);
         Assert.Equal("Ordinal", result.Tier);
@@ -189,14 +204,17 @@ public class SyllableEngineTests
     ///     Verifies that "101st" → "one hundred and first" (4 syllables).
     /// </summary>
     [Fact]
-    public void CountWordSyllables_OrdinalLargeNumber_ExpandsCorrectly()
+    public void CountWordSyllables_OrdinalLargeNumber_ExpandsCorrectly_Test()
     {
+        // Arrange
         var provider = Substitute.For<ISyllableProvider>();
         provider.TryCountSyllables(Arg.Any<string>(), out Arg.Any<SyllableResult?>()).Returns(false);
         var engine = CreateEngine([provider]);
 
+        // Act
         var result = engine.CountWordSyllables("101st");
 
+        // Assert
         // "101st" → "one hundred first" (Humanizer omits "and") → one(1) + hun-dred(2) + first(1) = 4
         Assert.Equal(4, result.Count);
         Assert.Equal("Ordinal", result.Tier);
@@ -207,8 +225,9 @@ public class SyllableEngineTests
     ///     and are not intercepted by special token normalization.
     /// </summary>
     [Fact]
-    public void CountWordSyllables_RegularWord_StillUsesProviders()
+    public void CountWordSyllables_RegularWord_StillUsesProviders_Test()
     {
+        // Arrange
         var provider = Substitute.For<ISyllableProvider>();
         provider
             .TryCountSyllables("hello", out Arg.Any<SyllableResult?>())
@@ -219,8 +238,10 @@ public class SyllableEngineTests
             });
         var engine = CreateEngine([provider]);
 
+        // Act
         var result = engine.CountWordSyllables("hello");
 
+        // Assert
         Assert.Equal(2, result.Count);
         Assert.Equal("CMU", result.Tier);
     }
@@ -229,14 +250,17 @@ public class SyllableEngineTests
     ///     Verifies that a negative numeral counts as the spoken word "negative" plus the numeral.
     /// </summary>
     [Fact]
-    public void CountWordSyllables_NegativeNumeral_IncludesNegative()
+    public void CountWordSyllables_NegativeNumeral_IncludesNegative_Test()
     {
+        // Arrange
         var provider = Substitute.For<ISyllableProvider>();
         provider.TryCountSyllables(Arg.Any<string>(), out Arg.Any<SyllableResult?>()).Returns(false);
         var engine = CreateEngine([provider]);
 
+        // Act
         var result = engine.CountWordSyllables("-5");
 
+        // Assert
         // Humanizer: "-5" → "negative five" → negative=3, five=1 → total 4.
         Assert.Equal(4, result.Count);
         Assert.Equal("Numeral", result.Tier);
@@ -246,14 +270,17 @@ public class SyllableEngineTests
     ///     Verifies that the numeral "0" produces a sensible syllable count.
     /// </summary>
     [Fact]
-    public void CountWordSyllables_ZeroNumeral_ReturnsCount()
+    public void CountWordSyllables_ZeroNumeral_ReturnsCount_Test()
     {
+        // Arrange
         var provider = Substitute.For<ISyllableProvider>();
         provider.TryCountSyllables(Arg.Any<string>(), out Arg.Any<SyllableResult?>()).Returns(false);
         var engine = CreateEngine([provider]);
 
+        // Act
         var result = engine.CountWordSyllables("0");
 
+        // Assert
         // "0" → "zero" → 2 syllables
         Assert.Equal(2, result.Count);
         Assert.Equal("Numeral", result.Tier);
@@ -267,7 +294,7 @@ public class SyllableEngineTests
     ///     Verifies that a non-empty line is tokenized and each word's syllables are summed.
     /// </summary>
     [Fact]
-    public void CountLineSyllables_TokenizesAndCounts()
+    public void CountLineSyllables_TokenizesAndCounts_Test()
     {
         // Arrange
         var provider1 = Substitute.For<ISyllableProvider>();
@@ -303,7 +330,7 @@ public class SyllableEngineTests
     ///     Verifies that an empty line returns a result with zero syllables and no words.
     /// </summary>
     [Fact]
-    public void CountLineSyllables_EmptyLine_ReturnsEmpty()
+    public void CountLineSyllables_EmptyLine_ReturnsEmpty_Test()
     {
         // Arrange
         var provider = Substitute.For<ISyllableProvider>();

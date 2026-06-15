@@ -21,7 +21,7 @@ public class AmericanCinquainClassifierTests
     /// Verifies that a 2-4-6-8-2 syllable pattern is correctly classified as AmericanCinquain.
     /// </summary>
     [Fact]
-    public void TryClassify_TwoFourSixEightTwo_ReturnsDefinition()
+    public void TryClassify_TwoFourSixEightTwo_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[]
@@ -47,7 +47,7 @@ public class AmericanCinquainClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[]
@@ -71,7 +71,7 @@ public class AmericanCinquainClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "shy moon", "soft light upon still pond", "rippling silver gleams" };
@@ -92,7 +92,7 @@ public class AmericanCinquainClassifierTests
     /// Verifies that AmericanCinquainClassifier has priority 900.
     /// </summary>
     [Fact]
-    public void Priority_Is900()
+    public void Priority_Is900_Test()
     {
         // Arrange
 

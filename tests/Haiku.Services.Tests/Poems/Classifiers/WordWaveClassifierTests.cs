@@ -4,8 +4,11 @@ public class WordWaveClassifierTests
 {
     private readonly WordWaveClassifier _classifier = new();
 
+    #region Match
+
     [Fact]
-    public void Match_WithValidWave_ReturnsDefinition()
+    /// <summary>Verifies the classifier matches a valid symmetric wave pattern.</summary>
+    public void Match_WithValidWave_ReturnsDefinition_Test()
     {
         var lines = new[] { "one", "two three", "four five six", "seven eight", "nine" };
         var counts = new[] { 1, 2, 3, 2, 1 };
@@ -13,7 +16,8 @@ public class WordWaveClassifierTests
     }
 
     [Fact]
-    public void Match_WithValid7LineWave_ReturnsDefinition()
+    /// <summary>Verifies the classifier matches a valid 7-line symmetric wave pattern.</summary>
+    public void Match_WithValid7LineWave_ReturnsDefinition_Test()
     {
         var lines = new[]
         {
@@ -29,8 +33,13 @@ public class WordWaveClassifierTests
         ClassifierTestHelpers.AssertMatch(_classifier, lines, counts, "word-wave");
     }
 
+    #endregion
+
+    #region NoMatch
+
     [Fact]
-    public void NoMatch_WithLessThan5Lines_ReturnsFalse()
+    /// <summary>Verifies the classifier rejects patterns with fewer than 5 lines.</summary>
+    public void NoMatch_WithLessThan5Lines_ReturnsFalse_Test()
     {
         var lines = new[] { "one", "two three", "four" };
         var counts = new[] { 1, 2, 1 };
@@ -38,7 +47,8 @@ public class WordWaveClassifierTests
     }
 
     [Fact]
-    public void NoMatch_WithAsymmetricWave_ReturnsFalse()
+    /// <summary>Verifies the classifier rejects asymmetric (non-symmetrical) wave patterns.</summary>
+    public void NoMatch_WithAsymmetricWave_ReturnsFalse_Test()
     {
         var lines = new[]
         {
@@ -52,9 +62,16 @@ public class WordWaveClassifierTests
         ClassifierTestHelpers.AssertNoMatch(_classifier, lines, counts);
     }
 
+    #endregion
+
+    #region Priority
+
     [Fact]
-    public void Priority_Is2300()
+    /// <summary>Verifies the classifier priority is 2300.</summary>
+    public void Priority_Is2300_Test()
     {
         ClassifierTestHelpers.AssertPriority(_classifier, 2300);
     }
+
+    #endregion
 }

@@ -11,10 +11,12 @@ public class TokenizedLineTests
     ///     Verifies that a default-constructed <c>TokenizedLine</c> has empty arrays and zero counts.
     /// </summary>
     [Fact]
-    public void DefaultValues_AreEmptyArraysAndZero()
+    public void DefaultValues_AreEmptyArraysAndZero_Test()
     {
         // Arrange
         var line = new TokenizedLine();
+
+        // Act (implicit — construction is the act)
 
         // Assert
         Assert.Empty(line.Words);
@@ -31,7 +33,7 @@ public class TokenizedLineTests
     ///     Verifies that all properties can be set via the object initializer and read back correctly.
     /// </summary>
     [Fact]
-    public void Properties_CanBeSetViaInit()
+    public void Properties_CanBeSetViaInit_Test()
     {
         // Arrange
         var words = new[] { "hello", "world" };
@@ -44,6 +46,8 @@ public class TokenizedLineTests
             TotalSyllables = 3,
             WordCount = 2,
         };
+
+        // Act (implicit — construction is the act)
 
         // Assert
         Assert.Equal(words, line.Words);
@@ -60,7 +64,7 @@ public class TokenizedLineTests
     ///     Verifies that two <c>TokenizedLine</c> instances with the same values are considered equal.
     /// </summary>
     [Fact]
-    public void SameValues_AreEqual()
+    public void SameValues_AreEqual_Test()
     {
         // Arrange
         var words = new[] { "hello" };
@@ -81,6 +85,8 @@ public class TokenizedLineTests
             TotalSyllables = 2,
             WordCount = 1,
         };
+
+        // Act (implicit — construction is the act)
 
         // Assert
         Assert.Equal(line1, line2);

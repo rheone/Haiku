@@ -11,71 +11,101 @@ namespace Haiku.Tests;
 /// </remarks>
 public class PoemServiceTests
 {
+    #region DetectPoemType
+
+    /// <summary>Verifies that a 5-7-5 syllable pattern on three lines is correctly detected as a Haiku.</summary>
     [Fact]
-    public void DetectPoemType_ReturnsHaiku_For575()
+    public void DetectPoemType_ReturnsHaiku_For575_Test()
     {
+        // Arrange
         var content = "line one\nline two\nline three";
         var counts = new List<int> { 5, 7, 5 };
 
+        // Act
         var result = PoemService.DetectPoemType(content, counts);
 
+        // Assert
         Assert.Equal(PoemType.Haiku, result);
     }
 
+    /// <summary>Verifies that a 5-7-5-7-7 syllable pattern on five lines is correctly detected as a Tanka.</summary>
     [Fact]
-    public void DetectPoemType_ReturnsTanka_For57577()
+    public void DetectPoemType_ReturnsTanka_For57577_Test()
     {
-        // Tanka is a 5-line Japanese form with syllable pattern 5-7-5-7-7.
+        // Arrange
         var content = "1\n2\n3\n4\n5";
         var counts = new List<int> { 5, 7, 5, 7, 7 };
 
+        // Act
         var result = PoemService.DetectPoemType(content, counts);
 
+        // Assert
         Assert.Equal(PoemType.Tanka, result);
     }
 
+    /// <summary>Verifies that a single line with a 7-syllable count is correctly detected as a Monoku.</summary>
     [Fact]
-    public void DetectPoemType_ReturnsMonoku_ForSingleLine()
+    public void DetectPoemType_ReturnsMonoku_ForSingleLine_Test()
     {
-        // Monoku is a one-line haiku variant; the single line must fall within 4-17 syllables.
+        // Arrange
         var content = "A single line of text";
         var counts = new List<int> { 7 };
 
+        // Act
         var result = PoemService.DetectPoemType(content, counts);
 
+        // Assert
         Assert.Equal(PoemType.Monoku, result);
     }
 
+    /// <summary>Verifies that an unrecognized syllable-count pattern falls back to Freeform.</summary>
     [Fact]
-    public void DetectPoemType_ReturnsFreeform_WhenNoPatternMatches()
+    public void DetectPoemType_ReturnsFreeform_WhenNoPatternMatches_Test()
     {
+        // Arrange
         var content = "line one\nline two";
         var counts = new List<int> { 3, 9 };
 
+        // Act
         var result = PoemService.DetectPoemType(content, counts);
 
+        // Assert
         Assert.Equal(PoemType.Freeform, result);
     }
 
+    #endregion
+
+    #region ExtractTags
+
+    /// <summary>Verifies that hashtags are extracted in distinct lowercase form, ignoring duplicates.</summary>
     [Fact]
-    public void ExtractTags_ReturnsDistinctLowercaseTags()
+    public void ExtractTags_ReturnsDistinctLowercaseTags_Test()
     {
+        // Arrange
         var content = "This is #Nature at its #best #Nature";
 
+        // Act
         var tags = PoemService.ExtractTags(content);
 
+        // Assert
         Assert.Equal(2, tags.Count);
         Assert.Contains("nature", tags);
         Assert.Contains("best", tags);
     }
 
+    /// <summary>Verifies that content without any hashtags returns an empty list.</summary>
     [Fact]
-    public void ExtractTags_ReturnsEmpty_WhenNoHashtags()
+    public void ExtractTags_ReturnsEmpty_WhenNoHashtags_Test()
     {
+        // Arrange
         var content = "This has no tags at all";
 
+        // Act
         var tags = PoemService.ExtractTags(content);
 
+        // Assert
         Assert.Empty(tags);
     }
+
+    #endregion
 }

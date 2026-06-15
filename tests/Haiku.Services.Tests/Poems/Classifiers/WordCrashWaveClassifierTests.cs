@@ -4,8 +4,11 @@ public class WordCrashWaveClassifierTests
 {
     private readonly WordCrashWaveClassifier _classifier = new();
 
+    #region Match
+
     [Fact]
-    public void Match_WithValidCrashWave_ReturnsDefinition()
+    /// <summary>Verifies the classifier matches a valid double crash-wave pattern.</summary>
+    public void Match_WithValidCrashWave_ReturnsDefinition_Test()
     {
         var lines = new[]
         {
@@ -24,8 +27,13 @@ public class WordCrashWaveClassifierTests
         ClassifierTestHelpers.AssertMatch(_classifier, lines, counts, "word-crash-wave");
     }
 
+    #endregion
+
+    #region NoMatch
+
     [Fact]
-    public void NoMatch_WithWrongPeakOrder_ReturnsFalse()
+    /// <summary>Verifies the classifier rejects a crest-wave pattern (wrong peak order).</summary>
+    public void NoMatch_WithWrongPeakOrder_ReturnsFalse_Test()
     {
         var lines = new[]
         {
@@ -45,16 +53,24 @@ public class WordCrashWaveClassifierTests
     }
 
     [Fact]
-    public void NoMatch_WithSingleWave_ReturnsFalse()
+    /// <summary>Verifies the classifier rejects a single wave (needs two waves).</summary>
+    public void NoMatch_WithSingleWave_ReturnsFalse_Test()
     {
         var lines = new[] { "one", "two three", "four five six", "two three", "one" };
         var counts = new[] { 1, 2, 3, 2, 1 };
         ClassifierTestHelpers.AssertNoMatch(_classifier, lines, counts);
     }
 
+    #endregion
+
+    #region Priority
+
     [Fact]
-    public void Priority_Is2700()
+    /// <summary>Verifies the classifier priority is 2700.</summary>
+    public void Priority_Is2700_Test()
     {
         ClassifierTestHelpers.AssertPriority(_classifier, 2700);
     }
+
+    #endregion
 }

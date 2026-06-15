@@ -21,7 +21,7 @@ public class AmericanLuneClassifierTests
     /// Verifies that a 3-5-3 syllable pattern is correctly classified as AmericanLune.
     /// </summary>
     [Fact]
-    public void TryClassify_ThreeFiveThree_ReturnsDefinition()
+    public void TryClassify_ThreeFiveThree_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[] { "cold night air", "frost settles on the bare branch", "dawn approaches" };
@@ -40,7 +40,7 @@ public class AmericanLuneClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "cold night air", "frost settles on the bare branch", "dawn approaches" };
@@ -57,7 +57,7 @@ public class AmericanLuneClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "cold night air", "frost settles on the bare branch" };
@@ -78,7 +78,7 @@ public class AmericanLuneClassifierTests
     /// Verifies that AmericanLuneClassifier has priority 400.
     /// </summary>
     [Fact]
-    public void Priority_Is400()
+    public void Priority_Is400_Test()
     {
         // Arrange
 

@@ -6,17 +6,22 @@ namespace MicroMediator.Tests;
 /// <summary>Unit tests for <see cref="ServiceCollectionExtensions"/> covering mediator and handler registration.</summary>
 public class ServiceCollectionExtensionsTests
 {
+    #region AddMediator
+
     /// <summary>
     /// Verifies that <see cref="ServiceCollectionExtensions.AddMediator"/> registers <see cref="IMediator"/>
     /// as a scoped service pointing to <see cref="Mediator"/> as the implementation.
     /// </summary>
     [Fact]
-    public void AddMediator_registers_IMediator_as_scoped()
+    public void AddMediator_IMediator_RegistersAsScoped_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
 
+        // Act
         services.AddMediator(typeof(VoidCmdHandler).Assembly);
 
+        // Assert
         var descriptor = Assert.Single(services, d => d.ServiceType == typeof(IMediator));
         Assert.Equal(ServiceLifetime.Scoped, descriptor.Lifetime);
         Assert.Equal(typeof(Mediator), descriptor.ImplementationType);
@@ -27,14 +32,17 @@ public class ServiceCollectionExtensionsTests
     /// is discovered and registered, and can be resolved from the built service provider.
     /// </summary>
     [Fact]
-    public void AddMediator_registers_void_command_handler()
+    public void AddMediator_VoidCommandHandler_Registers_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(VoidCmdHandler).Assembly);
         var provider = services.BuildServiceProvider();
 
+        // Act
         var handler = provider.GetRequiredService<ICommandHandler<VoidCmd>>();
 
+        // Assert
         Assert.IsType<VoidCmdHandler>(handler);
     }
 
@@ -43,14 +51,17 @@ public class ServiceCollectionExtensionsTests
     /// (command that returns a result) is discovered and registered.
     /// </summary>
     [Fact]
-    public void AddMediator_registers_command_with_result_handler()
+    public void AddMediator_CommandWithResultHandler_Registers_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(ResultCmdHandler).Assembly);
         var provider = services.BuildServiceProvider();
 
+        // Act
         var handler = provider.GetRequiredService<ICommandHandler<ResultCmd, bool>>();
 
+        // Assert
         Assert.IsType<ResultCmdHandler>(handler);
     }
 
@@ -59,14 +70,17 @@ public class ServiceCollectionExtensionsTests
     /// (query returning a result) is discovered and registered.
     /// </summary>
     [Fact]
-    public void AddMediator_registers_query_handler()
+    public void AddMediator_QueryHandler_Registers_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(ResultQueryHandler).Assembly);
         var provider = services.BuildServiceProvider();
 
+        // Act
         var handler = provider.GetRequiredService<IQueryHandler<ResultQuery, string>>();
 
+        // Assert
         Assert.IsType<ResultQueryHandler>(handler);
     }
 
@@ -76,12 +90,15 @@ public class ServiceCollectionExtensionsTests
     /// that also implements the handler interface.
     /// </summary>
     [Fact]
-    public void AddMediator_skips_abstract_handlers()
+    public void AddMediator_AbstractHandlers_Skips_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
 
+        // Act
         services.AddMediator(typeof(AbstractOnlyCmdHandler).Assembly);
 
+        // Assert
         Assert.DoesNotContain(services, d => d.ServiceType == typeof(ICommandHandler<AbstractOnlyCmd>));
     }
 
@@ -91,12 +108,15 @@ public class ServiceCollectionExtensionsTests
     /// as a handler implementation since it cannot be instantiated.
     /// </summary>
     [Fact]
-    public void AddMediator_skips_interface_types()
+    public void AddMediator_InterfaceTypes_Skips_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
 
+        // Act
         services.AddMediator(typeof(IInterfaceOnlyCmdHandler).Assembly);
 
+        // Assert
         Assert.DoesNotContain(services, d => d.ServiceType == typeof(ICommandHandler<InterfaceOnlyCmd>));
     }
 
@@ -105,12 +125,15 @@ public class ServiceCollectionExtensionsTests
     /// and returns the service collection for fluent chaining.
     /// </summary>
     [Fact]
-    public void AddMediator_handles_empty_assembly()
+    public void AddMediator_EmptyAssembly_HandlesGracefully_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
 
+        // Act
         var result = services.AddMediator(typeof(string).Assembly);
 
+        // Assert
         Assert.Same(services, result);
     }
 
@@ -119,12 +142,15 @@ public class ServiceCollectionExtensionsTests
     /// <see cref="IServiceCollection"/> instance for fluent method chaining.
     /// </summary>
     [Fact]
-    public void AddMediator_returns_service_collection_for_chaining()
+    public void AddMediator_ServiceCollection_ReturnsForChaining_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
 
+        // Act
         var result = services.AddMediator(typeof(VoidCmdHandler).Assembly);
 
+        // Assert
         Assert.Same(services, result);
     }
 
@@ -134,15 +160,18 @@ public class ServiceCollectionExtensionsTests
     /// is registered for each implemented handler service interface independently.
     /// </summary>
     [Fact]
-    public void AddMediator_registers_handler_implementing_multiple_interfaces()
+    public void AddMediator_MultipleInterfaces_RegistersEachIndependently_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
         services.AddMediator(typeof(MultiHandler).Assembly);
         var provider = services.BuildServiceProvider();
 
+        // Act
         var commandHandler = provider.GetRequiredService<ICommandHandler<MultiCmd>>();
         var queryHandler = provider.GetRequiredService<IQueryHandler<MultiQuery, int>>();
 
+        // Assert
         Assert.IsType<MultiHandler>(commandHandler);
         Assert.IsType<MultiHandler>(queryHandler);
     }
@@ -152,14 +181,19 @@ public class ServiceCollectionExtensionsTests
     /// and therefore not registered. An internal handler class should be invisible to the scanner.
     /// </summary>
     [Fact]
-    public void AddMediator_skips_non_public_handlers()
+    public void AddMediator_NonPublicHandlers_Skips_Test()
     {
+        // Arrange
         var services = new ServiceCollection();
 
+        // Act
         services.AddMediator(typeof(InternalOnlyCmd).Assembly);
 
+        // Assert
         Assert.DoesNotContain(services, d => d.ServiceType == typeof(ICommandHandler<InternalOnlyCmd>));
     }
+
+    #endregion
 
     /// <summary>A void command used to verify void command handler registration.</summary>
     public record VoidCmd : ICommand;

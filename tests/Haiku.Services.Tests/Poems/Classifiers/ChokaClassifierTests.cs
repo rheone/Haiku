@@ -21,7 +21,7 @@ public class ChokaClassifierTests
     /// Verifies that alternating 5-7-5-7-5-7-7 syllable pattern is correctly classified as Choka.
     /// </summary>
     [Fact]
-    public void TryClassify_SevenLinesAlternating_ReturnsDefinition()
+    public void TryClassify_SevenLinesAlternating_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[]
@@ -49,7 +49,7 @@ public class ChokaClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[]
@@ -75,7 +75,7 @@ public class ChokaClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[]
@@ -104,7 +104,7 @@ public class ChokaClassifierTests
     /// Verifies that ChokaClassifier has priority 1400.
     /// </summary>
     [Fact]
-    public void Priority_Is1400()
+    public void Priority_Is1400_Test()
     {
         // Arrange
 

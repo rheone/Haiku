@@ -21,7 +21,7 @@ public class MirrorCinquainClassifierTests
     /// Verifies that a 2-4-6-8-2-2-8-6-4-2 syllable pattern is correctly classified as MirrorCinquain.
     /// </summary>
     [Fact]
-    public void TryClassify_CorrectPattern_ReturnsDefinition()
+    public void TryClassify_CorrectPattern_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[]
@@ -52,7 +52,7 @@ public class MirrorCinquainClassifierTests
     /// Verifies that a non-matching syllable pattern returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongPattern_ReturnsFalse()
+    public void TryClassify_WrongPattern_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[]
@@ -81,7 +81,7 @@ public class MirrorCinquainClassifierTests
     /// Verifies that an incorrect line count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[]
@@ -109,7 +109,7 @@ public class MirrorCinquainClassifierTests
     /// Verifies that MirrorCinquainClassifier has priority 1300.
     /// </summary>
     [Fact]
-    public void Priority_Is1300()
+    public void Priority_Is1300_Test()
     {
         // Arrange
 

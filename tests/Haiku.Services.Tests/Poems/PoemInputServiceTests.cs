@@ -46,56 +46,84 @@ public class PoemInputServiceTests
         _service = new PoemInputService(syllableEngine, classifierChain, tokenizer);
     }
 
+    #region Process
+
     [Fact]
-    public void Process_EmptyInput_ReturnsInvalidWithError()
+    public void Process_EmptyInput_ReturnsInvalidWithError_Test()
     {
+        // Act
         var result = _service.Process("");
 
+        // Assert
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("Poem is empty"));
     }
 
     [Fact]
-    public void Process_WhitespaceInput_ReturnsInvalidWithError()
+    public void Process_WhitespaceInput_ReturnsInvalidWithError_Test()
     {
+        // Act
         var result = _service.Process("   ");
 
+        // Assert
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("Poem is empty"));
     }
 
     [Fact]
-    public void Process_ValidInput_SetsNormalizedContent()
+    public void Process_ValidInput_SetsNormalizedContent_Test()
     {
-        var result = _service.Process("hello world");
+        // Arrange
+        var input = "hello world";
 
+        // Act
+        var result = _service.Process(input);
+
+        // Assert
         Assert.True(result.IsValid);
         Assert.Equal("hello world", result.NormalizedContent);
     }
 
     [Fact]
-    public void Process_InputWithLeadingTrailingWhitespace_TrimsContent()
+    public void Process_InputWithLeadingTrailingWhitespace_TrimsContent_Test()
     {
-        var result = _service.Process("  hello world  ");
+        // Arrange
+        var input = "  hello world  ";
 
+        // Act
+        var result = _service.Process(input);
+
+        // Assert
         Assert.Equal("hello world", result.NormalizedContent);
     }
 
     [Fact]
-    public void Process_InputWithLineEndings_NormalizesToNewlines()
+    public void Process_InputWithLineEndings_NormalizesToNewlines_Test()
     {
-        var result = _service.Process("\r\nhello\r\nworld\r\n");
+        // Arrange
+        var input = "\r\nhello\r\nworld\r\n";
 
+        // Act
+        var result = _service.Process(input);
+
+        // Assert
         Assert.Equal(2, result.Lines.Length);
         Assert.Equal("hello", result.Lines[0]);
         Assert.Equal("world", result.Lines[1]);
     }
 
     [Fact]
-    public void Process_InputWithZeroWidthChars_RemovesThem()
+    public void Process_InputWithZeroWidthChars_RemovesThem_Test()
     {
-        var result = _service.Process("hel\u200Blo\u200Cworld");
+        // Arrange
+        var input = "hel\u200Blo\u200Cworld";
 
+        // Act
+        var result = _service.Process(input);
+
+        // Assert
         Assert.Equal("helloworld", result.NormalizedContent);
     }
+
+    #endregion
 }

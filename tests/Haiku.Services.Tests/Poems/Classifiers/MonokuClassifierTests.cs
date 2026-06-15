@@ -21,7 +21,7 @@ public class MonokuClassifierTests
     /// Verifies that a single line with at least 4 syllables is correctly classified as Monoku.
     /// </summary>
     [Fact]
-    public void TryClassify_SingleLineFiveSyllables_ReturnsDefinition()
+    public void TryClassify_SingleLineFiveSyllables_ReturnsDefinition_Test()
     {
         // Arrange
         var lines = new[] { "frog jumps in the old pond" };
@@ -40,7 +40,7 @@ public class MonokuClassifierTests
     /// Verifies that a single line below the minimum syllable count returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_SingleLineBelowMinimum_ReturnsFalse()
+    public void TryClassify_SingleLineBelowMinimum_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "hi there" };
@@ -57,7 +57,7 @@ public class MonokuClassifierTests
     /// Verifies that multiple lines returns false.
     /// </summary>
     [Fact]
-    public void TryClassify_WrongLineCount_ReturnsFalse()
+    public void TryClassify_WrongLineCount_ReturnsFalse_Test()
     {
         // Arrange
         var lines = new[] { "some words", "more words" };
@@ -78,7 +78,7 @@ public class MonokuClassifierTests
     /// Verifies that MonokuClassifier has priority 100.
     /// </summary>
     [Fact]
-    public void Priority_Is100()
+    public void Priority_Is100_Test()
     {
         // Arrange
 

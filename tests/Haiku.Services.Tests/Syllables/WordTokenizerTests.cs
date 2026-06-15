@@ -13,8 +13,10 @@ public class WordTokenizerTests
     ///     Verifies that a simple line is split into its constituent words.
     /// </summary>
     [Fact]
-    public void Tokenize_SimpleLine_ReturnsWordsAndCounts()
+    public void Tokenize_SimpleLine_ReturnsWordsAndCounts_Test()
     {
+        // Arrange (implicit — no setup beyond the field initializer)
+
         // Act
         var result = _tokenizer.Tokenize("hello world");
 
@@ -27,8 +29,10 @@ public class WordTokenizerTests
     ///     Verifies that an empty string returns an empty result.
     /// </summary>
     [Fact]
-    public void Tokenize_EmptyLine_ReturnsEmpty()
+    public void Tokenize_EmptyLine_ReturnsEmpty_Test()
     {
+        // Arrange (implicit — no setup beyond the field initializer)
+
         // Act
         var result = _tokenizer.Tokenize("");
 
@@ -41,8 +45,10 @@ public class WordTokenizerTests
     ///     Verifies that punctuation and ellipses are stripped from tokens.
     /// </summary>
     [Fact]
-    public void Tokenize_Punctuation_StripsNonSpokenChars()
+    public void Tokenize_Punctuation_StripsNonSpokenChars_Test()
     {
+        // Arrange (implicit — no setup beyond the field initializer)
+
         // Act
         var result = _tokenizer.Tokenize("hello, world! foo...");
 
@@ -55,8 +61,10 @@ public class WordTokenizerTests
     ///     Verifies that emoji characters are excluded from tokens.
     /// </summary>
     [Fact]
-    public void Tokenize_Emoji_ExcludesEmoji()
+    public void Tokenize_Emoji_ExcludesEmoji_Test()
     {
+        // Arrange (implicit — no setup beyond the field initializer)
+
         // Act
         var result = _tokenizer.Tokenize("hello 🌸 world");
 
@@ -68,8 +76,10 @@ public class WordTokenizerTests
     ///     Verifies that numeric digits are kept as words.
     /// </summary>
     [Fact]
-    public void Tokenize_Numerals_KeepsDigitsAsWords()
+    public void Tokenize_Numerals_KeepsDigitsAsWords_Test()
     {
+        // Arrange (implicit — no setup beyond the field initializer)
+
         // Act
         var result = _tokenizer.Tokenize("line 2 of 3");
 
@@ -82,8 +92,10 @@ public class WordTokenizerTests
     ///     Verifies that uppercase Roman numerals are detected and kept as words.
     /// </summary>
     [Fact]
-    public void Tokenize_RomanNumerals_DetectsUppercase()
+    public void Tokenize_RomanNumerals_DetectsUppercase_Test()
     {
+        // Arrange (implicit — no setup beyond the field initializer)
+
         // Act
         var result = _tokenizer.Tokenize("Chapter VII");
 
@@ -95,8 +107,10 @@ public class WordTokenizerTests
     ///     Verifies that hyphens are stripped from hyphenated words.
     /// </summary>
     [Fact]
-    public void Tokenize_HyphenatedWord_StripsHyphen()
+    public void Tokenize_HyphenatedWord_StripsHyphen_Test()
     {
+        // Arrange (implicit — no setup beyond the field initializer)
+
         // Act
         var result = _tokenizer.Tokenize("well-known");
 
@@ -108,10 +122,14 @@ public class WordTokenizerTests
     ///     Verifies that ordinal tokens like "1st", "2nd", "3rd" are kept as words.
     /// </summary>
     [Fact]
-    public void Tokenize_OrdinalTokens_KeptAsWords()
+    public void Tokenize_OrdinalTokens_KeptAsWords_Test()
     {
+        // Arrange (implicit — no setup beyond the field initializer)
+
+        // Act
         var result = _tokenizer.Tokenize("my 1st haiku on 2nd try");
 
+        // Assert
         Assert.Equal(["my", "1st", "haiku", "on", "2nd", "try"], result.Words);
         Assert.Equal(6, result.WordCount);
     }
@@ -120,10 +138,14 @@ public class WordTokenizerTests
     ///     Verifies that "th" suffixed ordinals and larger numbers work.
     /// </summary>
     [Fact]
-    public void Tokenize_OrdinalTokens_LargerNumbers()
+    public void Tokenize_OrdinalTokens_LargerNumbers_Test()
     {
+        // Arrange (implicit — no setup beyond the field initializer)
+
+        // Act
         var result = _tokenizer.Tokenize("the 42nd and 101st place");
 
+        // Assert
         Assert.Equal(["the", "42nd", "and", "101st", "place"], result.Words);
     }
 
